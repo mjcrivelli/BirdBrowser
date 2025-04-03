@@ -32,7 +32,11 @@ const BirdCard: React.FC<BirdCardProps> = ({
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     setImageError(true);
     console.error(`Failed to load image for ${bird.name}: ${imageUrl}`);
-    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=Image+Not+Found';
+    const fallbackUrl = imageUrl.replace('/thumb/', '/');
+    (e.target as HTMLImageElement).src = fallbackUrl;
+    (e.target as HTMLImageElement).onerror = () => {
+      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=Image+Not+Found';
+    };
   };
 
   const handleSeenToggle = (e: React.MouseEvent) => {
