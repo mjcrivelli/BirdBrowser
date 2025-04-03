@@ -50,7 +50,7 @@ export function useBirdSightings() {
   // Mark a bird as seen
   const markBirdAsSeen = useMutation({
     mutationFn: (birdId: number) => 
-      apiRequest('/api/sightings', 'POST', { userId, birdId }),
+      apiRequest('POST', '/api/sightings', { userId, birdId }),
     onSuccess: () => {
       // Invalidate the birds query to refresh the list with updated seen status
       queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
@@ -60,7 +60,7 @@ export function useBirdSightings() {
   // Mark a bird as unseen (remove from seen list)
   const markBirdAsUnseen = useMutation({
     mutationFn: (birdId: number) => 
-      apiRequest(`/api/sightings/${userId}/${birdId}`, 'DELETE'),
+      apiRequest('DELETE', `/api/sightings/${userId}/${birdId}`),
     onSuccess: () => {
       // Invalidate the birds query to refresh the list with updated seen status
       queryClient.invalidateQueries({ queryKey: ['/api/birds'] });

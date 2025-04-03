@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ExternalLink, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { BirdWithSeenStatus } from '@shared/schema';
+import { getWikipediaImageUrl } from '@/lib/utils';
 
 interface BirdDetailProps {
   bird: BirdWithSeenStatus;
@@ -11,6 +12,12 @@ interface BirdDetailProps {
 
 const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
+  
+  useEffect(() => {
+    // Convert Wikipedia image URL to direct URL when bird prop changes
+    setImageUrl(getWikipediaImageUrl(bird.imageUrl));
+  }, [bird.imageUrl]);
   
   const handleOpenWikipedia = () => {
     if (bird?.wikipediaUrl) {
@@ -47,11 +54,12 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
           )}
           
           <img 
-            src={bird.imageUrl} 
+            src={imageUrl} 
             alt={bird.name} 
             className={`w-full h-auto max-h-[250px] rounded-lg object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
             onLoad={() => setImageLoaded(true)}
             onError={(e) => {
+              console.error(`Failed to load detail image for ${bird.name}: ${imageUrl}`);
               (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500?text=Image+Not+Found';
             }}
           />

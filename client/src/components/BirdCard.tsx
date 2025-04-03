@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Check } from 'lucide-react';
 import type { BirdWithSeenStatus } from '@shared/schema';
+import { getWikipediaImageUrl } from '@/lib/utils';
 
 interface BirdCardProps {
   bird: BirdWithSeenStatus;
@@ -17,6 +18,12 @@ const BirdCard: React.FC<BirdCardProps> = ({
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
+
+  useEffect(() => {
+    // Convert Wikipedia image URL to direct URL when bird prop changes
+    setImageUrl(getWikipediaImageUrl(bird.imageUrl));
+  }, [bird.imageUrl]);
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -24,6 +31,7 @@ const BirdCard: React.FC<BirdCardProps> = ({
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     setImageError(true);
+    console.error(`Failed to load image for ${bird.name}: ${imageUrl}`);
     (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=Image+Not+Found';
   };
 
@@ -47,7 +55,7 @@ const BirdCard: React.FC<BirdCardProps> = ({
         )}
         
         <img 
-          src={bird.imageUrl} 
+          src={imageUrl} 
           alt={bird.name} 
           className={`w-[150px] h-[150px] rounded-full object-cover block mx-auto ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
           onLoad={handleImageLoad}
