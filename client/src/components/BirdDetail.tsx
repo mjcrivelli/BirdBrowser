@@ -85,7 +85,7 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
                   Visto
                 </>
               ) : (
-                'Marcar como visto'
+                'Vi na Toca!'
               )}
             </Button>
           )}

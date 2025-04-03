@@ -83,7 +83,7 @@ const BirdCard: React.FC<BirdCardProps> = ({
         )}
       </div>
       
-      <div className="text-center mt-2 sm:mt-3">
+      <div className="text-center mt-2 sm:mt-3 flex flex-col items-center">
         <h3 className="font-montserrat font-semibold text-base sm:text-lg truncate">{bird.name}</h3>
         <p className="text-xs sm:text-sm text-gray-600 italic truncate">{bird.scientificName}</p>
         
@@ -96,7 +96,7 @@ const BirdCard: React.FC<BirdCardProps> = ({
                 : 'bg-[#4CAF50] text-white hover:bg-[#388E3C]'
             }`}
           >
-            {bird.seen ? 'Visto ✓' : 'Marcar como visto'}
+            {bird.seen ? 'Visto ✓' : 'Vi na Toca!'}
           </button>
         )}
       </div>

@@ -67,7 +67,10 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
     imageContainer.style.flexShrink = '0';
 
     const image = document.createElement('img');
-    image.src = bird.imageUrl;
+    // Handle protocol-relative URLs
+    image.src = bird.imageUrl && bird.imageUrl.startsWith('//') 
+      ? `https:${bird.imageUrl}` 
+      : bird.imageUrl;
     image.alt = bird.name;
     image.style.width = '100%';
     image.style.height = '100%';
