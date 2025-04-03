@@ -11,10 +11,17 @@ export function cn(...inputs: ClassValue[]) {
  */
 export function getWikipediaImageUrl(url: string): string {
   if (!url) return '';
-
+  
   // Handle URLs that start with // (protocol-relative URLs)
   if (url.startsWith('//')) {
     url = 'https:' + url;
+  }
+
+  // Fix malformed URLs with duplicate filenames (common pattern in our dataset)
+  // Example: https://upload.wikimedia.org/wikipedia/commons/f/f8/Dacnis_cayana.jpg/Dacnis_cayana.jpg
+  const filenameMatch = url.match(/([^\/]+\.(jpg|png|jpeg|gif|svg))\/([^\/]+\.(jpg|png|jpeg|gif|svg))$/i);
+  if (filenameMatch && filenameMatch[1] === filenameMatch[3]) {
+    url = url.substring(0, url.lastIndexOf('/'));
   }
 
   // Handle Special:FilePath URLs
@@ -24,44 +31,34 @@ export function getWikipediaImageUrl(url: string): string {
     // Use the Wikimedia API to get a direct URL
     return `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${encodeURIComponent(filename)}&width=500`;
   }
-
-  // If it's already a direct Wikimedia Commons URL, just return it
+  
+  // Handle direct Wikimedia Commons URLs
   if (url.includes('upload.wikimedia.org')) {
-    // Modify URL to get a larger version by removing size constraints
-    if (url.includes('/thumb/')) {
-      // Remove the thumb part and the dimension specification at the end
-      const parts = url.split('/');
-      const filenameParts = parts[parts.length - 1].split('px-');
-      if (filenameParts.length > 1) {
-        parts.splice(parts.length - 1, 1, filenameParts[1]); // Replace the filename with one without size
-        parts.splice(parts.indexOf('thumb'), 1); // Remove 'thumb' from the path
-        return parts.join('/');
-      }
+    // For the specific URLs from our Excel - extract just the filename
+    const filename = url.split('/').pop() || '';
+    if (filename) {
+      return `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${encodeURIComponent(filename)}&width=500`;
     }
     return url;
   }
-
+  
   // Extract filename for other Commons URLs
   if (url.includes('commons.wikimedia.org/wiki/File:')) {
     const filename = url.split(':').pop() || '';
     return `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${encodeURIComponent(filename)}&width=500`;
   }
-
-  // Handle WikiAves URLs
+  
+  // Handle WikiAves URLs - direct return
   if (url.includes('wikiaves.com.br')) {
     return url;
   }
-
-  // Cleanup any malformed URLs
-  if (url.includes('/')) {
-    const parts = url.split('/');
-    const filename = parts[parts.length - 1];
-    // Remove any duplicate filename at the end
-    if (url.endsWith('/' + filename + '/' + filename)) {
-      return url.substring(0, url.lastIndexOf('/'));
-    }
+  
+  // For any non-recognized URL format, extract filename and use Commons redirect API
+  const lastSegment = url.split('/').pop();
+  if (lastSegment && /\.(jpg|png|jpeg|gif|svg)$/i.test(lastSegment)) {
+    return `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${encodeURIComponent(lastSegment)}&width=500`;
   }
-
-  // Default fallback to the original URL
+  
+  // Default fallback - use URL as is
   return url;
 }
