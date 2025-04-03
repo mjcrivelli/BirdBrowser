@@ -57,9 +57,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // API endpoint to add a bird sighting (mark as seen)
   app.post("/api/sightings", async (req, res) => {
     try {
+      console.log("POST /api/sightings - Request body:", req.body);
+      
       const validationResult = insertBirdSightingSchema.safeParse(req.body);
 
       if (!validationResult.success) {
+        console.log("Validation failed:", validationResult.error.errors);
         return res.status(400).json({ 
           message: "Invalid sighting data", 
           errors: validationResult.error.errors 
@@ -67,6 +70,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const sighting = await storage.addBirdSighting(validationResult.data);
+      console.log("Bird sighting added successfully:", sighting);
       res.status(201).json(sighting);
     } catch (error) {
       console.error("Error adding bird sighting:", error);
@@ -77,18 +81,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // API endpoint to remove a bird sighting (mark as not seen)
   app.delete("/api/sightings/:userId/:birdId", async (req, res) => {
     try {
+      console.log(`DELETE /api/sightings/${req.params.userId}/${req.params.birdId}`);
+      
       const userId = parseInt(req.params.userId);
       const birdId = parseInt(req.params.birdId);
 
       if (isNaN(userId) || isNaN(birdId)) {
+        console.log("Invalid parameters:", req.params);
         return res.status(400).json({ message: "Invalid userId or birdId" });
       }
 
       const result = await storage.removeBirdSighting(userId, birdId);
+      console.log("Remove bird sighting result:", result);
 
       if (result) {
         res.json({ success: true });
       } else {
+        console.log("Sighting not found for removal");
         res.status(404).json({ message: "Sighting not found" });
       }
     } catch (error) {

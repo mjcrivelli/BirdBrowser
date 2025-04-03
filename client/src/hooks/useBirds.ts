@@ -49,27 +49,73 @@ export function useBirdSightings() {
   
   // Mark a bird as seen
   const markBirdAsSeen = useMutation({
-    mutationFn: (birdId: number) => 
-      apiRequest('POST', '/api/sightings', { userId, birdId }),
+    mutationFn: async (birdId: number) => {
+      console.log(`Sending POST request to /api/sightings with: userId=${userId}, birdId=${birdId}`);
+      try {
+        // Direct fetch to avoid double-reading body error
+        const response = await fetch('/api/sightings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, birdId }),
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log('POST response:', result);
+        return result;
+      } catch (error) {
+        console.error('POST request failed:', error);
+        throw error;
+      }
+    },
     onSuccess: () => {
       // Invalidate the birds query to refresh the list with updated seen status
       console.log('Successfully marked bird as seen, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
       // Also invalidate specific queries with userId
       queryClient.invalidateQueries({ queryKey: ['/api/birds', { userId }] });
+    },
+    onError: (error) => {
+      console.error('Error in markBirdAsSeen mutation:', error);
     }
   });
   
   // Mark a bird as unseen (remove from seen list)
   const markBirdAsUnseen = useMutation({
-    mutationFn: (birdId: number) => 
-      apiRequest('DELETE', `/api/sightings/${userId}/${birdId}`),
+    mutationFn: async (birdId: number) => {
+      console.log(`Sending DELETE request to /api/sightings/${userId}/${birdId}`);
+      try {
+        // Direct fetch to avoid double-reading body error
+        const response = await fetch(`/api/sightings/${userId}/${birdId}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log('DELETE response:', result);
+        return result;
+      } catch (error) {
+        console.error('DELETE request failed:', error);
+        throw error;
+      }
+    },
     onSuccess: () => {
       // Invalidate the birds query to refresh the list with updated seen status
       console.log('Successfully marked bird as unseen, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
       // Also invalidate specific queries with userId
       queryClient.invalidateQueries({ queryKey: ['/api/birds', { userId }] });
+    },
+    onError: (error) => {
+      console.error('Error in markBirdAsUnseen mutation:', error);
     }
   });
   
