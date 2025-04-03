@@ -43,12 +43,18 @@ def get_wikipedia_image_url(wiki_url):
                     src = img['src']
                     if not src.startswith('http'):
                         src = 'https:' + src
-                    # Get the filename from src
-                    filename = src.split('/')[-1]
-                    # Remove any size prefix (like 220px-)
-                    if '-' in filename:
-                        filename = filename.split('-')[-1]
-                    return f"https://upload.wikimedia.org/wikipedia/commons/f/fb/{filename}"
+                    # Find original file page link
+                    file_link = infobox.find('a', class_='image')
+                    if file_link and 'href' in file_link.attrs:
+                        file_page_url = 'https://pt.wikipedia.org' + file_link['href']
+                        # Request the file page
+                        file_response = requests.get(file_page_url, headers={'User-Agent': 'Mozilla/5.0'})
+                        file_soup = BeautifulSoup(file_response.text, 'html.parser')
+                        # Find the original file link
+                        original_file = file_soup.find('div', class_='fullImageLink')
+                        if original_file and original_file.find('a'):
+                            return 'https:' + original_file.find('a')['href']
+                    return src
         
         # If no infobox or no image in infobox, try to get the image from the content
         content_div = soup.find('div', class_='mw-parser-output')
