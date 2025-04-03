@@ -35,7 +35,7 @@ const BirdCounter: React.FC<BirdCounterProps> = ({ seenBirds }) => {
   return (
     <>
       <div 
-        className="fixed right-6 bottom-6 bg-[#4CAF50] text-white py-2 px-4 rounded-full shadow-lg cursor-pointer hover:bg-[#388E3C] transition-colors flex items-center gap-2"
+        className="fixed right-6 bottom-6 bg-[#4CAF50] text-white py-2 px-4 rounded-full shadow-lg cursor-pointer hover:bg-[#388E3C] transition-colors flex items-center gap-2 z-50"
         onClick={handleCounterClick}
       >
         <AlertCircle className="h-5 w-5" />
@@ -45,7 +45,7 @@ const BirdCounter: React.FC<BirdCounterProps> = ({ seenBirds }) => {
       </div>
       
       <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="z-50">
           <AlertDialogHeader>
             <AlertDialogTitle>Baixar Lista de Aves</AlertDialogTitle>
             <AlertDialogDescription>

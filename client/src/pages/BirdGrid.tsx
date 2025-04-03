@@ -122,7 +122,11 @@ const BirdGrid: React.FC = () => {
               // If this bird is selected, render BirdDetail in its place
               if (bird.id === selectedBirdId) {
                 return (
-                  <div key={bird.id} className="col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-5 xl:col-span-6">
+                  <div 
+                    key={bird.id} 
+                    className="col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-5 xl:col-span-6 cursor-pointer"
+                    onClick={closeDetail}
+                  >
                     <BirdDetail 
                       bird={bird} 
                       onClose={closeDetail}
