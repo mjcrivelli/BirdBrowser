@@ -1,25 +1,38 @@
-import { birds, type Bird, type InsertBird, users, type User, type InsertUser } from "@shared/schema";
+import { 
+  birds, type Bird, type InsertBird, 
+  users, type User, type InsertUser,
+  birdSightings, type BirdSighting, type InsertBirdSighting,
+  type BirdWithSeenStatus
+} from "@shared/schema";
 
 export interface IStorage {
   getBirds(): Promise<Bird[]>;
+  getBirdsWithSeenStatus(userId?: number): Promise<BirdWithSeenStatus[]>;
   getBird(id: number): Promise<Bird | undefined>;
   createBird(bird: InsertBird): Promise<Bird>;
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  addBirdSighting(sighting: InsertBirdSighting): Promise<BirdSighting>;
+  removeBirdSighting(userId: number, birdId: number): Promise<boolean>;
+  getBirdSightings(userId: number): Promise<BirdSighting[]>;
 }
 
 export class MemStorage implements IStorage {
   private birds: Map<number, Bird>;
   private users: Map<number, User>;
+  private birdSightings: Map<number, BirdSighting>;
   currentBirdId: number;
   currentUserId: number;
+  currentSightingId: number;
 
   constructor() {
     this.birds = new Map();
     this.users = new Map();
+    this.birdSightings = new Map();
     this.currentBirdId = 1;
     this.currentUserId = 1;
+    this.currentSightingId = 1;
     
     // Initialize with sample bird data
     this.initializeBirds();
@@ -137,6 +150,61 @@ export class MemStorage implements IStorage {
     const user: User = { ...insertUser, id };
     this.users.set(id, user);
     return user;
+  }
+  
+  async getBirdsWithSeenStatus(userId?: number): Promise<BirdWithSeenStatus[]> {
+    const birds = await this.getBirds();
+    
+    if (!userId) {
+      // If no userId provided, return all birds with seen status set to false
+      return birds.map(bird => ({ ...bird, seen: false }));
+    }
+    
+    // Get all sightings for this user
+    const userSightings = await this.getBirdSightings(userId);
+    const seenBirdIds = new Set(userSightings.map(sighting => sighting.birdId));
+    
+    // Map each bird to include its seen status
+    return birds.map(bird => ({
+      ...bird,
+      seen: seenBirdIds.has(bird.id)
+    }));
+  }
+  
+  async addBirdSighting(sighting: InsertBirdSighting): Promise<BirdSighting> {
+    // Check if a sighting for this user and bird already exists
+    const existingSightings = Array.from(this.birdSightings.values()).filter(
+      s => s.userId === sighting.userId && s.birdId === sighting.birdId
+    );
+    
+    if (existingSightings.length > 0) {
+      // If sighting already exists, return it
+      return existingSightings[0];
+    }
+    
+    // Create a new sighting
+    const id = this.currentSightingId++;
+    const newSighting: BirdSighting = { ...sighting, id };
+    this.birdSightings.set(id, newSighting);
+    return newSighting;
+  }
+  
+  async removeBirdSighting(userId: number, birdId: number): Promise<boolean> {
+    const sighting = Array.from(this.birdSightings.values()).find(
+      s => s.userId === userId && s.birdId === birdId
+    );
+    
+    if (!sighting) {
+      return false;
+    }
+    
+    return this.birdSightings.delete(sighting.id);
+  }
+  
+  async getBirdSightings(userId: number): Promise<BirdSighting[]> {
+    return Array.from(this.birdSightings.values()).filter(
+      sighting => sighting.userId === userId
+    );
   }
 }
 

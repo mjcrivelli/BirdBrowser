@@ -26,6 +26,11 @@ export const insertBirdSchema = createInsertSchema(birds).pick({
 export type InsertBird = z.infer<typeof insertBirdSchema>;
 export type Bird = typeof birds.$inferSelect;
 
+// Extension for the Bird type that includes the seen status
+export interface BirdWithSeenStatus extends Bird {
+  seen: boolean;
+}
+
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
@@ -39,3 +44,18 @@ export const insertUserSchema = createInsertSchema(users).pick({
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+
+// Bird sightings table to track birds a user has seen
+export const birdSightings = pgTable("bird_sightings", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  birdId: integer("bird_id").notNull(),
+});
+
+export const insertBirdSightingSchema = createInsertSchema(birdSightings).pick({
+  userId: true,
+  birdId: true,
+});
+
+export type InsertBirdSighting = z.infer<typeof insertBirdSightingSchema>;
+export type BirdSighting = typeof birdSightings.$inferSelect;
