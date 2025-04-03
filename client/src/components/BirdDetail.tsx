@@ -35,8 +35,24 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
     }
   };
 
+  const handleContentClick = (e: React.MouseEvent) => {
+    // Don't close if clicking on buttons or links
+    if (
+      e.target instanceof HTMLButtonElement ||
+      e.target instanceof HTMLAnchorElement ||
+      (e.target instanceof Element && 
+       (e.target.closest('button') || e.target.closest('a')))
+    ) {
+      return;
+    }
+    onClose();
+  };
+
   return (
-    <div className={`w-full border ${bird.seen ? 'border-[#4CAF50]' : 'border-[#DDEBDD]'} rounded-lg p-6 bg-[#F9FBF9] shadow-md`}>
+    <div 
+      className={`w-full border ${bird.seen ? 'border-[#4CAF50]' : 'border-[#DDEBDD]'} rounded-lg p-6 bg-[#F9FBF9] shadow-md cursor-pointer`}
+      onClick={handleContentClick}
+    >
       <div className="flex justify-between items-start">
         <h2 className="text-2xl font-montserrat font-bold">{bird.name}</h2>
         <Button

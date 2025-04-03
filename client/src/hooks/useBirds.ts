@@ -89,17 +89,48 @@ export function useBirdSightings() {
       
       return response.json();
     },
+    onMutate: async (birdId) => {
+      // Cancel any outgoing refetches to avoid overwriting our optimistic update
+      await queryClient.cancelQueries({ queryKey: ['/api/birds', { userId }] });
+      
+      // Snapshot the previous birds data
+      const previousBirds = queryClient.getQueryData<BirdWithSeenStatus[]>(
+        ['/api/birds', { userId }]
+      );
+      
+      // Optimistically update the birds cache
+      if (previousBirds) {
+        const updatedBirds = previousBirds.map(bird => 
+          bird.id === birdId ? { ...bird, seen: true } : bird
+        );
+        
+        queryClient.setQueryData(
+          ['/api/birds', { userId }], 
+          updatedBirds
+        );
+      }
+      
+      // Return a context object with the snapshotted value
+      return { previousBirds };
+    },
+    
     onSuccess: (data) => {
       console.log('Successfully marked bird as seen:', data);
       
-      // Update the query cache directly with the new data
-      queryClient.setQueryData(
-        ['/api/birds', { userId }], 
-        data.birds
-      );
+      // No need to invalidate queries or set data again here
+      // as we're handling it on the backend already
     },
-    onError: (error) => {
+    
+    onError: (error, birdId, context: any) => {
       console.error('Failed to mark bird as seen:', error);
+      
+      // If the mutation fails, roll back to the previous state
+      if (context?.previousBirds) {
+        queryClient.setQueryData(
+          ['/api/birds', { userId }], 
+          context.previousBirds
+        );
+      }
     }
   });
   
@@ -118,17 +149,48 @@ export function useBirdSightings() {
       
       return response.json();
     },
+    onMutate: async (birdId) => {
+      // Cancel any outgoing refetches to avoid overwriting our optimistic update
+      await queryClient.cancelQueries({ queryKey: ['/api/birds', { userId }] });
+      
+      // Snapshot the previous birds data
+      const previousBirds = queryClient.getQueryData<BirdWithSeenStatus[]>(
+        ['/api/birds', { userId }]
+      );
+      
+      // Optimistically update the birds cache
+      if (previousBirds) {
+        const updatedBirds = previousBirds.map(bird => 
+          bird.id === birdId ? { ...bird, seen: false } : bird
+        );
+        
+        queryClient.setQueryData(
+          ['/api/birds', { userId }], 
+          updatedBirds
+        );
+      }
+      
+      // Return a context object with the snapshotted value
+      return { previousBirds };
+    },
+    
     onSuccess: (data) => {
       console.log('Successfully marked bird as unseen:', data);
       
-      // Update the query cache directly with the new data
-      queryClient.setQueryData(
-        ['/api/birds', { userId }], 
-        data.birds
-      );
+      // No need to invalidate queries or set data again here
+      // as we're handling it on the backend already
     },
-    onError: (error) => {
+    
+    onError: (error, birdId, context: any) => {
       console.error('Failed to mark bird as unseen:', error);
+      
+      // If the mutation fails, roll back to the previous state
+      if (context?.previousBirds) {
+        queryClient.setQueryData(
+          ['/api/birds', { userId }], 
+          context.previousBirds
+        );
+      }
     }
   });
   
