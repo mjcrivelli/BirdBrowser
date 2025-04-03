@@ -36,10 +36,7 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
   };
 
   return (
-    <div 
-      className={`w-full border ${bird.seen ? 'border-[#4CAF50]' : 'border-[#DDEBDD]'} rounded-lg p-6 bg-[#F9FBF9] shadow-md`}
-      onClick={(e) => e.stopPropagation()} // Prevent clicks from bubbling up to parent
-    >
+    <div className={`w-full border ${bird.seen ? 'border-[#4CAF50]' : 'border-[#DDEBDD]'} rounded-lg p-6 bg-[#F9FBF9] shadow-md`}>
       <div className="flex justify-between items-start">
         <h2 className="text-2xl font-montserrat font-bold">{bird.name}</h2>
         <Button
