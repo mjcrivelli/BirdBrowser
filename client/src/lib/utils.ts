@@ -52,11 +52,14 @@ export function getWikipediaImageUrl(url: string): string {
     return url;
   }
 
-  // Remove any additional paths after the filename
+  // Cleanup any malformed URLs
   if (url.includes('/')) {
     const parts = url.split('/');
     const filename = parts[parts.length - 1];
-    return url.substring(0, url.lastIndexOf('/'));
+    // Remove any duplicate filename at the end
+    if (url.endsWith('/' + filename + '/' + filename)) {
+      return url.substring(0, url.lastIndexOf('/'));
+    }
   }
 
   // Default fallback to the original URL

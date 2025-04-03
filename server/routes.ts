@@ -6,24 +6,25 @@ import { insertBirdSightingSchema } from "@shared/schema";
 export async function registerRoutes(app: Express): Promise<Server> {
   // API endpoint to get all birds
   app.get("/api/birds", async (req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=3600');
     try {
       // Check if we should include seen status
       const userIdParam = req.query.userId;
       let userId: number | undefined = undefined;
-      
+
       if (userIdParam && typeof userIdParam === 'string') {
         userId = parseInt(userIdParam);
         if (isNaN(userId)) {
           userId = undefined;
         }
       }
-      
+
       // If userId is provided, return birds with seen status
       if (userId !== undefined) {
         const birdsWithStatus = await storage.getBirdsWithSeenStatus(userId);
         return res.json(birdsWithStatus);
       }
-      
+
       // Otherwise return all birds
       const birds = await storage.getBirds();
       res.json(birds);
@@ -52,19 +53,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch bird details" });
     }
   });
-  
+
   // API endpoint to add a bird sighting (mark as seen)
   app.post("/api/sightings", async (req, res) => {
     try {
       const validationResult = insertBirdSightingSchema.safeParse(req.body);
-      
+
       if (!validationResult.success) {
         return res.status(400).json({ 
           message: "Invalid sighting data", 
           errors: validationResult.error.errors 
         });
       }
-      
+
       const sighting = await storage.addBirdSighting(validationResult.data);
       res.status(201).json(sighting);
     } catch (error) {
@@ -72,19 +73,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to add bird sighting" });
     }
   });
-  
+
   // API endpoint to remove a bird sighting (mark as not seen)
   app.delete("/api/sightings/:userId/:birdId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
       const birdId = parseInt(req.params.birdId);
-      
+
       if (isNaN(userId) || isNaN(birdId)) {
         return res.status(400).json({ message: "Invalid userId or birdId" });
       }
-      
+
       const result = await storage.removeBirdSighting(userId, birdId);
-      
+
       if (result) {
         res.json({ success: true });
       } else {
@@ -95,7 +96,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to remove bird sighting" });
     }
   });
-  
+
   // API endpoint to get all bird sightings for a user
   app.get("/api/sightings/:userId", async (req, res) => {
     try {
@@ -103,7 +104,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (isNaN(userId)) {
         return res.status(400).json({ message: "Invalid user ID" });
       }
-      
+
       const sightings = await storage.getBirdSightings(userId);
       res.json(sightings);
     } catch (error) {

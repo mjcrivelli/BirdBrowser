@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 import { Check } from 'lucide-react';
 import type { BirdWithSeenStatus } from '@shared/schema';
 import { getWikipediaImageUrl } from '@/lib/utils';
@@ -32,11 +34,24 @@ const BirdCard: React.FC<BirdCardProps> = ({
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     setImageError(true);
     console.error(`Failed to load image for ${bird.name}: ${imageUrl}`);
-    const fallbackUrl = imageUrl.replace('/thumb/', '/');
-    (e.target as HTMLImageElement).src = fallbackUrl;
-    (e.target as HTMLImageElement).onerror = () => {
-      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=Image+Not+Found';
+    
+    // Try different URL variations
+    const variations = [
+      imageUrl.replace('/thumb/', '/'),
+      imageUrl.replace(/\/\d+px-/, '/'),
+      `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${encodeURIComponent(imageUrl.split('/').pop() || '')}`,
+      'https://via.placeholder.com/150?text=Image+Not+Found'
+    ];
+    
+    let currentVariation = 0;
+    const tryNextVariation = (imgElement: HTMLImageElement) => {
+      if (currentVariation < variations.length) {
+        imgElement.src = variations[currentVariation++];
+        imgElement.onerror = () => tryNextVariation(imgElement);
+      }
     };
+    
+    tryNextVariation(e.target as HTMLImageElement);
   };
 
   const handleSeenToggle = (e: React.MouseEvent) => {
@@ -58,9 +73,10 @@ const BirdCard: React.FC<BirdCardProps> = ({
           <div className="w-[150px] h-[150px] rounded-full bg-gray-200 animate-pulse block mx-auto"></div>
         )}
         
-        <img 
-          src={imageUrl} 
-          alt={bird.name} 
+        <LazyLoadImage
+          src={imageUrl}
+          alt={bird.name}
+          effect="blur"
           className={`w-[150px] h-[150px] rounded-full object-cover block mx-auto ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
           onLoad={handleImageLoad}
           onError={handleImageError}
