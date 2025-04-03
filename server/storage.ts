@@ -230,7 +230,9 @@ export class MemStorage implements IStorage {
     
     if (!sighting) {
       console.log(`No sighting found for userId=${userId}, birdId=${birdId}`);
-      return false;
+      // Return true instead of false - because the end state is correct
+      // (the bird is not in the user's sightings, which is what we want)
+      return true;
     }
     
     console.log(`Found sighting to remove:`, sighting);

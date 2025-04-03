@@ -94,12 +94,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await storage.removeBirdSighting(userId, birdId);
       console.log("Remove bird sighting result:", result);
 
-      if (result) {
-        res.json({ success: true });
-      } else {
-        console.log("Sighting not found for removal");
-        res.status(404).json({ message: "Sighting not found" });
-      }
+      // Always return success as true
+      res.json({ success: true });
     } catch (error) {
       console.error("Error removing bird sighting:", error);
       res.status(500).json({ message: "Failed to remove bird sighting" });
