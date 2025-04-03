@@ -46,15 +46,15 @@ const BirdGrid: React.FC = () => {
           <div className="flex justify-center mb-8">
             <Skeleton className="h-10 w-64" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <div key={index} className="border border-[#DDEBDD] rounded-lg p-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 mb-12">
+            {Array.from({ length: 12 }).map((_, index) => (
+              <div key={index} className="rounded-lg p-2 sm:p-3 bg-white">
                 <div className="flex justify-center">
-                  <Skeleton className="w-[150px] h-[150px] rounded-full" />
+                  <Skeleton className="w-[120px] h-[120px] sm:w-[130px] sm:h-[130px] rounded-full" />
                 </div>
-                <div className="text-center mt-4">
-                  <Skeleton className="h-6 w-3/4 mx-auto" />
-                  <Skeleton className="h-4 w-1/2 mx-auto mt-2" />
+                <div className="text-center mt-2 sm:mt-3">
+                  <Skeleton className="h-5 w-3/4 mx-auto" />
+                  <Skeleton className="h-3 w-1/2 mx-auto mt-2" />
                 </div>
               </div>
             ))}
@@ -91,18 +91,18 @@ const BirdGrid: React.FC = () => {
         )}
         
         {/* Tabs for filtering birds */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6">
           <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full max-w-md">
             <TabsList className="grid grid-cols-3 w-full">
-              <TabsTrigger value="all" className="font-montserrat">
+              <TabsTrigger value="all" className="font-montserrat text-xs sm:text-sm">
                 Todas ({birds.length})
               </TabsTrigger>
-              <TabsTrigger value="seen" className="font-montserrat">
-                <Eye className="h-4 w-4 mr-1" />
+              <TabsTrigger value="seen" className="font-montserrat text-xs sm:text-sm">
+                <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                 Vistas ({seenBirds.length})
               </TabsTrigger>
-              <TabsTrigger value="unseen" className="font-montserrat">
-                <Filter className="h-4 w-4 mr-1" />
+              <TabsTrigger value="unseen" className="font-montserrat text-xs sm:text-sm">
+                <Filter className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                 Não vistas ({unseenBirds.length})
               </TabsTrigger>
             </TabsList>
@@ -110,12 +110,12 @@ const BirdGrid: React.FC = () => {
         </div>
 
         {displayBirds.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 mb-12">
             {displayBirds.map((bird) => {
               // If this bird is selected, render BirdDetail in its place
               if (bird.id === selectedBirdId) {
                 return (
-                  <div key={bird.id} className="col-span-1 sm:col-span-2 lg:col-span-3 xl:col-span-4">
+                  <div key={bird.id} className="col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-5 xl:col-span-6">
                     <BirdDetail 
                       bird={bird} 
                       onClose={closeDetail}
