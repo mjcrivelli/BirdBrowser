@@ -74,11 +74,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // API endpoint to remove a bird sighting (mark as not seen)
-  app.delete("/api/sightings", async (req, res) => {
+  app.delete("/api/sightings/:userId/:birdId", async (req, res) => {
     try {
-      const { userId, birdId } = req.body;
+      const userId = parseInt(req.params.userId);
+      const birdId = parseInt(req.params.birdId);
       
-      if (typeof userId !== 'number' || typeof birdId !== 'number') {
+      if (isNaN(userId) || isNaN(birdId)) {
         return res.status(400).json({ message: "Invalid userId or birdId" });
       }
       

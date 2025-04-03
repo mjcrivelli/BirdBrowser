@@ -81,8 +81,18 @@ const BirdGrid: React.FC = () => {
   return (
     <>
       <Header />
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 relative">
         <h1 className="text-4xl md:text-5xl font-montserrat font-bold text-center mb-8">Aves da Cachoeira da Toca</h1>
+        
+        {/* Seen birds counter */}
+        {seenBirds.length > 0 && (
+          <div className="fixed bottom-6 right-6 bg-[#4CAF50] text-white rounded-full px-4 py-2 flex items-center gap-2 shadow-lg hover:bg-[#388E3C] transition-colors z-10">
+            <Eye className="h-5 w-5" />
+            <span className="font-medium">
+              {seenBirds.length} {seenBirds.length === 1 ? 'ave vista' : 'aves vistas'}
+            </span>
+          </div>
+        )}
         
         {/* Tabs for filtering birds */}
         <div className="flex justify-center mb-8">

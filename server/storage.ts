@@ -1,9 +1,7 @@
-import { 
-  birds, type Bird, type InsertBird, 
-  users, type User, type InsertUser,
-  birdSightings, type BirdSighting, type InsertBirdSighting,
-  type BirdWithSeenStatus
-} from "@shared/schema";
+import { readFileSync } from 'fs';
+import { Bird, BirdSighting, BirdWithSeenStatus, InsertBird, InsertBirdSighting, InsertUser, User } from '@shared/schema';
+
+const DEFAULT_USER_ID = 1;
 
 export interface IStorage {
   getBirds(): Promise<Bird[]>;
@@ -34,21 +32,45 @@ export class MemStorage implements IStorage {
     this.currentUserId = 1;
     this.currentSightingId = 1;
     
-    // Initialize with sample bird data
+    // Initialize with data
     this.initializeBirds();
   }
 
   private initializeBirds() {
-    const birdData: InsertBird[] = [
-      {
-        name: "Saíra-sete-cores",
-        scientificName: "Tangara seledon",
-        description: "A saíra-sete-cores é um pássaro da família Thraupidae. Caracteriza-se por apresentar diversas cores em sua plumagem, incluindo verde, azul, amarelo e vermelho. É uma espécie comum em áreas de Mata Atlântica, sendo encontrada principalmente em florestas e bordas de mata.",
-        habitat: "Encontrada em florestas tropicais e subtropicais úmidas, principalmente na Mata Atlântica, desde o nível do mar até altitudes médias. Prefere o dossel e bordas de florestas.",
-        diet: "Alimenta-se principalmente de frutos, sementes e insetos pequenos que encontra nas árvores e arbustos.",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Green-headed_Tanager_%28Tangara_seledon%29.jpg/800px-Green-headed_Tanager_%28Tangara_seledon%29.jpg",
-        wikipediaUrl: "https://pt.wikipedia.org/wiki/Sa%C3%ADra-sete-cores"
-      },
+    try {
+      // Try to read bird data from a JSON file
+      const dataPath = './bird_data.json';
+      const jsonData = readFileSync(dataPath, 'utf8');
+      const birds: InsertBird[] = JSON.parse(jsonData);
+      
+      // Add birds to the storage
+      birds.forEach(bird => {
+        this.createBird(bird);
+      });
+      
+      console.log(`Loaded ${birds.length} birds from data file`);
+      
+      // Create a default user
+      const defaultUser: InsertUser = {
+        username: "visitor",
+        password: "password123"
+      };
+      const userId = this.currentUserId++;
+      this.users.set(userId, { ...defaultUser, id: userId });
+      return;
+    } catch (error) {
+      console.error('Error loading bird data:', error);
+      // Fallback to a few sample birds if file loading fails
+      const birdData: InsertBird[] = [
+        {
+          name: "Saíra-sete-cores",
+          scientificName: "Tangara seledon",
+          description: "A saíra-sete-cores é um pássaro da família Thraupidae. Caracteriza-se por apresentar diversas cores em sua plumagem, incluindo verde, azul, amarelo e vermelho. É uma espécie comum em áreas de Mata Atlântica, sendo encontrada principalmente em florestas e bordas de mata.",
+          habitat: "Encontrada em florestas tropicais e subtropicais úmidas, principalmente na Mata Atlântica, desde o nível do mar até altitudes médias. Prefere o dossel e bordas de florestas.",
+          diet: "Alimenta-se principalmente de frutos, sementes e insetos pequenos que encontra nas árvores e arbustos.",
+          imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Tangara_seledon.jpg",
+          wikipediaUrl: "https://pt.wikipedia.org/wiki/Sa%C3%ADra-sete-cores"
+        },
       {
         name: "Saí-azul",
         scientificName: "Dacnis cayana",
@@ -112,12 +134,21 @@ export class MemStorage implements IStorage {
         imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Jacana_jacana.jpg/800px-Jacana_jacana.jpg",
         wikipediaUrl: "https://pt.wikipedia.org/wiki/Jaçanã"
       }
-    ];
+      ];
 
-    // Add birds to storage
-    birdData.forEach(birdInfo => {
-      this.createBird(birdInfo);
-    });
+      // Add birds to storage
+      birdData.forEach(birdInfo => {
+        this.createBird(birdInfo);
+      });
+
+      // Create default user
+      const defaultUser: InsertUser = {
+        username: "visitor",
+        password: "password123"
+      };
+      const userId = this.currentUserId++;
+      this.users.set(userId, { ...defaultUser, id: userId });
+    }
   }
 
   async getBirds(): Promise<Bird[]> {

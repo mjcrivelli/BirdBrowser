@@ -1,0 +1,702 @@
+[
+  {
+    "id": 1,
+    "name": "Saí-verde",
+    "scientificName": "Chlorophanes spiza",
+    "description": " Mede 13,5 cm de comprimento e pesa 18,5g (macho). O macho é verde-azulado, \ncom o alto e os lados da cabeça pretos e os olhos vermelhos, e a fêmea é \nverde-opaca, com a garganta e o centro da barriga amarelados e os olhos \nescuros. Tem bico relativamente largo, de mandíbula amarelo-clara. ",
+    "habitat": "",
+    "diet": "Frutos, insetos e do néctar de flores",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Chlorophanes_spiza",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Chlorophanes_spiza.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Saí-azul",
+    "scientificName": "Dacnis cayana",
+    "description": " Mede aproximadamente 13 centímetros de comprimento e pesa, em média, 16 \ngramas. Apresenta acentuado dimorfismo sexual: o macho é azul e negro, com \nas pernas rosadas, enquanto a fêmea é verde, com a cabeça azulada e pernas \nalaranjadas. Seu canto é um gorjear fraco. ",
+    "habitat": "",
+    "diet": "Frutos, insetos e do néctar de flores",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Dacnis_cayana",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Dacnis_cayana.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Saíra-sete-cores",
+    "scientificName": "Tangara seledon",
+    "description": " Mede cerca de 13,5 centímetros de comprimento e pesa cerca de 18 gramas.",
+    "habitat": " O macho adulto apresenta plumagem complexa e brilhante. Cabeça, nuca e \nqueixo são de coloração turquesa. Uma banda larga verde-amarelo pálido \natravessa a nuca e o manto superior, e estende-se em torno dos lados do \npescoço para até a garganta. Os ombros são negros e as coberteiras \nprimárias azul violeta. O uropígio é amarelo-alaranjado e a parte superior \nda cauda azul-turquesa. A cauda é preta com bordas verde-claras na base, \nficando azul turquesa distalmente. As penas de voo são pretas com bordas \nlargas verdes pálidos. Nas partes inferiores, parte inferior da garganta e \no peito superior são negros, a parte central do peito é azul-turquesa. O \nventre é verde. O bico é preto e sua base apresenta plumagem preta. Os \nolhos são escuros com uma região ao redor dos olhos com plumagem preta. Os \ntarsos e pés são pretos.",
+    "diet": "Frutos e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sa%C3%ADra-sete-cores",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Tangara_seledon.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Capitão-de-saíra",
+    "scientificName": "Attila rufus",
+    "description": " Mede entre 20 e 21 centímetros de comprimento e pesa entre 36,5 e 51,5 \ngramas.",
+    "habitat": " Pássaro ferrugíneo uniforme, com cabeça cinzenta e garganta estriada de \nbranco. Grandes olhos escuros, tarsos e pés de coloração cinza. Bico longo, \nchato e rosado. ",
+    "diet": "Frutos, insetos e anfíbios",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Capit%C3%A3o-de-sa%C3%ADra",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Attila_rufus.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Saíra-militar",
+    "scientificName": "Tangara cyanocephala",
+    "description": " Mede entre 10 e 13 centímetros de comprimento e pesa entre 16 e 21 gramas.",
+    "habitat": " Apresenta a evidente faixa vermelho vivo ao redor do pescoço e coroa azul \nmetálico no alto da cabeça. Nas fêmeas a faixa vermelha é mais apagada, \ntendendo à tonalidade canela. Corpo em tonalidade verde uniforme, com dorso \nnegro e faixa amarela sobre as penas verdes das asas. As aves das \npopulações do Sul do Brasil, tendem a apresentar tamanho corporal acima da \nmédia de 11 centímetros de comprimento. Por sua vez, as saíras-militares do \nNordeste são menores, com tamanho abaixo da média padrão. ",
+    "diet": "Frutos, insetos e do néctar de flores",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Tangara_cyanocephala",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Tangara_cyanocephala.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Sanhaço-do-coqueiro",
+    "scientificName": "Thraupis palmarum",
+    "description": " Mede entre 17 e 18 centímetros de comprimento e pesa 27-48 g.",
+    "habitat": " Os três sanhaços, ",
+    "diet": "Frutos, insetos e do néctar de flores",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sanha%C3%A7u-verde",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Thraupis_palmarum.jpg"
+  },
+  {
+    "id": 7,
+    "name": "Sanhaço-de-encontro-amarelo",
+    "scientificName": "Thraupis ornata",
+    "description": " Espécie facilmente identificável pela coloração azul-acinzentada escura e \ncoberteiras superiores das asas amarelas, diferenciando-se bem das outras \nespécies de sanhaços. Em alguns indivíduos, independente do sexo e da \ndistribuição geográfica, o amarelo das primárias estende-se por todas as \nrêmiges, chegando até a região uropiginal. Mede cerca de 18 cm e pesa 43 \ngramas. ",
+    "habitat": "",
+    "diet": "Frutos, insetos e do néctar de flores",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sanha%C3%A7o-rei",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Thraupis_ornata.jpg"
+  },
+  {
+    "id": 8,
+    "name": "Sanhaço-de-encontro-azul",
+    "scientificName": "Thraupis cyanoptera",
+    "description": " Mede 18 cm de comprimento e pesa 43 g (macho). Possui corpo cheio e \ncompacto, bico grosso, forte, ponta fina, pernas curtas e fortes com dedos \nportando unhas aguçadas, asas e cauda longa. A coloração geral da plumagem \né azul-ardósia dorsalmente e azul-acinzentada na parte inferior, sendo mais \nclara na garganta. No encontro das asas, a coloração azul é mais forte. A \ncoloração da fêmea é um pouco mais clara. ",
+    "habitat": "",
+    "diet": "Frutas, sementes, insetos, larvas e aranhas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sanha%C3%A7u-de-encontro-azul",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Thraupis_cyanoptera.jpg"
+  },
+  {
+    "id": 9,
+    "name": "Sanhaço-cinzento",
+    "scientificName": "Thraupis sayaca",
+    "description": " Mede entre 16 e 19 centímetros de comprimento e pesa entre 28 e 43 gramas. \n(Hilty, 2011).",
+    "habitat": " O adulto de ",
+    "diet": "Frutas e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sanha%C3%A7o-cinzento",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Thraupis_sayaca.jpg"
+  },
+  {
+    "id": 10,
+    "name": "Ferro-velho",
+    "scientificName": "Euphonia pectoralis",
+    "description": " Mede 11,5 centímetros de comprimento e pesa cerca de 16,5 gramas (macho). ",
+    "habitat": "",
+    "diet": "Frutas e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Ferro-velho_(p%C3%A1ssaro)",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Euphonia_pectoralis.jpg"
+  },
+  {
+    "id": 11,
+    "name": "Tiê-sangue",
+    "scientificName": "Ramphocelus bresilia",
+    "description": " Mede entre 18 e 19 centímetros de comprimento e pesa entre 27,9 e 35,5 \ngramas. (Hilty, 2016).",
+    "habitat": " A plumagem do macho é de um vermelho-vivo, que deu origem ao nome. Parte \ndas asas e da cauda são pretas. A espécie apresenta ",
+    "diet": "Frutas e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Ti%C3%AA-sangue",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Ramphocelus_bresilia.jpg"
+  },
+  {
+    "id": 12,
+    "name": "Tiê-preto",
+    "scientificName": "Tachyphonus coronatus",
+    "description": " Para a identificação, é útil prestar atenção no branco debaixo das asas do \nmacho; a cristinha vermelha quase nunca é visível. O macho é \npreto-brilhante com uma estreita faixa vermelha no alto da cabeça; a fêmea \né toda marrom. Mede cerca de 18 centímetros. ",
+    "habitat": "",
+    "diet": "Frutas e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Ti%C3%AA-preto",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Tachyphonus_coronatus.jpg"
+  },
+  {
+    "id": 13,
+    "name": "Tiê-de-bando",
+    "scientificName": "Habia rubica",
+    "description": " Mede cerca de 19,5 centímetros de comprimento e pesa 40 gramas.",
+    "habitat": " O macho é vermelho-amarronzado com o alto da cabeça vermelho e a fêmea é \nmarrom-olivácea com uma pequena faixa amarela no alto da cabeça. ",
+    "diet": "Frutas, insetos e aranhas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Ti%C3%AA-de-bando",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Habia_rubica.jpg"
+  },
+  {
+    "id": 14,
+    "name": "Tiê-de-topete",
+    "scientificName": "Trichothraupis melanops",
+    "description": " Caracteriza-se por apresentar o ",
+    "habitat": " amarelado contrastando com a face negra. O dorso é cinzento, com asas e \ncauda negras. A fêmea apresenta-se sem o negro na face e com pouco amarelo \nno ",
+    "diet": "Frutas e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Ti%C3%AA-de-topete",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Trichothraupis_melanops.jpg"
+  },
+  {
+    "id": 15,
+    "name": "Catirumbava",
+    "scientificName": "Orthogonys chloricterus",
+    "description": " Mede 18 centímetros. Apresenta plumagem verde-olivácea uniforme, de olhos \nmarrons ou cinzentos, bico escuro e pernas alaranjadas. ",
+    "habitat": "",
+    "diet": "Frutas e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Catirumbava",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Orthogonys_chloricterus.jpg"
+  },
+  {
+    "id": 16,
+    "name": "Sabiá-laranjeira",
+    "scientificName": "Turdus rufiventris",
+    "description": " Mede 20-25 centímetros de comprimento e o macho pesa 70 gramas e a fêmea, \n80 gramas.",
+    "habitat": " pesando em média de 68-80 gramas. Tem ",
+    "diet": "Frutas, insetos e minhocas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sabi%C3%A1-laranjeira",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Turdus_rufiventris.jpg"
+  },
+  {
+    "id": 17,
+    "name": "Sabiá-una",
+    "scientificName": "Turdus flavipes",
+    "description": " Mede cerca de 20,5 centímetros de comprimento. O macho da espécie pesa \ncerca de 64 gramas e a fêmea 72 gramas.",
+    "habitat": " O macho é preto com as costas e barriga de coloração cinza; a fêmea é \nmarrom-oliváceo nas partes superiores e marrom-amarelado nas partes \ninferiores, com a garganta estriada de marrom-escuro.",
+    "diet": "Frutas, insetos e minhocas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Turdus_flavipes",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Turdus_flavipes.jpg"
+  },
+  {
+    "id": 18,
+    "name": "Sabiá-coleira",
+    "scientificName": "Turdus albicollis",
+    "description": " Mede cerca de 22 cm de comprimento. Apresenta sutil dimorfismo sexual, \nsendo as fêmeas adultas um pouco maiores que os machos, sendo sua \ndiferenciação principal feita apenas pelo canto, que é característica dos \nmachos. ",
+    "habitat": "",
+    "diet": "Frutas e formigas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sabi%C3%A1-coleira",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Turdus_albicollis.jpg"
+  },
+  {
+    "id": 19,
+    "name": "Sabiá-poca",
+    "scientificName": "Turdus amaurochalinus",
+    "description": " Para identificá-lo, a característica ",
+    "habitat": " escura, parecendo ser negra em alguns exemplares, entre o olho e o bico. \nAlém disso, a cabeça é mais achatada, parecendo que o bico está no mesmo \nplano da testa. O papo branco e os riscos variam conforme o indivíduo. \nAlgumas aves parecem ter uma gola branca separando os riscos do peito. Logo \nque saem dos ninhos, os juvenis apresentam o peito e barriga todo \npontilhado de bolas marrom-oliváceas, bem como as costas e asas pontilhadas \nde marrom claro. As penas das asas mantém essas características por mais \ntempo, provavelmente até o segundo ano de vida. Apresenta tamanho médio em \ntorno de 21 centímetros de comprimento, olhos grandes com uma marca escura \nno loro, região que fica entre o bico e o olho dando a ele um ar de bravo, \nbico longo, forte e pouco curvo, pernas cor-de-avelã. Em agosto inicia-se a \nreprodução. Nessa época, aparecem as aves com o bico amarelo vivo, uma \ncaracterística ligada à reprodução. Aves juvenis ou adultos fora do período \nreprodutivo têm o bico escuro ou com diferentes proporções de amarelo. ",
+    "diet": "Frutas e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sabi%C3%A1-poca",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Turdus_amaurochalinus.jpg"
+  },
+  {
+    "id": 20,
+    "name": "Sabiá-barranco",
+    "scientificName": "Turdus leucomelas",
+    "description": " Mede cerca de 22 a 23 centímetros. Não apresenta dimorfismo sexual, sendo \nsua diferenciação feita apenas pelo canto, que é característica dos machos. \nO adulto apresenta o alto da cabeça arredondado, acinzentada nos lados e \nolivácea na parte alta, sem a mácula negra à frente dos olhos. Bico \ncinza-escuro uniforme. O tom acinzentado domina as costas, tornando-se \namarronzado nas asas. Peito acinzentado, com a garganta branca e listras \ncinza-escuras bem definidas. Quando voa, às vezes mostra a área alaranjada \nda parte interna das asas. A parte inferior da cauda é clara.",
+    "habitat": " O juvenil tem o dorso pintalgado de bolas amarronzadas, sem a garganta \nbranca bem delimitada. Pontos marrons no peito e barriga. ",
+    "diet": "Frutas, minhocas e artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sabi%C3%A1-barranco",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Turdus_leucomelas.jpg"
+  },
+  {
+    "id": 21,
+    "name": "Tangará",
+    "scientificName": "Chiroxiphia caudata",
+    "description": " Possui cerca de 13 centímetros e apresenta forte dimorfismo sexual. Os \nmachos têm plumagem azul-celeste, cauda preta com duas penas centrais mais \nlongas que as outras e, no alto da cabeça, uma brilhante coroa vermelha. Os \nmais jovens são verde-oliva, diferindo das fêmeas pela coroa vermelha que \nnasce antes da mudança das plumas no restante do corpo; só atingem a \nplumagem adulta com dois anos de idade. ",
+    "habitat": "",
+    "diet": "Frutas e artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Tangar%C3%A1_(ave)",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Chiroxiphia_caudata.jpg"
+  },
+  {
+    "id": 22,
+    "name": "Gaturamo-rei",
+    "scientificName": "Cyanophonia cyanocephala",
+    "description": " Mede cerca de 11 centímetros de comprimento. Tais aves possuem a garganta \ne o dorso negros, uropígio e lado ventral amarelos, e um característico \ncapacete azul. As fêmeas são esverdeadas. ",
+    "habitat": "",
+    "diet": "Frutas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Gaturamo-rei",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Cyanophonia_cyanocephala.jpg"
+  },
+  {
+    "id": 23,
+    "name": "Alma-de-gato",
+    "scientificName": "Piaya cayana",
+    "description": " Apresenta plumagem ferrugínea nas partes superiores, peito acinzentado, \nventre escuro, cauda longa, escura e com as pontas das ",
+    "habitat": " claras, ",
+    "diet": "Lagartas, ovos, pererecas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Alma-de-gato",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Piaya_cayana.jpg"
+  },
+  {
+    "id": 24,
+    "name": "Surucuá-variado",
+    "scientificName": "Trogon surrucura",
+    "description": " Mede entre 26 e 28 centímetros e pesa entre 70 e 78 gramas. É um pássaro \nquieto que passa longos períodos de descanso em um poleiro, e seu canto \npode ser ouvido durante todo o dia.",
+    "habitat": " A variedade nominal ",
+    "diet": "Frutas, insetos e moluscos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Surucu%C3%A1-variado",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Trogon_surrucura.jpg"
+  },
+  {
+    "id": 25,
+    "name": "Surucuá-de-barriga-amarela",
+    "scientificName": "Trogon viridis",
+    "description": " Mede cerca de 30 centímetros de comprimento e pesa 93 gramas. Apresenta ",
+    "habitat": ". O macho tem o bico cinza azulado. Os olhos são escuros de coloração \nmarrom e apresentam um claro anel periocular de coloração azul. As regiões \nauriculares são pretas. A garganta e a porção superior do peito são pretos \ne as partes laterais do peito apresentam uma coloração azul escuro \nultramarino que contrasta fortemente com o ventre que é amarelo. A nuca, \nmanto e as costas são verde esmeralda com reflexos azul arroxeado, ou \nverde. As rêmiges são pretas com marcações brancas. As coberteiras são azul \nesverdeadas. A cauda longa e escura apresenta três pares de penas com a \nface inferior na cor branca com a extremidade preta. As bordas externas das \nretrizes são pretas. A parte dorsal da cauda é da mesma coloração do manto, \nentretanto apresenta esta coloração menos intensa. A fêmea, menos \nexuberante que o macho da espécie, apresenta a cabeça cinza. Sua mandíbula \nsuperior apresenta a coloração cinza azulada e a mandíbula inferior é \ncinza. A região loral é preta. Os olhos da fêmea são semelhantes aos olhos \ndo indivíduo do sexo masculino. O peito é cinza e o ventre amarelo. A nuca, \nmanto e dorso também são de coloração cinza. A cauda apresenta as retrizes \ncom barrado branco na porção lateral, terminando com uma barra branca na \nsua extremidade distal. A face dorsal das penas retrizes apresenta em sua \nextremidade distal uma barra subterminal preta. As fêmeas dessa espécie são \nmuito parecidas com as fêmeas de surucuá-violáceo (",
+    "diet": "Frutas, insetos e outros artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Trogon_viridis",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Trogon_viridis.jpg"
+  },
+  {
+    "id": 26,
+    "name": "Tiriba-de-testa-vermelha",
+    "scientificName": "Pyrrhura frontalis",
+    "description": " Mede entre 24 e 28 centímetros de comprimento e pesa entre 72 e 94 gramas.",
+    "habitat": " É verde, inclusive nas bochechas, com a zona auricular pardacenta. Fronte, ",
+    "diet": "Frutas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Tiriba-de-testa-vermelha",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Pyrrhura_frontalis.jpg"
+  },
+  {
+    "id": 27,
+    "name": "Periquito-rico",
+    "scientificName": "Brotogeris tirica",
+    "description": " Mede 21 cm. A coloração básica da plumagem é verde. As partes inferiores e \nlaterais da ",
+    "habitat": ", peito e abdômen são de um verde com tons amarelados. A parte traseira da \ncabeça, a nuca, é de um verde levemente azulado. A base das asas é de um \nmarrom oliváceo. A ",
+    "diet": "Frutas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Periquito-verde",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Brotogeris_tirica.jpg"
+  },
+  {
+    "id": 28,
+    "name": "Papagaio-moleiro",
+    "scientificName": "Amazona farinosa",
+    "description": " É a maior ",
+    "habitat": " do gênero, medindo cerca de 40 cm de comprimento. Possui plumagem verde, \ncoberta por um pó branco muito fino (",
+    "diet": "Frutas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Papagaio-moleiro",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Amazona_farinosa.jpg"
+  },
+  {
+    "id": 29,
+    "name": "Canário-da-terra",
+    "scientificName": "Sicalis flaveola",
+    "description": " Tamanho aproximado: 13,5 centímetros. Peso médio: 20 gramas. Cor \namarelo-olivácea com estrias enegrecidas nas costas e próximo das pernas. \nAsas e cauda cinza-oliva. A íris é negra e o bico tem a parte superior cor \nde chifre e a inferior é amarelada. As pernas são rosadas. A fêmea e o \njovem têm a parte superior do corpo olivácea com densa estriação parda por \nbaixo, com as penas e cauda e tarso quase enegrecidos, mas o jovem macho, \nquando adulto, assume a coloração amarela. Com 4 a 6 meses de idade, os \nfilhotes machos já estão cantando, e levam cerca de 18 meses para adquirir \na plumagem de adulto. ",
+    "habitat": "",
+    "diet": "Sementes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Can%C3%A1rio-da-terra-verdadeiro",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Sicalis_flaveola.jpg"
+  },
+  {
+    "id": 30,
+    "name": "Bico de lacre",
+    "scientificName": "Estrilda astrild",
+    "description": " Mede cerca de 10-13 centímetros de comprimento e pesa 7-10 gramas.",
+    "habitat": " Ambos os sexos são parecidos, possuindo ",
+    "diet": "Sementes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Bico-de-lacre-comum",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Estrilda_astrild.jpg"
+  },
+  {
+    "id": 31,
+    "name": "Bem-te-vi",
+    "scientificName": "Pitangus sulphuratus",
+    "description": " Ave de médio porte, o bem-te-vi ou bem-te-vi verdadeiro mede entre 20,5 e \n25 centímetros de comprimento e pesa aproximadamente de 52-68 g. Tem o \ndorso pardo e a barriga de um amarelo vivo; uma listra (sobrancelha) branca \nno alto da cabeça, acima dos olhos; cauda preta. O bico é preto, achatado, \nlongo, resistente e um pouco encurvado. A garganta (zona logo abaixo do \nbico) é de cor branca. Possui um topete amarelo somente visível quando a \nave o eriça em determinadas situações.",
+    "habitat": " O seu canto trissilábico característico lembra as sílabas bem-te-vi, que \ndão o nome à espécie. Portanto, seu nome popular possui origem onomatopeica.",
+    "diet": "Insetos, frutos, filhote de aves e de pequenos mamíferos.",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Bem-te-vi",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Pitangus_sulphuratus.jpg"
+  },
+  {
+    "id": 32,
+    "name": "Bem-te-vi-pirata",
+    "scientificName": "Legatus leucophaius",
+    "description": " Mede entre 14,5 e 17 centímetros de comprimento e pesa entre 19 e 26 \ngramas.",
+    "habitat": " Apresenta a testa e a coroa esbranquiçadas, o píleo amarelo nem sempre \nvisível, ampla faixa transocular escura. Estria malar escura. O ventre é \nesbranquiçado com estrias acinzentadas, podendo apresentar coloração \namarela suave nos flancos. Crisso estriado. Porção superior do corpo \nacinzentada. Manto cinzento uniforme. Rêmiges cinzentas com a borda \nesbranquiçada. Retrizes cinzentas.",
+    "diet": "Frutas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Legatus_leucophaius",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Legatus_leucophaius.jpg"
+  },
+  {
+    "id": 33,
+    "name": "Bentevizinho-de-penacho-vermelho",
+    "scientificName": "Myiozetetes similis",
+    "description": " Mede entre 16 e 18,5 centímetros de comprimento e pesa entre 24 e 27 \ngramas. Espécie sem dimorfismo sexual aparente. ",
+    "habitat": " Ave com a aparência geral desbotada. Apresenta o píleo marrom escuro \nfuliginoso com uma grande mancha central quase sempre oculta, de coloração \nvermelho vibrante. Uma larga faixa superciliar branca com os dois lados \nopostos confluentes na testa e não confluentes na nuca. As regiões lorais e \norbitais apresentam máscara escura de coloração uniformemente marrom escuro \nfuliginoso e as regiões auriculares e as laterais do pescoço são de \ncoloração cinzenta que causam perceptível contraste com a máscara \nfuliginosa escura. A região posterior do pescoço, o dorso, os escapulários, \ne uropígio são de coloração marrom-oliveáceo. As rêmiges primárias, \nsecundárias e coberteiras maiores das asas são marrons marginados de \ncoloração pardo-olivácea. As rêmiges primárias proximais e rêmiges \nsecundárias são marginadas com coloração acastanhada pálida. As rêmiges \nprimárias distais apresentam marginações de coloração castanha ou canela. \nAs penas supracaudais e as retrizes apresentam coloração geral \nmarrom-acinzentada com estreitas bordas acastanhadas. Queixo e garganta são \nbrancos. A região peitoral superior apresenta um semi-colar verde oliváceo, \nde intensidade variável, sobre fundo amarelo-pálido. As demais partes \ninferiores, incluindo axilares e coberteiras inferiores das asas, são de \ncoloração amarelo-pálido ou apresentam uniforme coloração amarelo-limão.",
+    "diet": "Frutas e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Bentevizinho-de-penacho-vermelho",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Myiozetetes_similis.jpg"
+  },
+  {
+    "id": 34,
+    "name": "Suiriri",
+    "scientificName": "Tyrannus melancholicus",
+    "description": " O suiriri (",
+    "habitat": ") possui a cabeça predominantemente cinza, com a garganta mais clara, \ntendendo ao branco, e uma faixa difusa mais escura na região ocular e \nauricular. O píleo é de coloração laranja — uma característica visível \nquando eriça o topete em suas disputas territoriais. O peito possui \ncoloração verde-oliva, destacando-se da coloração amarela da barriga. Mede \nentre 18 e 24,5 centímetros de comprimento e pesa entre 32 e 43 gramas \n(Mobley, 2016). Os imaturos são similares aos adultos, mas as bordas das \ncoberteiras são acastanhadas. ",
+    "diet": "Frutos e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Suiriri",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Tyrannus_melancholicus.jpg"
+  },
+  {
+    "id": 35,
+    "name": "Cambacica",
+    "scientificName": "Coereba flaveola",
+    "description": " Mede aproximadamente 10,5-11,5 centímetros e pesa cerca de 8-10 gramas. O \ndorso é marrom-escuro. As asas e a cauda são marrom-escuras; as rêmiges \nprimárias possuem leve bordeamento esbranquiçado, mais evidente na base. O \npeito e o uropígio são amarelos. O ventre e o crisso são amarelo-limão, e \npor vezes esbranquiçados. A coroa e a face tem coloração negra; evidente \nfaixa superciliar branca; garganta cinzenta. O bico é curvado e pontudo, \nnegro e de base rosada. ",
+    "habitat": "",
+    "diet": "Néctar, frutas e artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Cambacica",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Coereba_flaveola.jpg"
+  },
+  {
+    "id": 36,
+    "name": "Viuvinha",
+    "scientificName": "Colonia colonus",
+    "description": " Mede de 23 a 28 cm. O contraste entre o negro do corpo e o branco do alto \nda cabeça é exclusivo desta espécie. Quando voa, é possível ver a grande \nárea branca nas costas, antes da cauda. As duas penas centrais da cauda são \nmuito longas (chegam a 10 centímetros nos machos) e destacam-se pelo \ncomprimento e pelo alargamento nas pontas. As fêmeas possuem-nas menores, \nembora seja necessário observar o casal junto para ter certeza dos sexos. ",
+    "habitat": "",
+    "diet": "Pequenos artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Maria-viuvinha",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Colonia_colonus.jpg"
+  },
+  {
+    "id": 37,
+    "name": "Tico-tico",
+    "scientificName": "Zonotrichia capensis",
+    "description": " Pássaro de porte médio que mede 15 centímetros de comprimento. Possui o \ncorpo compacto, com asas e cauda de tamanhos regulares, pernas e pés \ndelgados e bico cônico e forte. A coloração dorsal é pardo-acinzentada, \ntendo a cabeça cinza com duas tiras negras que partem da base da maxila \nindo até a nuca, com parte central cinza, também partindo da mesma base e \nalargando-se para a nuca.",
+    "habitat": " As faces são de cor cinza, com duas tiras negras de cada lado que vão até \na região do pescoço, uma partindo do canto posterior do olho e outra do \ncanto do bico. Pescoço com uma faixa cintada de cor vermelho-ferrugínea que \ndesce até os lados do peito alto, onde se encontra com uma mancha negra.",
+    "diet": "Sementes, frutas e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Tico-tico",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Zonotrichia_capensis.jpg"
+  },
+  {
+    "id": 38,
+    "name": "Chorozinho-de-asa-vermelha",
+    "scientificName": "Herpsilochmus rufimarginatus",
+    "description": " Mede 11,5 cm de comprimento e pesa 10,5 g. Apresenta plumagem muito \ndistinta em relação ao seu gênero, assemelhando-se mais a certas espécies \ndo gênero ",
+    "habitat": ", das quais se distingue pelo ventre amarelo, comum a ambos os sexos, ou \nentão a certos ",
+    "diet": "Frutas e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Chorozinho-de-asa-vermelha",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Herpsilochmus_rufimarginatus.jpg"
+  },
+  {
+    "id": 39,
+    "name": "Pica-pau-rei",
+    "scientificName": "Campephilus robustus",
+    "description": " É considerado o maior pica-pau do Brasil, medindo cerca de 36 centímetros \nde comprimento, com peso médio de 200 gramas. De rara beleza, possui a \ncabeça e o pescoço vermelhos, dorso creme, asas e cauda negras. O peito e o \nventre são brancos, inteiramente barrados de finas faixas horizontais \nnegras. O macho tem uma pequena mancha auricular preta e branca, enquanto a \nfêmea possui uma grande estria malar branca, vilada de negro. Assim como as \ndemais espécies de pica-pau. ",
+    "habitat": " possui um canto territorial, diversos tipos de chamados e uma música \ninstrumental, o “tamborilar”. Ela é executada através de repetidos golpes \ndo bico sobre a superfície de troncos secos ou ocos, substrato escolhido de \nmaneira a proporcionar boa ampliação da sonoridade e alcance do ruído. ",
+    "diet": "Insetos, larvas, frutos e sementes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Pica-pau-rei",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Campephilus_robustus.jpg"
+  },
+  {
+    "id": 40,
+    "name": "João velho",
+    "scientificName": "Celeus flavescens",
+    "description": " Mede entre 27 e 30 centímetros de comprimento e pesa entre 110 e 165 \ngramas.",
+    "habitat": " Cabeça e face amarelos, com proeminente topete da mesma cor; macho com \nfaixa malar vermelha. Partes superiores pretas, barradas de branco e partes \ninferiores uniformemente pretas. Muito semelhante ao ",
+    "diet": "Insetos e frutas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Pica-pau-de-cabe%C3%A7a-amarela",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Celeus_flavescens.jpg"
+  },
+  {
+    "id": 41,
+    "name": "Benedito-de-testa-amarela",
+    "scientificName": "Melanerpes flavifrons",
+    "description": " Tem cerca de 19,5 centímetros. Espécie multicolorida. Fronte e garganta \namarelo-vivos, vértice posterior e nuca vermelhos no macho e pretos na \nfêmea; pescoço posterior, dorso superior e asas negros; dorso inferior e ",
+    "habitat": " brancos; peito superior pardacento; peito inferior e ventre vermelhos; \nflancos barrados de preto e branco. É barulhento. Entre os vários sons que \nproduz, tem um grito forte, ríspido e rápido, ",
+    "diet": "Frutas e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Benedito-de-testa-amarela",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Melanerpes_flavifrons.jpg"
+  },
+  {
+    "id": 42,
+    "name": "Arapaçu-verde",
+    "scientificName": "Sittasomus griseicapillus",
+    "description": " Mede entre 15 e 19,5 centímetros de comprimento e pesa entre 8 e 29 gramas.",
+    "habitat": " Bico pequeno e reto, pouco notável e diferente dos demais ",
+    "diet": "Insetos e larvas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Arapa%C3%A7u-verde",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Sittasomus_griseicapillus.jpg"
+  },
+  {
+    "id": 43,
+    "name": "Martim-pescador",
+    "scientificName": "Megaceryle torquata",
+    "description": " Mede 42 centímetros e pesa de 305 a 341 gramas. Maior espécie da família \nno Brasil. Corpo atarracado, cabeça grande com crista irregular conspícua \nque cobre todo o píleo da base do bico até a nuca. Bico grande (8 \ncentímetros), às vezes com matizes encarnadas; cabeça e partes superiores \nazuladas; mancha loral branca; garganta e pescoço brancos, formando um \ncolar quase completo. Bico com cúlmen, a maior parte da maxila e a ponta da \nmandíbula inferior enegrecidos; base da maxila e metade proximal da \nmandíbula inferior com quantidades variáveis de amarelo fosco (às vezes \npouco); íris castanho escuro; pés sindáctilus de cor verde oliva, sola dos \ndedos amarelada; garras pretas. Os pés sindáctilus dificultam o movimento \nno solo, mas são eficientes na escavação da toca. Macho com o peito e o \nventre uniformemente ferrugíneos até a região do crisso, que é branco. \nCoberteiras inferiores das asas brancas. Fêmea com o peito cinza azulado, \numa faixa branca abaixo do peito e o ventre ferrugíneo, incluindo o crisso. \nA fêmea tem as coberteiras inferiores das asas ferrugíneas. Macho imaturo \nsemelhante à fêmea, por também apresentar uma faixa branca cortando o \npeito, mas a diferença é a extensão da área ferrugínea do ventre (até a \nregião do crisso nos machos, até chegar às retrizes nas fêmeas). ",
+    "habitat": "",
+    "diet": "Peixes e crustáceos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Martim-pescador-grande",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Megaceryle_torquata.jpg"
+  },
+  {
+    "id": 44,
+    "name": "Macuco",
+    "scientificName": "Tinamus solitarius",
+    "description": " Atinge até 52 centímetros e entre 1,5 a 2,5 quilos de peso médio. As \nfêmeas geralmente são maiores e mais pesadas que os machos. Há relatos de \nfêmeas pesando 2,5 quilos, ainda abaixo das fêmeas de Tinamus tao, a \nazulona da Amazônia, que atinge os 3,0 quilos, ",
+    "habitat": "",
+    "diet": "Sementes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Macuco",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Tinamus_solitarius.jpg"
+  },
+  {
+    "id": 45,
+    "name": "Jacutinga",
+    "scientificName": "Aburria jacutinga",
+    "description": " É uma ave grande, medindo entre 64 e 74 centímetros de comprimento e \npesando de 1,1 a 1,4 quilogramas. É fácil de identificar, pois em quase \ntoda a sua área de ocorrência é o único Cracídeo com mancha branca na asa. \nNo extremo oeste da área de ocorrência, no Paraguai, a espécie pode ocorrer \nao lado da ",
+    "habitat": " (Aburria cumanensis), que também possui mancha branca na asa, mas, como o \nnome sugere, possui garganta azul ao invés de vermelha, e a cara também é \ntoda branca. ",
+    "diet": "Frutas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Jacutinga",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Aburria_jacutinga.jpg"
+  },
+  {
+    "id": 46,
+    "name": "Socó-boi",
+    "scientificName": "Tigrisoma lineatum",
+    "description": " Mede entre 66 e 76 centímetros de comprimento e pesa cerca de 840 gramas \n(Martínez-Vilalta, et al, 2016 em HBW).",
+    "habitat": " A plumagem adulta é idêntica para ambos os sexos e é adquirida aos dois \nanos de idade, caracterizando-se pelo pescoço castanho com uma faixa branca \nvertical na frente e manto pardo-acinzentado, manchado de acanelado; possui \num bico bastante longo. A plumagem do socó-boi jovem é amarelo-clara com \nfaixas transversais negras, garganta e ventre brancos e o bico é \nrelativamente curto. ",
+    "diet": "Anfíbios, répteis e insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Soc%C3%B3-boi",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Tigrisoma_lineatum.jpg"
+  },
+  {
+    "id": 47,
+    "name": "Rolinha",
+    "scientificName": "Columbina talpacoti",
+    "description": " Mede 12-18 centímetros de comprimento e pesa cerca de 35-56 gramas.",
+    "habitat": " O ",
+    "diet": "Sementes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Rolinha",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Columbina_talpacoti.jpg"
+  },
+  {
+    "id": 48,
+    "name": "Juriti",
+    "scientificName": "Leptotila verreauxi",
+    "description": " Tem 29 centímetros de comprimento e pesa entre 160 e 215 gramas. Sua \nplumagem é marrom, com ",
+    "habitat": " claro, cabeça cinzenta com alguns reflexos metálicos na nuca e alto dorso. \nQuando em voo é possivel notar uma coloraçâo vermelho-ferrugem embaixo das \nasas. Possui, ainda, uma coloração azulada ao redor dos olhos. ",
+    "diet": "Sementes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Leptotila",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Leptotila_verreauxi.jpg"
+  },
+  {
+    "id": 49,
+    "name": "Pomba trocal",
+    "scientificName": "Patagioenas speciosa",
+    "description": " Mede cerca de 30 cm de comprimento. O macho possui as penas do ",
+    "habitat": " de coloração metálica, dando-lhe uma aparência ",
+    "diet": "Frutas e sementes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Pomba-trocal",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Patagioenas_speciosa.jpg"
+  },
+  {
+    "id": 50,
+    "name": "Pomba amargosa",
+    "scientificName": "Patagioenas plumbea",
+    "description": " Mede cerca de 34 centímetros de comprimento e pesa 230 gramas.",
+    "habitat": " Seu tamanho é avantajado e a ",
+    "diet": "Frutas e sementes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Pomba-amargosa",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Patagioenas_plumbea.jpg"
+  },
+  {
+    "id": 51,
+    "name": "Araponga",
+    "scientificName": "Procnias nudicollis",
+    "description": " Possui a cabeça achatada, ",
+    "habitat": " alargada e ampla, e o bico é curto. Os machos adultos são inteiramente \nbrancos, exceto os lados da cabeça e garganta, que são nus, de cor \nverde-jade onde se implantam raras cerdas pretas; bico preto e pés pardos, \ntamanho médio de 27 centímetros. A fêmea adulta tem a parte superior \nverde-oliva, com a cabeça cinza e a parte inferior amarela com estrias \namarelo-esverdeadas e cinzentas; a garganta é cinzenta onde entremeiam-se \nestrias negras; possui tamanho menor do que o macho. ",
+    "diet": "Frutas de palmeiras",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Araponga_(ave)",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Procnias_nudicollis.jpg"
+  },
+  {
+    "id": 52,
+    "name": "Juruviara",
+    "scientificName": "Vireo chivi",
+    "description": " Mede 14 cm de comprimento. É detectada pelo ",
+    "habitat": ", simples e repetitivo mas melodioso. Quase nunca deixa a folhagem das \nárvores, e não é muito frequente vê-la, já que, por ser pequena, de \ncolorido apagado e de comportamento discreto, não costuma chamar a atenção. \nNa Amazônia pode ser confundida com seus primos migratórios (Vireo \naltiloquus, Vireo flavoviridis e Vireo olivaceus), que migram para a região \nentre outubro e março, fugindo do inverno do hemisfério norte, diferindo-se \ndestes principalmente por não ter o olho tão vermelho. Os cantos são \nparecidos e às vezes as espécies podem ser encontradas juntas.",
+    "diet": "Insetos, fruta da embaúba",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Juruviara-sul-americana",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Vireo_chivi.jpg"
+  },
+  {
+    "id": 53,
+    "name": "Pitiguari",
+    "scientificName": "Cyclarhis gujanensis",
+    "description": " Mede cerca de 16,5 centímetros, tem cabeça e bico desproporcionais ao \ncorpo. O bico é todo acinzentado com leve tom róseo, de aspecto poderoso e \nterminando com uma ponta fina, virada para baixo, parecendo um bico de ave \nde rapina em um pássaro. As cores são únicas, com a cabeça e nuca \nacinzentadas, uma nítida e característica faixa marrom-avermelhada sobre os \nolhos (laranja-escuro nos adultos, marrom uniforme nos juvenis). Alto da \ncabeça oliváceo ou cinza-escuro. No peito, uma larga faixa amarelada separa \na barriga e a garganta cinza-claro, quase branca. Dorso pardo-esverdeado. \nMacho e fêmea são idênticos. ",
+    "habitat": "",
+    "diet": "Insetos e larvas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Cyclarhis_gujanensis",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Cyclarhis_gujanensis.jpg"
+  },
+  {
+    "id": 54,
+    "name": "Corruíra",
+    "scientificName": "Troglodytes musculus",
+    "description": " Mede de 10-13 centímetros de comprimento e pesa em torno de 10-12 g. É \ngrande ",
+    "habitat": " e seu ",
+    "diet": "Insetos e larvas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Curru%C3%ADra",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Troglodytes_musculus.jpg"
+  },
+  {
+    "id": 55,
+    "name": "Pula-pula",
+    "scientificName": "Basileuterus culicivorus",
+    "description": " Mede cerca de 12 centímetros e pesa cerca de 10,5 gramas. Possui o lado \ninferior amarelo e o superior verde-oliváceo, ",
+    "habitat": " esbranquiçada, realçada por uma faixa anegrada por baixo e por cima, faixa \nmedial no ",
+    "diet": "Insetos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Basileuterus_culicivorus",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Basileuterus_culicivorus.jpg"
+  },
+  {
+    "id": 56,
+    "name": "Carcará",
+    "scientificName": "Caracara plancus",
+    "description": " Medindo cerca de 50-60 centímetros da ",
+    "habitat": ", o peso do macho é de 834 g; a fêmea pesa 953 g e mede cerca de 123 \ncentímetros de envergadura; o carcará é facilmente reconhecível quando \npousado, pelo fato de possuir uma espécie de solidéu preto sobre a cabeça, \nassim como um bico adunco e alto, que assemelha-se à lâmina de um cutelo; a \nface é vermelha. É recoberto de preto na parte superior e possui o peito de \numa combinação de marrom claro com riscas pretas, de tipo “carijó”; patas \ncompridas e de cor amarela; em voo, assemelha-se a um urubu, mas é \nreconhecível por duas manchas de cor clara na extremidade das asas. Deve \nseu nome à ",
+    "diet": "Onívoro",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Carcar%C3%A1",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Caracara_plancus.jpg"
+  },
+  {
+    "id": 57,
+    "name": "Gavião carijó",
+    "scientificName": "Rupornis magnirostris",
+    "description": " Mede de 31 a 41 centímetros de comprimento, e o peso do macho varia entre \n206-290 gramas e da fêmea 257-350 gramas, sendo os machos 20% menores que \nas fêmeas.",
+    "habitat": " Há grande diferença entre os adultos e os imaturos, sendo que os últimos ",
+    "diet": "Aves, répteis e pequenos mamíferos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Gavi%C3%A3o-carij%C3%B3",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Rupornis_magnirostris.jpg"
+  },
+  {
+    "id": 58,
+    "name": "Gavião asa de telha",
+    "scientificName": "Parabuteo unicinctus",
+    "description": " Mede de 48 a 56 centímetros de comprimento e tem envergadura de 115 \ncentímetros. O macho pesa 725 gramas e a fêmea entre 834 e 1047 gramas. As ",
+    "habitat": " norte-americanas são maiores que as do Brasil, e além disso os indivíduos \nbrasileiros possuem uma ",
+    "diet": "Pequenos vertebrados",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Gavi%C3%A3o-asa-de-telha",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Parabuteo_unicinctus.jpg"
+  },
+  {
+    "id": 59,
+    "name": "Gavião bombachinha grande",
+    "scientificName": "Harpagus diodon",
+    "description": " Mede 29-35 cm de comprimento e envergadura de 60-70 cm (Del Hoyo et al. \n1994, ",
+    "habitat": " Menq, 2016). O adulto apresenta plumagem cinza na parte ventral e \ncinza-escuro no dorso, com calções de cor ferrugem, cera e tarsos \namarelados, e íris que varia do castanho ao marrom-avermelhado. Além disso, \napresenta a garganta clara com uma listra vertical escura, característica \nque serve para diferenciá-lo do ",
+    "diet": "Insetos e pássaros pequenos",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Gavi%C3%A3o-bombachinha-grande",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Harpagus_diodon.jpg"
+  },
+  {
+    "id": 60,
+    "name": "Beija flor rajado",
+    "scientificName": "Ramphodon naevius",
+    "description": " Mede entre 14 e 16 centímetros de comprimento e pesa entre 5,3 e 9 gramas \n(Hinkelmann, 2013), sendo o maior beija-flor da ",
+    "habitat": " e um dos maiores do mundo. Partes superiores marrom esverdeadas; ",
+    "diet": "Néctar e pequenos artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Beija-flor-rajado",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Ramphodon_naevius.jpg"
+  },
+  {
+    "id": 61,
+    "name": "Beija flor balança rabo do bico torto",
+    "scientificName": "Glaucis hirsutus",
+    "description": " Mede 13 centímetros de comprimento e pesa 7 gramas, ",
+    "habitat": " de 3 centímetros. É robusto, de bico longo e curvo, com mandíbula \namarelo-claro e maxila negra. Partes superiores verde-bronzeadas; ",
+    "diet": "Néctar e pequenos artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Glaucis_hirsutus",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Glaucis_hirsutus.jpg"
+  },
+  {
+    "id": 62,
+    "name": "Beija flor fronte violeta",
+    "scientificName": "Thalurania glaucopis",
+    "description": " Mede aproximadamente 11,1 centímetros. Verde brilhante de ",
+    "habitat": " azul-violeta, tufos do ",
+    "diet": "Néctar e pequenos artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Beija-flor-de-fronte-violeta",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Thalurania_glaucopis.jpg"
+  },
+  {
+    "id": 63,
+    "name": "Beija flor rubi",
+    "scientificName": "Heliodoxa rubricauda",
+    "description": " Mede entre 10,8 e 11,3 centímetros de comprimento. O macho da espécie pesa \nentre 7 e 9,2 gramas e a fêmea pesa entre 5,9 e 7,1 gramas. (Schuchmann, \n2016).",
+    "habitat": " Apresenta acentuado ",
+    "diet": "Néctar e pequenos artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Heliodoxa_rubricauda",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Heliodoxa_rubricauda.jpg"
+  },
+  {
+    "id": 64,
+    "name": "Beija flor cinza",
+    "scientificName": "Aphantochroa cirrochloris",
+    "description": " Possui o ",
+    "habitat": " cinza-esverdeado. Cabeça e partes superiores verde-acobreadas; face \ncinza-esverdeada com uma pequena mancha pós-ocular branca; bico preto \nligeiramente curvado para baixo. Partes inferiores cinza-escuras com tons \nde verde no pescoço e uma mácula uropigiana e tufos no crisso brancos. \nCauda grande e asas largas de cor cinza-escura quase preta. Tamanho 12 cm. \nA fêmea e o macho têm a mesma aparência, no entanto ela é um pouco menor. ",
+    "diet": "Néctar e pequenos artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Beija-flor-cinza",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Aphantochroa_cirrochloris.jpg"
+  },
+  {
+    "id": 65,
+    "name": "Beija flor preto",
+    "scientificName": "Florisuga fusca",
+    "description": " Esta espécie de beija-flor possui em média 12,6 centímetros. O colorido \ncontrastante vistoso das ",
+    "habitat": " é exibido quando o pássaro expande a cauda em um leque branco cortado em \nduas metades pelas centrais negras ou quando abre e fecha rápido as \ncaudais. O branco da cauda continua até os flancos e forma uma faixa sobre \no crisso.",
+    "diet": "Néctar e pequenos artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Beija-flor-preto",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Florisuga_fusca.jpg"
+  },
+  {
+    "id": 66,
+    "name": "Beija flor tesoura",
+    "scientificName": "Eupetomena macroura",
+    "description": " Mede entre 15 e 18 centímetros de comprimento, sendo um dos maiores \nbeija-flores brasileiros, pesando em torno de 6-11 gramas. ",
+    "habitat": ", pescoço e parte superior do tórax de um profundo azul violeta; restante \nda plumagem verde-escuro iridescente. Pequena mancha branca atrás dos \nolhos; ",
+    "diet": "Néctar e pequenos artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Beija-flor-tesoura",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Eupetomena_macroura.jpg"
+  },
+  {
+    "id": 67,
+    "name": "Beija flor de frente preta",
+    "scientificName": "Anthracothorax nigricollis",
+    "description": " A fêmea e o macho são de plumagens tão diferentes que parecem ser duas \nespécies separadas (",
+    "habitat": "). ",
+    "diet": "Néctar e pequenos artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Beija-flor_de-veste-preta",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Anthracothorax_nigricollis.jpg"
+  },
+  {
+    "id": 68,
+    "name": "Beija flor topetinho verde",
+    "scientificName": "Lophornis chalybeus",
+    "description": " O topetinho-verde é um pequeno beija-flor que mede entre 7,5 a 8,5 \ncentímetros e pesa apenas 3 gramas. Os machos desta espécie são elegantes e \napresentam longos tufos de penas verdes com as pontas brancas na garganta. \nQuando eriçados, mostram bela mancha verde iridescente atrás dos olhos. \nDorso superior verde e uropígio bronze, garganta verde, peito com manchas \nbrancas, abdome cinzento e infracaudais brancas. Pálpebras azuis, bico \nnegro. Os machos não apresentam topete na cor vermelha na cabeça. A fêmea \nnão tem os tufos de longas penas na bochecha e em vez disso tem uma \ngarganta marrom, peito com manchas brancas e uma faixa facial abaixo do \nolhos esbranquiçada. Ambos os sexos exibem uma banda branca no uropígio, \ncomo muitos outros do gênero, que para o macho é branca e para a fêmea é \namarronzada. ",
+    "habitat": "",
+    "diet": "Néctar e pequenos artrópodes",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Topetinho-verde",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Lophornis_chalybeus.jpg"
+  },
+  {
+    "id": 69,
+    "name": "Araçari poca",
+    "scientificName": "Selenidera maculirostris",
+    "description": " Mede cerca de 33 cm de comprimento e pesa por volta de 170 g. O macho \napresenta ",
+    "habitat": " pretos, os quais são marrons na fêmea. Tem de três a cinco riscos \ntransversais no bico, que variam de formato de indivíduo para indivíduo. \nTem um tufo de penas pós-oculares de cor amarelo-ouro. Possui uma grande \nmancha escura na íris, anterior e posterior à pupila, comum ao gênero \nSelenidera. ",
+    "diet": "Frutas",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Selenidera_maculirostris",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Selenidera_maculirostris.jpg"
+  },
+  {
+    "id": 70,
+    "name": "Tucano bico verde",
+    "scientificName": "Ramphastos dicolorus",
+    "description": " Tem cerca de 42 a 48 centímetros, boa parte correspondem ao ",
+    "habitat": ". Pesa em torno de 265 g a 400 g. Apresenta papo amarelo e bico verde. O \nserrilhado do bico é bem desenvolvido e realçados pela cor vermelha \nsangüínea. É o único ",
+    "diet": "Frutas, ovos e filhotes no ninho",
+    "wikipediaUrl": "https://pt.wikipedia.org/wiki/Tucano-de-bico-verde",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Ramphastos_dicolorus.jpg"
+  }
+]
