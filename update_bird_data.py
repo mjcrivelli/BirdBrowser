@@ -6,10 +6,10 @@ def update_bird_data_from_excel():
     """
     Update the bird data JSON with image URLs from the Excel file
     """
-    print("Starting update of bird data from Excel...")
+    print("Starting update of bird data from Excel file...")
     
     # Path to the Excel file and JSON file
-    excel_path = "attached_assets/aves_Toca_v2.xlsx"
+    excel_path = "attached_assets/aves_Toca_v2 (1).xlsx"
     json_path = "bird_data.json"
     
     # Check if files exist
@@ -35,27 +35,26 @@ def update_bird_data_from_excel():
         print(f"Available columns in Excel: {df.columns.tolist()}")
         
         # Create a dictionary of names to image URLs from Excel
-        excel_image_urls = {}
+        image_urls = {}
         for _, row in df.iterrows():
             name = row.get('Nome Comum', None)
-            if name and 'link' in df.columns and not pd.isna(row['link']):
-                # Use the link column as the image URL
-                excel_image_urls[name] = str(row['link'])
-                print(f"Found image URL for {name}: {row['link']}")
+            if name and 'Picture' in df.columns and pd.notna(row['Picture']):
+                image_urls[name] = str(row['Picture'])
         
-        print(f"Found {len(excel_image_urls)} birds with image URLs in Excel")
+        print(f"Found {len(image_urls)} birds with image URLs")
         
         # Update the JSON data with new image URLs
         update_count = 0
         for bird in bird_data:
-            if bird['name'] in excel_image_urls:
+            if bird['name'] in image_urls:
                 old_url = bird.get('imageUrl', '')
-                new_url = excel_image_urls[bird['name']]
+                new_url = image_urls[bird['name']]
                 
-                # Only update if the URL is actually different
-                if old_url != new_url:
+                # Only update if the URL is actually different and not empty
+                if old_url != new_url and new_url and not pd.isna(new_url):
                     bird['imageUrl'] = new_url
                     update_count += 1
+                    print(f"Updated {bird['name']} with image URL: {new_url}")
         
         print(f"Updated {update_count} birds with new image URLs")
         

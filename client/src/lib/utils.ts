@@ -7,10 +7,15 @@ export function cn(...inputs: ClassValue[]) {
 
 /**
  * Converts a Wikipedia image URL to a direct URL for the Wikimedia Commons image
- * Works with both Special:FilePath and direct Commons URLs
+ * Works with various Wikipedia/Wikimedia URL formats
  */
 export function getWikipediaImageUrl(url: string): string {
   if (!url) return '';
+  
+  // Handle URLs that start with // (protocol-relative URLs)
+  if (url.startsWith('//')) {
+    url = 'https:' + url;
+  }
   
   // Handle Special:FilePath URLs
   if (url.includes('Special:FilePath')) {
@@ -22,6 +27,17 @@ export function getWikipediaImageUrl(url: string): string {
   
   // If it's already a direct Wikimedia Commons URL, just return it
   if (url.includes('upload.wikimedia.org')) {
+    // Modify URL to get a larger version by removing size constraints
+    if (url.includes('/thumb/')) {
+      // Remove the thumb part and the dimension specification at the end
+      const parts = url.split('/');
+      const filenameParts = parts[parts.length - 1].split('px-');
+      if (filenameParts.length > 1) {
+        parts.splice(parts.length - 1, 1, filenameParts[1]); // Replace the filename with one without size
+        parts.splice(parts.indexOf('thumb'), 1); // Remove 'thumb' from the path
+        return parts.join('/');
+      }
+    }
     return url;
   }
   
@@ -29,6 +45,11 @@ export function getWikipediaImageUrl(url: string): string {
   if (url.includes('commons.wikimedia.org/wiki/File:')) {
     const filename = url.split(':').pop() || '';
     return `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${encodeURIComponent(filename)}&width=500`;
+  }
+  
+  // Handle WikiAves URLs
+  if (url.includes('wikiaves.com.br')) {
+    return url;
   }
   
   // Default fallback to the original URL
