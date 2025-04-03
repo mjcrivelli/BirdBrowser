@@ -101,7 +101,8 @@ def fix_bird_data_json(json_path):
                     # Convert the Special:FilePath URL to a direct URL format
                     if 'Special:FilePath' in bird['imageUrl']:
                         filename = bird['imageUrl'].split('/')[-1]
-                        bird['imageUrl'] = f"https://upload.wikimedia.org/wikipedia/commons/thumb/latest/{filename}/500px-{filename}"
+                        # Use a more reliable direct image URL format
+                        bird['imageUrl'] = f"https://upload.wikimedia.org/wikipedia/commons/c/c0/{filename}"
                         print(f"Converted to direct URL: {bird['imageUrl']}")
         
         # Write the updated data back to the JSON file
