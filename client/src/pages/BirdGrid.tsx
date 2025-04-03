@@ -13,7 +13,7 @@ import { Eye, Filter } from 'lucide-react';
 import type { BirdWithSeenStatus } from '@shared/schema';
 
 const BirdGrid: React.FC = () => {
-  const { birds, seenBirds, unseenBirds, isLoading, isError } = useBirds();
+  const { birds, seenBirds, unseenBirds, isLoading, isError, refetch } = useBirds();
   const { toggleBirdSeenStatus, isPending } = useBirdSightings();
   const [selectedBirdId, setSelectedBirdId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<string>('all');
@@ -26,9 +26,16 @@ const BirdGrid: React.FC = () => {
     setSelectedBirdId(null);
   };
 
-  const handleToggleSeen = (bird: BirdWithSeenStatus) => {
+  const handleToggleSeen = async (bird: BirdWithSeenStatus) => {
     console.log('BirdGrid - handleToggleSeen called with:', bird.id, bird.name, bird.seen);
+    // Toggle the bird's seen status
     toggleBirdSeenStatus(bird);
+    
+    // Give the backend a moment to process
+    setTimeout(() => {
+      console.log('Manually refetching birds data after toggle');
+      refetch();
+    }, 300);
   };
 
   // Determine which birds to display based on active tab

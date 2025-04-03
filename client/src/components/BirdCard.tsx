@@ -90,7 +90,7 @@ const BirdCard: React.FC<BirdCardProps> = ({
         {onToggleSeen && (
           <button 
             onClick={handleSeenToggle} 
-            className={`mt-2 px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-colors ${
+            className={`mt-2 px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-colors z-10 relative ${
               bird.seen 
                 ? 'bg-[#DDEBDD] text-[#4CAF50] hover:bg-[#C8E6C9]'
                 : 'bg-[#4CAF50] text-white hover:bg-[#388E3C]'

@@ -221,15 +221,22 @@ export class MemStorage implements IStorage {
   }
   
   async removeBirdSighting(userId: number, birdId: number): Promise<boolean> {
+    console.log(`Looking for sighting to remove: userId=${userId}, birdId=${birdId}`);
+    console.log(`Current sightings:`, Array.from(this.birdSightings.entries()));
+    
     const sighting = Array.from(this.birdSightings.values()).find(
       s => s.userId === userId && s.birdId === birdId
     );
     
     if (!sighting) {
+      console.log(`No sighting found for userId=${userId}, birdId=${birdId}`);
       return false;
     }
     
-    return this.birdSightings.delete(sighting.id);
+    console.log(`Found sighting to remove:`, sighting);
+    const result = this.birdSightings.delete(sighting.id);
+    console.log(`Deletion result: ${result}`);
+    return result;
   }
   
   async getBirdSightings(userId: number): Promise<BirdSighting[]> {

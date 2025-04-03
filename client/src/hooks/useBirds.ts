@@ -12,7 +12,8 @@ export function useBirds(userId: number = DEFAULT_USER_ID) {
     data: birds = [],
     isLoading,
     isError,
-    error
+    error,
+    refetch
   } = useQuery<BirdWithSeenStatus[]>({
     queryKey: ['/api/birds', { userId }],
     queryFn: () => fetch(`/api/birds?userId=${userId}`).then(res => res.json()),
@@ -32,6 +33,7 @@ export function useBirds(userId: number = DEFAULT_USER_ID) {
     isLoading,
     isError,
     error,
+    refetch,
     getBirdById
   };
 }
@@ -75,9 +77,10 @@ export function useBirdSightings() {
     onSuccess: () => {
       // Invalidate the birds query to refresh the list with updated seen status
       console.log('Successfully marked bird as seen, invalidating queries');
+      // First, we force refetch all bird queries
       queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
-      // Also invalidate specific queries with userId
-      queryClient.invalidateQueries({ queryKey: ['/api/birds', { userId }] });
+      // Then specifically refetch birds with the current userId
+      queryClient.refetchQueries({ queryKey: ['/api/birds', { userId }] });
     },
     onError: (error) => {
       console.error('Error in markBirdAsSeen mutation:', error);
@@ -110,9 +113,10 @@ export function useBirdSightings() {
     onSuccess: () => {
       // Invalidate the birds query to refresh the list with updated seen status
       console.log('Successfully marked bird as unseen, invalidating queries');
+      // First, we force refetch all bird queries
       queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
-      // Also invalidate specific queries with userId
-      queryClient.invalidateQueries({ queryKey: ['/api/birds', { userId }] });
+      // Then specifically refetch birds with the current userId
+      queryClient.refetchQueries({ queryKey: ['/api/birds', { userId }] });
     },
     onError: (error) => {
       console.error('Error in markBirdAsUnseen mutation:', error);
