@@ -83,9 +83,9 @@ const BirdCard: React.FC<BirdCardProps> = ({
         )}
       </div>
       
-      <div className="text-center mt-2 sm:mt-3 flex flex-col items-center">
-        <h3 className="font-montserrat font-semibold text-base sm:text-lg truncate">{bird.name}</h3>
-        <p className="text-xs sm:text-sm text-gray-600 italic truncate">{bird.scientificName}</p>
+      <div className="text-center mt-2 sm:mt-3 flex flex-col items-center w-full px-1">
+        <h3 className="font-montserrat font-semibold text-base sm:text-lg w-full overflow-hidden text-ellipsis whitespace-nowrap">{bird.name}</h3>
+        <p className="text-xs sm:text-sm text-gray-600 italic w-full overflow-hidden text-ellipsis whitespace-nowrap">{bird.scientificName}</p>
         
         {onToggleSeen && (
           <button 

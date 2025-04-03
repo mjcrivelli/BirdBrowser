@@ -53,7 +53,10 @@ export function useBirdSightings() {
       apiRequest('POST', '/api/sightings', { userId, birdId }),
     onSuccess: () => {
       // Invalidate the birds query to refresh the list with updated seen status
+      console.log('Successfully marked bird as seen, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
+      // Also invalidate specific queries with userId
+      queryClient.invalidateQueries({ queryKey: ['/api/birds', { userId }] });
     }
   });
   
@@ -63,15 +66,21 @@ export function useBirdSightings() {
       apiRequest('DELETE', `/api/sightings/${userId}/${birdId}`),
     onSuccess: () => {
       // Invalidate the birds query to refresh the list with updated seen status
+      console.log('Successfully marked bird as unseen, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
+      // Also invalidate specific queries with userId
+      queryClient.invalidateQueries({ queryKey: ['/api/birds', { userId }] });
     }
   });
   
   // Toggle seen status
   const toggleBirdSeenStatus = (bird: BirdWithSeenStatus) => {
+    console.log('Toggling bird seen status:', bird.id, bird.name, bird.seen);
     if (bird.seen) {
+      console.log('Marking bird as unseen:', bird.id);
       markBirdAsUnseen.mutate(bird.id);
     } else {
+      console.log('Marking bird as seen:', bird.id);
       markBirdAsSeen.mutate(bird.id);
     }
   };

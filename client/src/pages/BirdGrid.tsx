@@ -27,6 +27,7 @@ const BirdGrid: React.FC = () => {
   };
 
   const handleToggleSeen = (bird: BirdWithSeenStatus) => {
+    console.log('BirdGrid - handleToggleSeen called with:', bird.id, bird.name, bird.seen);
     toggleBirdSeenStatus(bird);
   };
 
