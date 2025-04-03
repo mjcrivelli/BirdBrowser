@@ -1,4 +1,6 @@
 import { birds, type Bird, type InsertBird } from "@shared/schema";
+import { readBirdsFromExcel } from "./excel-reader";
+import { getFallbackBirds } from "./fallback-birds";
 
 // Define the interface for bird storage operations
 export interface IStorage {
@@ -22,7 +24,7 @@ export class MemStorage implements IStorage {
     this.currentId = 1;
     this.currentBirdId = 1;
     
-    // Initialize with sample bird data
+    // Initialize with bird data from Excel
     this.initializeBirds();
   }
 
@@ -53,12 +55,57 @@ export class MemStorage implements IStorage {
 
   async createBird(insertBird: InsertBird): Promise<Bird> {
     const id = this.currentBirdId++;
-    const bird: Bird = { ...insertBird, id };
+    // Ensure all properties conform to Bird type
+    const bird: Bird = { 
+      id,
+      name: insertBird.name,
+      scientificName: insertBird.scientificName,
+      family: insertBird.family ?? null,
+      habitat: insertBird.habitat ?? null,
+      diet: insertBird.diet ?? null,
+      conservationStatus: insertBird.conservationStatus ?? null,
+      description: insertBird.description ?? null,
+      wikipediaUrl: insertBird.wikipediaUrl ?? null,
+      imageUrl: insertBird.imageUrl ?? null,
+      category: insertBird.category ?? "common",
+    };
     this.birdData.set(id, bird);
     return bird;
   }
 
   private initializeBirds() {
+    try {
+      // Use our simplified fallback birds for now
+      // Later we can try to read from Excel file again
+      console.log("Using fallback bird data");
+      const birds = getFallbackBirds();
+      
+      // Process the birds
+      birds.forEach((bird, index) => {
+        const id = index + 1;
+        // Ensure all properties are properly defined to match Bird type
+        const validBird: Bird = {
+          id,
+          name: bird.name,
+          scientificName: bird.scientificName,
+          family: bird.family ?? null,
+          habitat: bird.habitat ?? null,
+          diet: bird.diet ?? null,
+          conservationStatus: bird.conservationStatus ?? null,
+          description: bird.description ?? null,
+          wikipediaUrl: bird.wikipediaUrl ?? null,
+          imageUrl: bird.imageUrl ?? null,
+          category: bird.category ?? null,
+        };
+        this.birdData.set(id, validBird);
+      });
+      this.currentBirdId = birds.length + 1;
+      return;
+    } catch (error) {
+      console.error("Error initializing birds:", error);
+    }
+    
+    // If something goes wrong, we'll use hardcoded data
     const sampleBirds: Omit<Bird, 'id'>[] = [
       {
         name: "Golden Eagle",
