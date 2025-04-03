@@ -13,22 +13,27 @@ import { Eye, Filter } from 'lucide-react';
 import type { BirdWithSeenStatus } from '@shared/schema';
 
 const BirdGrid: React.FC = () => {
-  const { birds, seenBirds, unseenBirds, isLoading, isError } = useBirds();
+  // Get bird data using our hooks
+  const { birds, seenBirds, unseenBirds, isLoading, isError, refetch } = useBirds();
   const { toggleBirdSeenStatus, isPending } = useBirdSightings();
+  
+  // Local state
   const [selectedBirdId, setSelectedBirdId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<string>('all');
 
+  // Handle clicking on a bird card to expand/collapse details
   const handleBirdSelection = (bird: BirdWithSeenStatus) => {
     setSelectedBirdId(prevId => prevId === bird.id ? null : bird.id);
   };
 
+  // Close the detailed view
   const closeDetail = () => {
     setSelectedBirdId(null);
   };
 
+  // Handle toggling the seen status of a bird
   const handleToggleSeen = (bird: BirdWithSeenStatus) => {
     console.log('BirdGrid - handleToggleSeen called with:', bird.id, bird.name, bird.seen);
-    // Simply toggle the bird's seen status - query invalidation will handle UI updates
     toggleBirdSeenStatus(bird);
   };
 

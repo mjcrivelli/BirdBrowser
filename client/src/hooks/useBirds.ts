@@ -5,23 +5,41 @@ import { apiRequest } from "@/lib/queryClient";
 // Default user ID until we implement authentication
 const DEFAULT_USER_ID = 1;
 
+// Type for API responses
+interface MarkBirdResponse {
+  sighting: BirdSighting;
+  birds: BirdWithSeenStatus[];
+}
+
+interface RemoveBirdResponse {
+  success: boolean;
+  birds: BirdWithSeenStatus[];
+}
+
+/**
+ * Hook for accessing and managing bird data
+ */
 export function useBirds(userId: number = DEFAULT_USER_ID) {
   const queryClient = useQueryClient();
   
+  // Get all birds with their seen status
   const {
     data: birds = [],
     isLoading,
     isError,
-    error
+    error,
+    refetch
   } = useQuery<BirdWithSeenStatus[]>({
     queryKey: ['/api/birds', { userId }],
     queryFn: () => fetch(`/api/birds?userId=${userId}`).then(res => res.json()),
   });
   
+  // Helper function to get a specific bird by ID
   const getBirdById = (id: number): BirdWithSeenStatus | undefined => {
     return birds.find((bird) => bird.id === id);
   };
   
+  // Filter birds by seen status
   const seenBirds = birds.filter(bird => bird.seen);
   const unseenBirds = birds.filter(bird => !bird.seen);
   
@@ -32,10 +50,14 @@ export function useBirds(userId: number = DEFAULT_USER_ID) {
     isLoading,
     isError,
     error,
+    refetch,
     getBirdById
   };
 }
 
+/**
+ * Hook for fetching details of a specific bird
+ */
 export function useBirdDetail(id: number) {
   return useQuery<Bird>({
     queryKey: ['/api/birds', id],
@@ -43,86 +65,80 @@ export function useBirdDetail(id: number) {
   });
 }
 
+/**
+ * Hook for managing bird sightings (marking birds as seen/unseen)
+ */
 export function useBirdSightings() {
   const queryClient = useQueryClient();
   const userId = DEFAULT_USER_ID;
   
   // Mark a bird as seen
-  const markBirdAsSeen = useMutation({
+  const markBirdAsSeen = useMutation<MarkBirdResponse, Error, number>({
     mutationFn: async (birdId: number) => {
-      console.log(`Sending POST request to /api/sightings with: userId=${userId}, birdId=${birdId}`);
-      try {
-        // Direct fetch to avoid double-reading body error
-        const response = await fetch('/api/sightings', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, birdId }),
-          credentials: 'include'
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        
-        const result = await response.json();
-        console.log('POST response:', result);
-        return result;
-      } catch (error) {
-        console.error('POST request failed:', error);
-        throw error;
+      console.log(`Marking bird as seen: ${birdId}`);
+      const response = await fetch('/api/sightings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, birdId }),
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to mark bird as seen: ${response.status}`);
       }
+      
+      return response.json();
     },
-    onSuccess: () => {
-      // Invalidate the birds query to refresh the list with updated seen status
-      console.log('Successfully marked bird as seen, invalidating queries');
-      queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
+    onSuccess: (data) => {
+      console.log('Successfully marked bird as seen:', data);
+      
+      // Update the query cache directly with the new data
+      queryClient.setQueryData(
+        ['/api/birds', { userId }], 
+        data.birds
+      );
     },
     onError: (error) => {
-      console.error('Error in markBirdAsSeen mutation:', error);
+      console.error('Failed to mark bird as seen:', error);
     }
   });
   
-  // Mark a bird as unseen (remove from seen list)
-  const markBirdAsUnseen = useMutation({
+  // Mark a bird as unseen
+  const markBirdAsUnseen = useMutation<RemoveBirdResponse, Error, number>({
     mutationFn: async (birdId: number) => {
-      console.log(`Sending DELETE request to /api/sightings/${userId}/${birdId}`);
-      try {
-        // Direct fetch to avoid double-reading body error
-        const response = await fetch(`/api/sightings/${userId}/${birdId}`, {
-          method: 'DELETE',
-          credentials: 'include'
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        
-        const result = await response.json();
-        console.log('DELETE response:', result);
-        return result;
-      } catch (error) {
-        console.error('DELETE request failed:', error);
-        throw error;
+      console.log(`Marking bird as unseen: ${birdId}`);
+      const response = await fetch(`/api/sightings/${userId}/${birdId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to mark bird as unseen: ${response.status}`);
       }
+      
+      return response.json();
     },
-    onSuccess: () => {
-      // Invalidate the birds query to refresh the list with updated seen status
-      console.log('Successfully marked bird as unseen, invalidating queries');
-      queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
+    onSuccess: (data) => {
+      console.log('Successfully marked bird as unseen:', data);
+      
+      // Update the query cache directly with the new data
+      queryClient.setQueryData(
+        ['/api/birds', { userId }], 
+        data.birds
+      );
     },
     onError: (error) => {
-      console.error('Error in markBirdAsUnseen mutation:', error);
+      console.error('Failed to mark bird as unseen:', error);
     }
   });
   
-  // Toggle seen status
+  // Toggle the seen status of a bird
   const toggleBirdSeenStatus = (bird: BirdWithSeenStatus) => {
-    console.log('Toggling bird seen status:', bird.id, bird.name, bird.seen);
+    console.log(`Toggling seen status for bird: ${bird.id}, current status: ${bird.seen}`);
+    
     if (bird.seen) {
-      console.log('Marking bird as unseen:', bird.id);
       markBirdAsUnseen.mutate(bird.id);
     } else {
-      console.log('Marking bird as seen:', bird.id);
       markBirdAsSeen.mutate(bird.id);
     }
   };

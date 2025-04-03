@@ -203,13 +203,15 @@ export class MemStorage implements IStorage {
   }
   
   async addBirdSighting(sighting: InsertBirdSighting): Promise<BirdSighting> {
-    // Check if a sighting for this user and bird already exists
+    console.log(`Adding bird sighting: userId=${sighting.userId}, birdId=${sighting.birdId}`);
+    
+    // Check if this sighting already exists
     const existingSightings = Array.from(this.birdSightings.values()).filter(
       s => s.userId === sighting.userId && s.birdId === sighting.birdId
     );
     
     if (existingSightings.length > 0) {
-      // If sighting already exists, return it
+      console.log(`Sighting already exists, returning existing: id=${existingSightings[0].id}`);
       return existingSightings[0];
     }
     
@@ -217,28 +219,36 @@ export class MemStorage implements IStorage {
     const id = this.currentSightingId++;
     const newSighting: BirdSighting = { ...sighting, id };
     this.birdSightings.set(id, newSighting);
+    
+    console.log(`Created new sighting with id=${id}`);
+    console.log(`Current sightings:`, Array.from(this.birdSightings.entries()));
+    
     return newSighting;
   }
   
   async removeBirdSighting(userId: number, birdId: number): Promise<boolean> {
-    console.log(`Looking for sighting to remove: userId=${userId}, birdId=${birdId}`);
-    console.log(`Current sightings:`, Array.from(this.birdSightings.entries()));
+    console.log(`Removing bird sighting: userId=${userId}, birdId=${birdId}`);
+    console.log(`Current sightings before removal:`, Array.from(this.birdSightings.entries()));
     
-    const sighting = Array.from(this.birdSightings.values()).find(
-      s => s.userId === userId && s.birdId === birdId
-    );
+    // Find all sightings for this user and bird
+    const sightingsToRemove = Array.from(this.birdSightings.entries())
+      .filter(([_, s]) => s.userId === userId && s.birdId === birdId);
     
-    if (!sighting) {
-      console.log(`No sighting found for userId=${userId}, birdId=${birdId}`);
-      // Return true instead of false - because the end state is correct
-      // (the bird is not in the user's sightings, which is what we want)
-      return true;
+    if (sightingsToRemove.length === 0) {
+      console.log(`No matching sightings found to remove.`);
+      return true; // Return success even if nothing to delete
     }
     
-    console.log(`Found sighting to remove:`, sighting);
-    const result = this.birdSightings.delete(sighting.id);
-    console.log(`Deletion result: ${result}`);
-    return result;
+    // Delete all matching sightings
+    let success = true;
+    for (const [id, _] of sightingsToRemove) {
+      console.log(`Removing sighting with id=${id}`);
+      const result = this.birdSightings.delete(id);
+      if (!result) success = false;
+    }
+    
+    console.log(`Current sightings after removal:`, Array.from(this.birdSightings.entries()));
+    return success;
   }
   
   async getBirdSightings(userId: number): Promise<BirdSighting[]> {

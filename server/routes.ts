@@ -71,7 +71,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const sighting = await storage.addBirdSighting(validationResult.data);
       console.log("Bird sighting added successfully:", sighting);
-      res.status(201).json(sighting);
+      
+      // Get fresh data with updated seen status
+      const birdsWithStatus = await storage.getBirdsWithSeenStatus(validationResult.data.userId);
+      
+      // Return both the sighting and updated birds list
+      res.status(201).json({
+        sighting,
+        birds: birdsWithStatus
+      });
     } catch (error) {
       console.error("Error adding bird sighting:", error);
       res.status(500).json({ message: "Failed to add bird sighting" });
@@ -94,8 +102,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await storage.removeBirdSighting(userId, birdId);
       console.log("Remove bird sighting result:", result);
 
-      // Always return success as true
-      res.json({ success: true });
+      // Get fresh data with updated seen status
+      const birdsWithStatus = await storage.getBirdsWithSeenStatus(userId);
+      
+      // Return both the success status and updated birds list
+      res.json({
+        success: true,
+        birds: birdsWithStatus
+      });
     } catch (error) {
       console.error("Error removing bird sighting:", error);
       res.status(500).json({ message: "Failed to remove bird sighting" });
