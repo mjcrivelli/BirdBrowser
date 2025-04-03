@@ -38,21 +38,32 @@ def get_wikipedia_image_url(wiki_url):
         if infobox:
             # Try to get the image from the infobox first
             img = infobox.find('img')
-            if img and img.has_attr('src'):
-                img_url = img['src']
-                if not img_url.startswith('http'):
-                    img_url = 'https:' + img_url
-                return img_url
+            if img:
+                if img.has_attr('src'):
+                    src = img['src']
+                    if not src.startswith('http'):
+                        src = 'https:' + src
+                    # Get the filename from src
+                    filename = src.split('/')[-1]
+                    # Remove any size prefix (like 220px-)
+                    if '-' in filename:
+                        filename = filename.split('-')[-1]
+                    return f"https://upload.wikimedia.org/wikipedia/commons/f/fb/{filename}"
         
         # If no infobox or no image in infobox, try to get the image from the content
         content_div = soup.find('div', class_='mw-parser-output')
         if content_div:
             img = content_div.find('img')
             if img and img.has_attr('src'):
-                img_url = img['src']
-                if not img_url.startswith('http'):
-                    img_url = 'https:' + img_url
-                return img_url
+                src = img['src']
+                if not src.startswith('http'):
+                    src = 'https:' + src
+                # Get the filename from src
+                filename = src.split('/')[-1]
+                # Remove any size prefix (like 220px-)
+                if '-' in filename:
+                    filename = filename.split('-')[-1]
+                return f"https://upload.wikimedia.org/wikipedia/commons/f/fb/{filename}"
             
         # For "Ficheiro:" pages, get the image from the file page
         if 'Ficheiro:' in wiki_url or 'File:' in wiki_url:
