@@ -3,7 +3,6 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { Check } from 'lucide-react';
 import type { BirdWithSeenStatus } from '@shared/schema';
-import { getWikipediaImageUrl } from '@/lib/utils';
 
 interface BirdCardProps {
   bird: BirdWithSeenStatus;
@@ -23,8 +22,13 @@ const BirdCard: React.FC<BirdCardProps> = ({
   const [imageUrl, setImageUrl] = useState('');
 
   useEffect(() => {
-    // Convert Wikipedia image URL to direct URL when bird prop changes
-    setImageUrl(getWikipediaImageUrl(bird.imageUrl));
+    // Use the image URL directly from the bird data
+    // Add https: prefix to protocol-relative URLs
+    if (bird.imageUrl && bird.imageUrl.startsWith('//')) {
+      setImageUrl(`https:${bird.imageUrl}`);
+    } else {
+      setImageUrl(bird.imageUrl);
+    }
   }, [bird.imageUrl]);
 
   const handleImageLoad = () => {
@@ -35,37 +39,11 @@ const BirdCard: React.FC<BirdCardProps> = ({
     setImageError(true);
     console.log(`Failed to load image for ${bird.name}: ${imageUrl}`);
     
-    // Try alternative approaches based on bird name
-    const birdNameUrl = getWikipediaImageUrl(bird.name);
-    
-    // Try different URL variations
-    const variations = [
-      // Try with the bird name directly (this will use our hardcoded WikiAves fallbacks)
-      birdNameUrl,
-      // Try removing the /thumb/ directory and the size prefix  
-      imageUrl.replace('/thumb/', '/').replace(/\/\d+px-/, '/'),
-      // Try direct file redirect using the filename
-      `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${encodeURIComponent(bird.name.replace(/ /g, '_'))}.jpg&width=500`,
-      // Try another approach using the scientific name
-      `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${encodeURIComponent(bird.scientificName.replace(/ /g, '_'))}.jpg&width=500`,
-      // Final fallback - use a high-quality WikiAves image for a similar bird as placeholder
-      "https://www.wikiaves.com.br/img/fotocapa/_93316.jpg"
-    ];
-    
-    // Filter out the current URL to avoid loops
-    const filteredVariations = variations.filter(url => url !== imageUrl);
-    
-    let currentVariation = 0;
-    const tryNextVariation = (imgElement: HTMLImageElement) => {
-      if (currentVariation < filteredVariations.length) {
-        const nextUrl = filteredVariations[currentVariation++];
-        imgElement.src = nextUrl;
-        console.log(`Trying alternative image URL for ${bird.name}: ${nextUrl}`);
-        imgElement.onerror = () => tryNextVariation(imgElement);
-      }
-    };
-    
-    tryNextVariation(e.target as HTMLImageElement);
+    // Only attempt one simple fallback - add https: if it's missing
+    if (bird.imageUrl && bird.imageUrl.startsWith('//')) {
+      const fixedUrl = `https:${bird.imageUrl}`;
+      (e.target as HTMLImageElement).src = fixedUrl;
+    }
   };
 
   const handleSeenToggle = (e: React.MouseEvent) => {

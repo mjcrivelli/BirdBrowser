@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { X, ExternalLink, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { BirdWithSeenStatus } from '@shared/schema';
-import { getWikipediaImageUrl } from '@/lib/utils';
 
 interface BirdDetailProps {
   bird: BirdWithSeenStatus;
@@ -15,8 +14,13 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
   const [imageUrl, setImageUrl] = useState('');
   
   useEffect(() => {
-    // Convert Wikipedia image URL to direct URL when bird prop changes
-    setImageUrl(getWikipediaImageUrl(bird.imageUrl));
+    // Use the image URL directly from the bird data
+    // Add https: prefix to protocol-relative URLs
+    if (bird.imageUrl && bird.imageUrl.startsWith('//')) {
+      setImageUrl(`https:${bird.imageUrl}`);
+    } else {
+      setImageUrl(bird.imageUrl);
+    }
   }, [bird.imageUrl]);
   
   const handleOpenWikipedia = () => {
@@ -59,8 +63,10 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
             className={`w-full h-auto max-h-[250px] rounded-lg object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
             onLoad={() => setImageLoaded(true)}
             onError={(e) => {
-              console.error(`Failed to load detail image for ${bird.name}: ${imageUrl}`);
-              (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500?text=Image+Not+Found';
+              console.log(`Failed to load detail image for ${bird.name}: ${imageUrl}`);
+              if (bird.imageUrl && bird.imageUrl.startsWith('//')) {
+                (e.target as HTMLImageElement).src = `https:${bird.imageUrl}`;
+              }
             }}
           />
           
