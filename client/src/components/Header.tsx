@@ -22,51 +22,55 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 bg-white shadow-sm z-10">
+    <header className="sticky top-0 bg-white shadow-sm z-10" role="banner">
       <div className="container mx-auto px-4 py-2 flex justify-between items-center">
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex items-center" aria-label="Ir para a página inicial Aves da Toca">
           <Logo />
         </Link>
-        
-        <nav className="hidden md:flex space-x-6 text-sm font-montserrat">
+
+        <nav className="hidden md:flex space-x-6 text-sm font-montserrat" role="navigation" aria-label="Navegação principal">
           {navLinks.map((link, index) => (
-            <Link 
+            <Link
               key={index}
               href={link.href}
               className={`transition-colors uppercase ${
-                link.active 
-                  ? "text-[#4CAF50] hover:text-[#388E3C] font-semibold" 
+                link.active
+                  ? "text-[#4CAF50] hover:text-[#388E3C] font-semibold"
                   : "text-[#333333] hover:text-[#4CAF50]"
               }`}
+              aria-current={link.active ? 'page' : undefined}
             >
               {link.label}
             </Link>
           ))}
         </nav>
-        
-        <button 
-          className="md:hidden text-[#333333]" 
+
+        <button
+          className="md:hidden text-[#333333]"
           onClick={toggleMobileMenu}
-          aria-label="Menu"
+          aria-label="Abrir menu de navegação"
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-navigation"
         >
           <Menu className="h-6 w-6" />
         </button>
       </div>
-      
+
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white shadow-md px-4 py-2">
-          <nav className="flex flex-col space-y-3 font-montserrat text-sm">
+          <nav id="mobile-navigation" className="flex flex-col space-y-3 font-montserrat text-sm" role="navigation" aria-label="Navegação móvel">
             {navLinks.map((link, index) => (
-              <Link 
+              <Link
                 key={index}
                 href={link.href}
                 className={`py-2 transition-colors uppercase ${
-                  link.active 
-                    ? "text-[#4CAF50] hover:text-[#388E3C] font-semibold" 
+                  link.active
+                    ? "text-[#4CAF50] hover:text-[#388E3C] font-semibold"
                     : "text-[#333333] hover:text-[#4CAF50]"
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
+                aria-current={link.active ? 'page' : undefined}
               >
                 {link.label}
               </Link>

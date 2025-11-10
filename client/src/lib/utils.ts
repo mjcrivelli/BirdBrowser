@@ -6,18 +6,36 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Announce a message to screen readers using the global live region.
+ */
+export function announce(message: string) {
+  try {
+    const region = document.getElementById('a11y-live-region');
+    if (!region) return;
+    // Clear first to ensure change is detected
+    region.textContent = '';
+    // Slight delay to reliably trigger aria-live
+    window.setTimeout(() => {
+      region.textContent = message;
+    }, 50);
+  } catch {
+    // no-op
+  }
+}
+
+/**
  * Converts a Wikipedia image URL to a direct URL for the Wikimedia Commons image
  * Works with various Wikipedia/Wikimedia URL formats
  */
 export function getWikipediaImageUrl(url: string): string {
   if (!url) return '';
-  
+
   // Use direct URLs from the Excel file's "Picture" column if available
   // WikiAves URLs - these are direct image URLs
   if (url.includes('wikiaves.com.br')) {
     return url;
   }
-  
+
   // Handle URLs that start with // (protocol-relative URLs)
   if (url.startsWith('//')) {
     url = 'https:' + url;
@@ -29,7 +47,7 @@ export function getWikipediaImageUrl(url: string): string {
   if (filenameMatch && filenameMatch[1] === filenameMatch[3]) {
     url = url.substring(0, url.lastIndexOf('/'));
   }
-  
+
   // If we already have a Special:Redirect URL, just adjust the width parameter
   if (url.includes('Special:Redirect/file/')) {
     // Return with increased width for better quality
@@ -47,7 +65,7 @@ export function getWikipediaImageUrl(url: string): string {
     const decodedFilename = decodeURIComponent(filename);
     return `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${encodeURIComponent(decodedFilename)}&width=500`;
   }
-  
+
   // Handle direct Wikimedia Commons upload URLs
   if (url.includes('upload.wikimedia.org')) {
     // For the specific URLs from our Excel - extract just the filename
@@ -60,13 +78,13 @@ export function getWikipediaImageUrl(url: string): string {
         break;
       }
     }
-    
+
     if (filename) {
       return `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${encodeURIComponent(filename)}&width=500`;
     }
     return url;
   }
-  
+
   // Extract filename for Commons File: URLs
   if (url.includes('commons.wikimedia.org/wiki/File:')) {
     const parts = url.split('File:');
@@ -75,7 +93,7 @@ export function getWikipediaImageUrl(url: string): string {
       return `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${encodeURIComponent(filename)}&width=500`;
     }
   }
-  
+
   // Handle 280px and similar prefixes in URL filename
   if (url.includes('/280px-') || url.includes('/330px-') || url.includes('/250px-')) {
     const parts = url.split('/');
@@ -86,13 +104,13 @@ export function getWikipediaImageUrl(url: string): string {
       }
     }
   }
-  
+
   // For any non-recognized URL format, extract filename and use Commons redirect API
   const lastSegment = url.split('/').pop();
   if (lastSegment && /\.(jpg|png|jpeg|gif|svg)$/i.test(lastSegment)) {
     return `https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/${encodeURIComponent(lastSegment)}&width=500`;
   }
-  
+
   // Handle remaining problematic birds with hardcoded high-quality WikiAves URLs
   const birdNames: Record<string, string> = {
     "Saí-verde": "https://www.wikiaves.com.br/img/fotocapa/_114177.jpg",
@@ -121,14 +139,14 @@ export function getWikipediaImageUrl(url: string): string {
     "Catirumbava": "https://www.wikiaves.com.br/img/fotocapa/_97213.jpg",
     "Tiê-sangue": "https://www.wikiaves.com.br/img/fotocapa/_66209.jpg"
   };
-  
+
   // Check if the URL contains any of the birds we're applying hardcoded images for
   for (const birdName in birdNames) {
     if (url.toLowerCase().includes(birdName.toLowerCase())) {
       return birdNames[birdName];
     }
   }
-  
+
   // Default fallback - use URL as is
   return url;
 }

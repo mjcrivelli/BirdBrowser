@@ -43,16 +43,17 @@ const BirdDetailModal: React.FC<BirdDetailModalProps> = ({ bird, open, onClose }
             size="icon"
             className="text-gray-500 hover:text-gray-800"
             onClick={onClose}
+            aria-label="Fechar modal de detalhes da ave"
           >
             <X className="h-6 w-6" />
           </Button>
         </DialogHeader>
-        
+
         <div className="flex flex-col md:flex-row gap-6 mt-4">
           <div className="md:w-1/2 mb-6 md:mb-0">
-            <img 
-              src={bird.imageUrl} 
-              alt={bird.name} 
+            <img
+              src={bird.imageUrl}
+              alt={`Foto da ave ${bird.name}`}
               className="w-full h-auto rounded-lg"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500?text=Image+Not+Found';
@@ -60,26 +61,26 @@ const BirdDetailModal: React.FC<BirdDetailModalProps> = ({ bird, open, onClose }
             />
             <p className="text-sm text-gray-600 italic mt-2 text-center">{bird.scientificName}</p>
           </div>
-          
+
           <div className="md:w-1/2">
             <div className="mb-4">
               <h3 className="font-montserrat font-semibold text-lg mb-2">Descrição</h3>
               <p>{bird.description}</p>
             </div>
-            
+
             <div className="mb-4">
               <h3 className="font-montserrat font-semibold text-lg mb-2">Habitat</h3>
               <p>{bird.habitat}</p>
             </div>
-            
+
             <div className="mb-4">
               <h3 className="font-montserrat font-semibold text-lg mb-2">Dieta</h3>
               <p>{bird.diet}</p>
             </div>
-            
+
             <div className="mt-6">
-              <Button 
-                className="bg-[#4CAF50] hover:bg-[#388E3C] text-white font-montserrat" 
+              <Button
+                className="bg-[#4CAF50] hover:bg-[#388E3C] text-white font-montserrat"
                 onClick={handleOpenWikipedia}
               >
                 Ver na Wikipedia
