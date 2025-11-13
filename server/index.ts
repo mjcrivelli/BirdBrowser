@@ -1,6 +1,11 @@
 import express, { type Request, Response, NextFunction } from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
@@ -43,13 +48,24 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
+  // Caminho absoluto para a pasta "public/memoria"
+  const memoriaPath = path.join(__dirname, "../public/memoria");
+
+  // Servir arquivos estáticos do jogo
+  app.use("/memoria", express.static(memoriaPath));
+
+  // Rota principal do jogo da memória
+  app.get("/memoria", (_req: Request, res: Response) => {
+    res.sendFile(path.join(memoriaPath, "memoria.html"));
+  });
+
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
     res.status(status).json({ message });
-    throw err;
+     log(`ERROR: ${message}`);
   });
 
   // importantly only setup vite in development and after
@@ -65,11 +81,8 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
+  server.listen(
+    port, () => {
     log(`serving on port ${port}`);
   });
 })();
