@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Open+Sans:wght@400;600&display=swap');
+
+/* === VARIÁVEIS BASE (iguais à sua aplicação principal) === */
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(222.2, 84%, 4.9%);
+  --primary: hsl(122, 39%, 49%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(60, 76%, 50%);
+  --secondary-foreground: hsl(222.2, 47.4%, 11.2%);
+  --border: hsl(214.3, 31.8%, 91.4%);
+  --radius: 0.5rem;
+}
+
+body.dark {
+  --background: hsl(222.2, 84%, 4.9%);
+  --foreground: hsl(210, 40%, 98%);
+  --primary: hsl(122, 39%, 49%);
+  --secondary: hsl(60, 76%, 50%);
+  --border: hsl(217.2, 32.6%, 17.5%);
+}
+
+/* === BASE === */
+body {
+  font-family: 'Open Sans', sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  margin: 0;
+  padding: 2rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+}
+
+/* === TABULEIRO DO JOGO === */
+.board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+  justify-content: center;
+  max-width: 480px;
+  width: 100%;
+}
+
+.card {
+  background-color: var(--primary);
+  border-radius: var(--radius);
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card img {
+  width: 80%;
+  height: 80%;
+  display: none;
+  border-radius: var(--radius);
+  user-select: none;
+  pointer-events: none;
+}
+
+.card.flipped {
+  background-color: var(--background);
+  border: 2px solid var(--primary);
+}
+
+.card.flipped img {
+  display: block;
+}
+
+/* === BOTÃO DE REINICIAR === */
+button#restart {
+  margin-top: 2rem;
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button#restart:hover {
+  background-color: hsl(60, 76%, 45%);
+  transform: translateY(-2px);
+}
+
+/* === MODO ESCURO === */
+body.dark .card {
+  background-color: var(--foreground);
+}
+
+body.dark .card.flipped {
+  background-color: var(--background);
+}
+
+body.dark button#restart {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+body.dark button#restart:hover {
+  background-color: hsl(122, 39%, 42%);
+}
+
+/* === RESPONSIVIDADE === */
+@media (max-width: 480px) {
+  .board {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .card {
+    width: 90px;
+    height: 90px;
+  }
+}
+

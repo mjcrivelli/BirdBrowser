@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { Menu } from 'lucide-react';
 import Logo from './ui/logo';
 
@@ -18,6 +18,7 @@ const Header: React.FC = () => {
     { label: 'Eventos', href: '#', active: false },
     { label: 'Dicas', href: '#', active: false },
     { label: 'Aves da Toca', href: '/', active: true },
+    { label: 'Jogo da Memória', href: '/memoria', active: true },
     { label: 'Contato', href: '#', active: false },
   ];
 
