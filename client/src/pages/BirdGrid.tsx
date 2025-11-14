@@ -11,12 +11,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Eye, Filter } from 'lucide-react';
 import type { BirdWithSeenStatus } from '@shared/schema';
+import { announce } from '@/lib/utils';
 
 const BirdGrid: React.FC = () => {
   // Get bird data using our hooks
   const { birds, seenBirds, unseenBirds, isLoading, isError, refetch } = useBirds();
   const { toggleBirdSeenStatus, isPending } = useBirdSightings();
-  
+
   // Local state
   const [selectedBirdId, setSelectedBirdId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<string>('all');
@@ -24,23 +25,43 @@ const BirdGrid: React.FC = () => {
   // Handle clicking on a bird card to expand/collapse details
   const handleBirdSelection = (bird: BirdWithSeenStatus) => {
     setSelectedBirdId(prevId => prevId === bird.id ? null : bird.id);
+    if (selectedBirdId === bird.id) {
+      announce(`Fechando detalhes de ${bird.name}`);
+    } else {
+      announce(`Abrindo detalhes de ${bird.name}`);
+    }
   };
 
-  // Close the detailed view
+  // Close the detailed view and restore focus to the originating card
   const closeDetail = () => {
+    const idToRestore = selectedBirdId;
     setSelectedBirdId(null);
+    // After the card re-renders, restore focus
+    if (idToRestore != null) {
+      setTimeout(() => {
+        const card = document.getElementById(`bird-card-${idToRestore}`);
+        if (card) {
+          (card as HTMLElement).focus();
+        }
+        const b = birds.find(brd => brd.id === idToRestore);
+        if (b) {
+          announce(`Fechando detalhes de ${b.name}`);
+        }
+      }, 0);
+    }
   };
 
   // Handle toggling the seen status of a bird
   const handleToggleSeen = (bird: BirdWithSeenStatus) => {
     console.log('BirdGrid - handleToggleSeen called with:', bird.id, bird.name, bird.seen);
     toggleBirdSeenStatus(bird);
+    announce(bird.seen ? `${bird.name} marcada como não vista` : `${bird.name} marcada como vista`);
   };
 
   // Determine which birds to display based on active tab
-  const displayBirds = 
+  const displayBirds =
     activeTab === 'all' ? birds :
-    activeTab === 'seen' ? seenBirds : 
+    activeTab === 'seen' ? seenBirds :
     unseenBirds;
 
   // Loading state
@@ -57,7 +78,7 @@ const BirdGrid: React.FC = () => {
             {Array.from({ length: 12 }).map((_, index) => (
               <div key={index} className="rounded-lg p-2 sm:p-3 bg-white">
                 <div className="flex justify-center">
-                  <Skeleton className="w-[120px] h-[120px] sm:w-[130px] sm:h-[130px] rounded-full" />
+                  <Skeleton className="w-[7.5rem] h-[7.5rem] sm:w-[8.125rem] sm:h-[8.125rem] rounded-full" />
                 </div>
                 <div className="text-center mt-2 sm:mt-3">
                   <Skeleton className="h-5 w-3/4 mx-auto" />
@@ -91,12 +112,12 @@ const BirdGrid: React.FC = () => {
       <Header />
       <main className="container mx-auto px-4 py-8 relative">
         <h1 className="text-4xl md:text-5xl font-montserrat font-bold text-center mb-8">Aves da Cachoeira da Toca</h1>
-        
+
         {/* Seen birds counter */}
         {seenBirds.length > 0 && (
           <BirdCounter seenBirds={seenBirds} />
         )}
-        
+
         {/* Tabs for filtering birds */}
         <div className="flex justify-center mb-6">
           <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full max-w-md">
@@ -117,40 +138,41 @@ const BirdGrid: React.FC = () => {
         </div>
 
         {displayBirds.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 mb-12">
+          <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 mb-12" role="list" aria-label="Lista de aves">
             {displayBirds.map((bird) => {
               // If this bird is selected, render BirdDetail in its place
               if (bird.id === selectedBirdId) {
                 return (
-                  <div key={bird.id} className="col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-5 xl:col-span-6">
-                    <BirdDetail 
-                      bird={bird} 
+                  <li key={bird.id} className="col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-5 xl:col-span-6">
+                    <BirdDetail
+                      bird={bird}
                       onClose={closeDetail}
                       onToggleSeen={handleToggleSeen}
                     />
-                  </div>
+                  </li>
                 );
               }
-              
+
               // Otherwise render the BirdCard
               return (
-                <BirdCard 
-                  key={bird.id} 
-                  bird={bird} 
-                  onClick={handleBirdSelection}
-                  onToggleSeen={handleToggleSeen}
-                />
+                <li key={bird.id}>
+                  <BirdCard
+                    bird={bird}
+                    onClick={handleBirdSelection}
+                    onToggleSeen={handleToggleSeen}
+                  />
+                </li>
               );
             })}
-          </div>
+          </ul>
         ) : (
           // If the filtered list is empty
-          <EmptyState 
+          <EmptyState
             message={
-              activeTab === 'seen' 
+              activeTab === 'seen'
                 ? "Você ainda não marcou nenhuma ave como vista. Explore a lista de aves e marque as que você já viu!"
                 : "Nenhuma ave encontrada com os filtros selecionados."
-            } 
+            }
           />
         )}
       </main>

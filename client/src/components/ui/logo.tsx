@@ -6,12 +6,13 @@ interface LogoProps {
 
 const Logo: React.FC<LogoProps> = ({ size = 56 }) => {
   return (
-    <svg 
-      width={size} 
-      height={size} 
-      viewBox="0 0 100 100" 
-      fill="none" 
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
     >
       <rect width="100" height="100" rx="0" fill="#4CAF50" />
       <path d="M0 80C0 80 20 60 40 70C60 80 80 60 100 80V100H0V80Z" fill="#8BC34A" />
