@@ -102,7 +102,7 @@ const Memoria: React.FC = () => {
                   >
                     <img
                       src={card.img}
-                      alt="bird"
+                      alt="Ave"
                       className="h-24 w-24 object-cover rounded"
                     />
                   </div>
@@ -118,4 +118,3 @@ const Memoria: React.FC = () => {
 };
 
 export default Memoria;
-

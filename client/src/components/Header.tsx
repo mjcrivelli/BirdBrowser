@@ -39,7 +39,6 @@ const Header: React.FC = () => {
                   ? "text-[#4CAF50] hover:text-[#388E3C] font-semibold"
                   : "text-[#333333] hover:text-[#4CAF50]"
               }`}
-              aria-current={link.active ? 'page' : undefined}
             >
               {link.label}
             </Link>
@@ -71,7 +70,6 @@ const Header: React.FC = () => {
                     : "text-[#333333] hover:text-[#4CAF50]"
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
-                aria-current={link.active ? 'page' : undefined}
               >
                 {link.label}
               </Link>
