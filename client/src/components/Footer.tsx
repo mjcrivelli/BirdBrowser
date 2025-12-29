@@ -1,8 +1,8 @@
-import React from 'react';
 import { Link } from 'wouter';
-import { Facebook, Instagram, Twitter } from 'lucide-react';
+import { Facebook, Instagram } from 'lucide-react';
+import { SiTripadvisor } from 'react-icons/si';
 
-const Footer: React.FC = () => {
+const Footer = () => {
   return (
     <footer className="bg-gray-100 border-t border-[#DDEBDD]" role="contentinfo">
       <div className="container mx-auto px-4 py-8">
@@ -19,10 +19,8 @@ const Footer: React.FC = () => {
               <h4 className="font-montserrat font-semibold mb-3">Navegação</h4>
               <nav aria-label="Navegação do rodapé">
                 <ul className="text-sm space-y-2">
-                  <li><Link href="#" className="text-gray-600 hover:text-[#4CAF50] transition-colors">Início</Link></li>
-                  <li><Link href="#" className="text-gray-600 hover:text-[#4CAF50] transition-colors">Nossa História</Link></li>
-                  <li><Link href="#" className="text-gray-600 hover:text-[#4CAF50] transition-colors">Clube Toca</Link></li>
-                  <li><Link href="#" className="text-gray-600 hover:text-[#4CAF50] transition-colors">Aves da Toca</Link></li>
+                  <li><Link href="/" className="text-gray-600 hover:text-[#4CAF50] transition-colors">Aves da Toca</Link></li>
+                  <li><Link href="/memoria" className="text-gray-600 hover:text-[#4CAF50] transition-colors">Jogo da Memória</Link></li>
                 </ul>
               </nav>
             </div>
@@ -30,23 +28,23 @@ const Footer: React.FC = () => {
             <div>
               <h4 className="font-montserrat font-semibold mb-3">Contato</h4>
               <ul className="text-sm space-y-2">
-                <li className="text-gray-600">(XX) XXXX-XXXX</li>
-                <li className="text-gray-600">contato@cachoeiradatoca.com.br</li>
-                <li className="text-gray-600">Rod. XXX, Km XX - SP</li>
+                <li className="text-gray-600">+55 12 997933354</li>
+                <li className="text-gray-600">vitoria@cachoeiradatoca.com</li>
+                <li className="text-gray-600">Estrada da Toca, 1000, Ilhabela-SP, Brasil</li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-montserrat font-semibold mb-3">Redes Sociais</h4>
               <div className="flex space-x-3">
-                <a href="#" className="text-gray-600 hover:text-[#4CAF50] transition-colors" aria-label="Facebook da Cachoeira da Toca">
+                <a href="https://www.facebook.com/CachoeiraDaToca/?rf=1284221224961983" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-[#4CAF50] transition-colors" aria-label="Facebook da Cachoeira da Toca">
                   <Facebook className="w-5 h-5" />
                 </a>
-                <a href="#" className="text-gray-600 hover:text-[#4CAF50] transition-colors" aria-label="Instagram da Cachoeira da Toca">
+                <a href="https://www.instagram.com/cachoeiradatoca/" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-[#4CAF50] transition-colors" aria-label="Instagram da Cachoeira da Toca">
                   <Instagram className="w-5 h-5" />
                 </a>
-                <a href="#" className="text-gray-600 hover:text-[#4CAF50] transition-colors" aria-label="Twitter da Cachoeira da Toca">
-                  <Twitter className="w-5 h-5" />
+                <a href="https://www.tripadvisor.com/Attraction_Review-g609135-d2427343-Reviews-Cachoeira_Da_Toca-Ilhabela_State_of_Sao_Paulo.html" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-[#4CAF50] transition-colors" aria-label="TripAdvisor da Cachoeira da Toca">
+                  <SiTripadvisor className="w-5 h-5" />
                 </a>
               </div>
             </div>
