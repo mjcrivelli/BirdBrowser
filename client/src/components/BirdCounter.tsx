@@ -39,7 +39,7 @@ const BirdCounter: React.FC<BirdCounterProps> = ({ seenBirds }) => {
       </span>
       <button
         type="button"
-        className="fixed right-6 bottom-6 bg-[#4CAF50] text-white py-2 px-4 rounded-full shadow-lg hover:bg-[#388E3C] transition-colors flex items-center gap-2"
+        className="fixed right-6 bottom-6 z-50 bg-[#4CAF50] text-white py-2 px-4 rounded-full shadow-lg hover:bg-[#388E3C] transition-colors flex items-center gap-2"
         onClick={handleCounterClick}
         aria-haspopup="dialog"
         aria-label={`Você tem ${count} ${text}. Abrir opções para download.`}
