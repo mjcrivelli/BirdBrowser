@@ -224,7 +224,11 @@ const BirdCard: React.FC<BirdCardProps> = ({
               )}
             </button>
             <button
-              onClick={(e) => { e.stopPropagation(); setIsEditDialogOpen(true); }}
+              onClick={(e) => { 
+                e.preventDefault();
+                e.stopPropagation(); 
+                setIsEditDialogOpen(true); 
+              }}
               className="absolute bottom-0 left-1/4 bg-orange-500 text-white rounded-full p-2 hover:bg-orange-600 transition-colors shadow-lg"
               aria-label={`Editar informações de ${bird.name}`}
               data-testid={`button-edit-${bird.id}`}
@@ -261,11 +265,11 @@ const BirdCard: React.FC<BirdCardProps> = ({
       )}
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
           <DialogHeader>
             <DialogTitle>Editar informações de {bird.name}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-4" onClick={(e) => e.stopPropagation()}>
             <div>
               <label className="text-sm font-medium">Nome</label>
               <Input value={editData.name} onChange={(e) => setEditData({...editData, name: e.target.value})} />
@@ -276,15 +280,15 @@ const BirdCard: React.FC<BirdCardProps> = ({
             </div>
             <div>
               <label className="text-sm font-medium">Descrição</label>
-              <textarea className="w-full p-2 border rounded-md text-sm" rows={3} value={editData.description} onChange={(e) => setEditData({...editData, description: e.target.value})} />
+              <textarea className="w-full p-2 border border-gray-300 rounded-md text-sm bg-white text-black" rows={3} value={editData.description} onChange={(e) => setEditData({...editData, description: e.target.value})} />
             </div>
             <div>
               <label className="text-sm font-medium">Habitat</label>
-              <textarea className="w-full p-2 border rounded-md text-sm" rows={2} value={editData.habitat} onChange={(e) => setEditData({...editData, habitat: e.target.value})} />
+              <textarea className="w-full p-2 border border-gray-300 rounded-md text-sm bg-white text-black" rows={2} value={editData.habitat} onChange={(e) => setEditData({...editData, habitat: e.target.value})} />
             </div>
             <div>
               <label className="text-sm font-medium">Dieta</label>
-              <textarea className="w-full p-2 border rounded-md text-sm" rows={2} value={editData.diet} onChange={(e) => setEditData({...editData, diet: e.target.value})} />
+              <textarea className="w-full p-2 border border-gray-300 rounded-md text-sm bg-white text-black" rows={2} value={editData.diet} onChange={(e) => setEditData({...editData, diet: e.target.value})} />
             </div>
             <div>
               <label className="text-sm font-medium">URL Wikipedia</label>
