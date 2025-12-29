@@ -184,6 +184,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // API endpoint to seed birds to database
+  app.post("/api/seed-birds", async (req, res) => {
+    try {
+      const count = await storage.seedBirdsToDatabase();
+      res.json({ success: true, count, message: `Seeded ${count} birds to database` });
+    } catch (error) {
+      console.error("Error seeding birds:", error);
+      res.status(500).json({ message: "Failed to seed birds" });
+    }
+  });
+
+  // API endpoint to record PDF generation event
+  app.post("/api/pdf-generated", async (req, res) => {
+    try {
+      console.log("POST /api/pdf-generated - Request body:", req.body);
+      
+      const recordSchema = z.object({
+        birdCount: z.number(),
+        birdNames: z.array(z.string()),
+        latitude: z.number().nullable().optional(),
+        longitude: z.number().nullable().optional(),
+      });
+      
+      const validationResult = recordSchema.safeParse(req.body);
+
+      if (!validationResult.success) {
+        console.log("Validation failed:", validationResult.error.errors);
+        return res.status(400).json({ 
+          message: "Invalid PDF generation data", 
+          errors: validationResult.error.errors 
+        });
+      }
+
+      const season = getSouthernHemisphereSeason();
+      
+      const record = await storage.addSightingRecord({
+        birdId: 0,
+        birdName: `PDF Generated: ${validationResult.data.birdCount} birds (${validationResult.data.birdNames.join(', ')})`,
+        latitude: validationResult.data.latitude ?? null,
+        longitude: validationResult.data.longitude ?? null,
+        season,
+      });
+      
+      console.log("PDF generation record created:", record);
+      res.status(201).json(record);
+    } catch (error) {
+      console.error("Error recording PDF generation:", error);
+      res.status(500).json({ message: "Failed to record PDF generation" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

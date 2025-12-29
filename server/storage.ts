@@ -1,5 +1,7 @@
 import { readFileSync } from 'fs';
-import { Bird, BirdSighting, BirdWithSeenStatus, InsertBird, InsertBirdSighting, InsertUser, User, InsertSightingRecord, SightingRecord } from '@shared/schema';
+import { Bird, BirdSighting, BirdWithSeenStatus, InsertBird, InsertBirdSighting, InsertUser, User, InsertSightingRecord, SightingRecord, birds, sightingRecords, birdSightings, users } from '@shared/schema';
+import { db } from './db';
+import { eq, and } from 'drizzle-orm';
 
 export function getSouthernHemisphereSeason(date: Date = new Date()): string {
   const month = date.getMonth() + 1;
@@ -30,6 +32,7 @@ export interface IStorage {
   getBirdSightings(userId: number): Promise<BirdSighting[]>;
   addSightingRecord(record: InsertSightingRecord): Promise<SightingRecord>;
   getSightingRecords(): Promise<SightingRecord[]>;
+  seedBirdsToDatabase(): Promise<number>;
 }
 
 export class MemStorage implements IStorage {
@@ -278,24 +281,76 @@ export class MemStorage implements IStorage {
   }
 
   async addSightingRecord(record: InsertSightingRecord): Promise<SightingRecord> {
-    const id = this.currentRecordId++;
-    const newRecord: SightingRecord = {
-      id,
-      birdId: record.birdId,
-      birdName: record.birdName,
-      timestamp: new Date(),
-      latitude: record.latitude ?? null,
-      longitude: record.longitude ?? null,
-      season: record.season,
-    };
-    this.sightingRecords.set(id, newRecord);
-    console.log(`Created new sighting record: id=${id}, bird=${record.birdName}, season=${record.season}`);
-    return newRecord;
+    try {
+      const [newRecord] = await db.insert(sightingRecords).values({
+        birdId: record.birdId,
+        birdName: record.birdName,
+        latitude: record.latitude,
+        longitude: record.longitude,
+        season: record.season,
+      }).returning();
+      
+      console.log(`Created sighting record in database: id=${newRecord.id}, bird=${record.birdName}, season=${record.season}`);
+      return newRecord;
+    } catch (error) {
+      console.error('Error adding sighting record to database, using in-memory fallback:', error);
+      const id = this.currentRecordId++;
+      const newRecord: SightingRecord = {
+        id,
+        birdId: record.birdId,
+        birdName: record.birdName,
+        timestamp: new Date(),
+        latitude: record.latitude ?? null,
+        longitude: record.longitude ?? null,
+        season: record.season,
+      };
+      this.sightingRecords.set(id, newRecord);
+      return newRecord;
+    }
   }
 
   async getSightingRecords(): Promise<SightingRecord[]> {
-    return Array.from(this.sightingRecords.values());
+    try {
+      const records = await db.select().from(sightingRecords);
+      return records;
+    } catch (error) {
+      console.error('Error fetching sighting records from database:', error);
+      return Array.from(this.sightingRecords.values());
+    }
   }
+
+  async seedBirdsToDatabase(): Promise<number> {
+    try {
+      const dataPath = './bird_data.json';
+      const jsonData = readFileSync(dataPath, 'utf8');
+      const birdData: InsertBird[] = JSON.parse(jsonData);
+      
+      const existingBirds = await db.select().from(birds);
+      if (existingBirds.length > 0) {
+        console.log(`Database already has ${existingBirds.length} birds, skipping seed`);
+        return existingBirds.length;
+      }
+      
+      for (const bird of birdData) {
+        await db.insert(birds).values({
+          name: bird.name,
+          scientificName: bird.scientificName,
+          description: bird.description,
+          habitat: bird.habitat,
+          diet: bird.diet,
+          imageUrl: bird.imageUrl,
+          wikipediaUrl: bird.wikipediaUrl,
+        });
+      }
+      
+      console.log(`Seeded ${birdData.length} birds to database`);
+      return birdData.length;
+    } catch (error) {
+      console.error('Error seeding birds to database:', error);
+      throw error;
+    }
+  }
+
 }
 
 export const storage = new MemStorage();

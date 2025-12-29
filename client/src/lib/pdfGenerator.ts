@@ -2,6 +2,49 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import type { BirdWithSeenStatus } from '@shared/schema';
 
+const recordPdfGeneration = async (seenBirds: BirdWithSeenStatus[]) => {
+  try {
+    let latitude: number | null = null;
+    let longitude: number | null = null;
+
+    if (navigator.geolocation) {
+      try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: false,
+            timeout: 5000,
+            maximumAge: 600000
+          });
+        });
+        latitude = position.coords.latitude;
+        longitude = position.coords.longitude;
+      } catch (err) {
+        console.log('Could not get location for PDF generation record');
+      }
+    }
+
+    const response = await fetch('/api/pdf-generated', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        birdCount: seenBirds.length,
+        birdNames: seenBirds.map(b => b.name),
+        latitude,
+        longitude,
+      }),
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      console.error('Failed to record PDF generation:', response.status);
+    } else {
+      console.log('PDF generation recorded successfully');
+    }
+  } catch (error) {
+    console.error('Error recording PDF generation:', error);
+  }
+};
+
 /**
  * Generate a PDF of the birds that the user has seen
  * @param seenBirds The list of birds that the user has seen
@@ -11,6 +54,8 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
     alert('Você ainda não marcou nenhuma ave como vista!');
     return;
   }
+
+  recordPdfGeneration(seenBirds);
 
   // Create a temporary container to render the PDF content
   const tempContainer = document.createElement('div');
