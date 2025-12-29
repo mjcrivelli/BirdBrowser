@@ -2,9 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Bird, BirdWithSeenStatus, BirdSighting, SightingRecord } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useState, useEffect } from "react";
-
-// Default user ID until we implement authentication
-const DEFAULT_USER_ID = 1;
+import { getVisitorId } from "@/lib/visitorId";
 
 interface UserLocation {
   latitude: number | null;
@@ -57,8 +55,9 @@ interface RemoveBirdResponse {
 /**
  * Hook for accessing and managing bird data
  */
-export function useBirds(userId: number = DEFAULT_USER_ID) {
+export function useBirds() {
   const queryClient = useQueryClient();
+  const visitorId = getVisitorId();
   
   // Get all birds with their seen status
   const {
@@ -68,8 +67,8 @@ export function useBirds(userId: number = DEFAULT_USER_ID) {
     error,
     refetch
   } = useQuery<BirdWithSeenStatus[]>({
-    queryKey: ['/api/birds', { userId }],
-    queryFn: () => fetch(`/api/birds?userId=${userId}`).then(res => res.json()),
+    queryKey: ['/api/birds', { visitorId }],
+    queryFn: () => fetch(`/api/birds?visitorId=${visitorId}`).then(res => res.json()),
   });
   
   // Helper function to get a specific bird by ID
@@ -113,7 +112,7 @@ interface MarkBirdWithNameArgs {
  */
 export function useBirdSightings() {
   const queryClient = useQueryClient();
-  const userId = DEFAULT_USER_ID;
+  const visitorId = getVisitorId();
   const { location } = useUserLocation();
   
   // Helper to record sighting with location
@@ -152,7 +151,7 @@ export function useBirdSightings() {
       const response = await fetch('/api/sightings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, birdId }),
+        body: JSON.stringify({ visitorId, birdId }),
         credentials: 'include'
       });
       
@@ -163,44 +162,36 @@ export function useBirdSightings() {
       return response.json();
     },
     onMutate: async ({ birdId }) => {
-      // Cancel any outgoing refetches to avoid overwriting our optimistic update
-      await queryClient.cancelQueries({ queryKey: ['/api/birds', { userId }] });
+      await queryClient.cancelQueries({ queryKey: ['/api/birds', { visitorId }] });
       
-      // Snapshot the previous birds data
       const previousBirds = queryClient.getQueryData<BirdWithSeenStatus[]>(
-        ['/api/birds', { userId }]
+        ['/api/birds', { visitorId }]
       );
       
-      // Optimistically update the birds cache
       if (previousBirds) {
         const updatedBirds = previousBirds.map(bird => 
           bird.id === birdId ? { ...bird, seen: true } : bird
         );
         
         queryClient.setQueryData(
-          ['/api/birds', { userId }], 
+          ['/api/birds', { visitorId }], 
           updatedBirds
         );
       }
       
-      // Return a context object with the snapshotted value
       return { previousBirds };
     },
     
     onSuccess: (data) => {
       console.log('Successfully marked bird as seen:', data);
-      
-      // No need to invalidate queries or set data again here
-      // as we're handling it on the backend already
     },
     
     onError: (error, { birdId }, context: any) => {
       console.error('Failed to mark bird as seen:', error);
       
-      // If the mutation fails, roll back to the previous state
       if (context?.previousBirds) {
         queryClient.setQueryData(
-          ['/api/birds', { userId }], 
+          ['/api/birds', { visitorId }], 
           context.previousBirds
         );
       }
@@ -211,7 +202,7 @@ export function useBirdSightings() {
   const markBirdAsUnseen = useMutation<RemoveBirdResponse, Error, number>({
     mutationFn: async (birdId: number) => {
       console.log(`Marking bird as unseen: ${birdId}`);
-      const response = await fetch(`/api/sightings/${userId}/${birdId}`, {
+      const response = await fetch(`/api/sightings/${visitorId}/${birdId}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -223,44 +214,36 @@ export function useBirdSightings() {
       return response.json();
     },
     onMutate: async (birdId) => {
-      // Cancel any outgoing refetches to avoid overwriting our optimistic update
-      await queryClient.cancelQueries({ queryKey: ['/api/birds', { userId }] });
+      await queryClient.cancelQueries({ queryKey: ['/api/birds', { visitorId }] });
       
-      // Snapshot the previous birds data
       const previousBirds = queryClient.getQueryData<BirdWithSeenStatus[]>(
-        ['/api/birds', { userId }]
+        ['/api/birds', { visitorId }]
       );
       
-      // Optimistically update the birds cache
       if (previousBirds) {
         const updatedBirds = previousBirds.map(bird => 
           bird.id === birdId ? { ...bird, seen: false } : bird
         );
         
         queryClient.setQueryData(
-          ['/api/birds', { userId }], 
+          ['/api/birds', { visitorId }], 
           updatedBirds
         );
       }
       
-      // Return a context object with the snapshotted value
       return { previousBirds };
     },
     
     onSuccess: (data) => {
       console.log('Successfully marked bird as unseen:', data);
-      
-      // No need to invalidate queries or set data again here
-      // as we're handling it on the backend already
     },
     
     onError: (error, birdId, context: any) => {
       console.error('Failed to mark bird as unseen:', error);
       
-      // If the mutation fails, roll back to the previous state
       if (context?.previousBirds) {
         queryClient.setQueryData(
-          ['/api/birds', { userId }], 
+          ['/api/birds', { visitorId }], 
           context.previousBirds
         );
       }

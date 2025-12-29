@@ -11,28 +11,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   registerObjectStorageRoutes(app);
   // API endpoint to get all birds
   app.get("/api/birds", async (req, res) => {
-    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.setHeader('Cache-Control', 'no-cache');
     try {
-      // Check if we should include seen status
-      const userIdParam = req.query.userId;
-      let userId: number | undefined = undefined;
-
-      if (userIdParam && typeof userIdParam === 'string') {
-        userId = parseInt(userIdParam);
-        if (isNaN(userId)) {
-          userId = undefined;
-        }
-      }
-
-      // If userId is provided, return birds with seen status
-      if (userId !== undefined) {
-        const birdsWithStatus = await storage.getBirdsWithSeenStatus(userId);
+      const visitorId = req.query.visitorId as string | undefined;
+      
+      if (visitorId) {
+        const user = await storage.getOrCreateUserByVisitorId(visitorId);
+        const birdsWithStatus = await storage.getBirdsWithSeenStatus(user.id);
         return res.json(birdsWithStatus);
       }
 
-      // Otherwise return all birds
       const birds = await storage.getBirds();
-      res.json(birds);
+      res.json(birds.map(bird => ({ ...bird, seen: false })));
     } catch (error) {
       console.error("Error fetching birds:", error);
       res.status(500).json({ message: "Failed to fetch birds" });
@@ -64,23 +54,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("POST /api/sightings - Request body:", req.body);
       
-      const validationResult = insertBirdSightingSchema.safeParse(req.body);
-
-      if (!validationResult.success) {
-        console.log("Validation failed:", validationResult.error.errors);
-        return res.status(400).json({ 
-          message: "Invalid sighting data", 
-          errors: validationResult.error.errors 
-        });
+      const { visitorId, birdId } = req.body;
+      
+      if (!visitorId || !birdId) {
+        return res.status(400).json({ message: "Missing visitorId or birdId" });
       }
-
-      const sighting = await storage.addBirdSighting(validationResult.data);
+      
+      const user = await storage.getOrCreateUserByVisitorId(visitorId);
+      
+      const sighting = await storage.addBirdSighting({ userId: user.id, birdId });
       console.log("Bird sighting added successfully:", sighting);
       
-      // Get fresh data with updated seen status
-      const birdsWithStatus = await storage.getBirdsWithSeenStatus(validationResult.data.userId);
+      const birdsWithStatus = await storage.getBirdsWithSeenStatus(user.id);
       
-      // Return both the sighting and updated birds list
       res.status(201).json({
         sighting,
         birds: birdsWithStatus
@@ -92,25 +78,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // API endpoint to remove a bird sighting (mark as not seen)
-  app.delete("/api/sightings/:userId/:birdId", async (req, res) => {
+  app.delete("/api/sightings/:visitorId/:birdId", async (req, res) => {
     try {
-      console.log(`DELETE /api/sightings/${req.params.userId}/${req.params.birdId}`);
+      const { visitorId, birdId: birdIdParam } = req.params;
+      console.log(`DELETE /api/sightings/${visitorId}/${birdIdParam}`);
       
-      const userId = parseInt(req.params.userId);
-      const birdId = parseInt(req.params.birdId);
+      const birdId = parseInt(birdIdParam);
 
-      if (isNaN(userId) || isNaN(birdId)) {
+      if (!visitorId || isNaN(birdId)) {
         console.log("Invalid parameters:", req.params);
-        return res.status(400).json({ message: "Invalid userId or birdId" });
+        return res.status(400).json({ message: "Invalid visitorId or birdId" });
       }
 
-      const result = await storage.removeBirdSighting(userId, birdId);
+      const user = await storage.getOrCreateUserByVisitorId(visitorId);
+      const result = await storage.removeBirdSighting(user.id, birdId);
       console.log("Remove bird sighting result:", result);
 
-      // Get fresh data with updated seen status
-      const birdsWithStatus = await storage.getBirdsWithSeenStatus(userId);
+      const birdsWithStatus = await storage.getBirdsWithSeenStatus(user.id);
       
-      // Return both the success status and updated birds list
       res.json({
         success: true,
         birds: birdsWithStatus

@@ -27,6 +27,7 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  getOrCreateUserByVisitorId(visitorId: string): Promise<User>;
   addBirdSighting(sighting: InsertBirdSighting): Promise<BirdSighting>;
   removeBirdSighting(userId: number, birdId: number): Promise<boolean>;
   getBirdSightings(userId: number): Promise<BirdSighting[]>;
@@ -42,6 +43,7 @@ export interface IStorage {
 export class MemStorage implements IStorage {
   private birds: Map<number, Bird>;
   private users: Map<number, User>;
+  private visitorIdToUserId: Map<string, number>;
   private birdSightings: Map<number, BirdSighting>;
   private sightingRecords: Map<number, SightingRecord>;
   private catalogAboutData: CatalogAbout | null;
@@ -53,6 +55,7 @@ export class MemStorage implements IStorage {
   constructor() {
     this.birds = new Map();
     this.users = new Map();
+    this.visitorIdToUserId = new Map();
     this.birdSightings = new Map();
     this.sightingRecords = new Map();
     this.catalogAboutData = null;
@@ -219,6 +222,27 @@ export class MemStorage implements IStorage {
     const user: User = { ...insertUser, id };
     this.users.set(id, user);
     return user;
+  }
+
+  async getOrCreateUserByVisitorId(visitorId: string): Promise<User> {
+    const existingUserId = this.visitorIdToUserId.get(visitorId);
+    
+    if (existingUserId !== undefined) {
+      const user = this.users.get(existingUserId);
+      if (user) {
+        return user;
+      }
+    }
+    
+    const newUser = await this.createUser({
+      username: `visitor_${visitorId.substring(0, 8)}`,
+      password: visitorId
+    });
+    
+    this.visitorIdToUserId.set(visitorId, newUser.id);
+    console.log(`Created new anonymous user: id=${newUser.id}, visitorId=${visitorId.substring(0, 8)}...`);
+    
+    return newUser;
   }
   
   async getBirdsWithSeenStatus(userId?: number): Promise<BirdWithSeenStatus[]> {
