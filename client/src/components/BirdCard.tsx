@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
-import { Check } from 'lucide-react';
+import { Check, Camera, Loader2 } from 'lucide-react';
 import type { BirdWithSeenStatus } from '@shared/schema';
 import { announce } from '@/lib/utils';
+import { useAdmin } from '@/contexts/AdminContext';
+import { useToast } from '@/hooks/use-toast';
+import { queryClient } from '@/lib/queryClient';
 
 interface BirdCardProps {
   bird: BirdWithSeenStatus;
@@ -21,16 +24,75 @@ const BirdCard: React.FC<BirdCardProps> = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { isAdminMode, adminPassword } = useAdmin();
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Use the image URL directly from the bird data
-    // Add https: prefix to protocol-relative URLs
-    if (bird.imageUrl && bird.imageUrl.startsWith('//')) {
-      setImageUrl(`https:${bird.imageUrl}`);
+    const url = bird.customImageUrl || bird.imageUrl;
+    if (url && url.startsWith('//')) {
+      setImageUrl(`https:${url}`);
     } else {
-      setImageUrl(bird.imageUrl);
+      setImageUrl(url);
     }
-  }, [bird.imageUrl]);
+  }, [bird.imageUrl, bird.customImageUrl]);
+
+  const handleUploadClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast({ title: 'Erro', description: 'Por favor, selecione uma imagem.', variant: 'destructive' });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const uploadRes = await fetch('/api/object-storage/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: `bird-${bird.id}-${Date.now()}.${file.name.split('.').pop()}`,
+          contentType: file.type,
+          isPublic: true,
+        }),
+      });
+
+      if (!uploadRes.ok) throw new Error('Failed to get upload URL');
+      const { uploadUrl, publicUrl } = await uploadRes.json();
+
+      const uploadFileRes = await fetch(uploadUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type },
+        body: file,
+      });
+
+      if (!uploadFileRes.ok) throw new Error('Failed to upload file');
+
+      const updateRes = await fetch(`/api/admin/birds/${bird.id}/image`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: adminPassword, customImageUrl: publicUrl }),
+      });
+
+      if (!updateRes.ok) throw new Error('Failed to update bird image');
+
+      queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
+      toast({ title: 'Sucesso', description: 'Imagem atualizada com sucesso!' });
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({ title: 'Erro', description: 'Falha ao enviar imagem.', variant: 'destructive' });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -100,6 +162,33 @@ const BirdCard: React.FC<BirdCardProps> = ({
           <div className="absolute top-0 right-1/4 bg-[#4CAF50] text-white rounded-full p-1" aria-hidden="true">
             <Check className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
           </div>
+        )}
+
+        {/* Admin upload button */}
+        {isAdminMode && (
+          <>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+              data-testid={`input-upload-${bird.id}`}
+            />
+            <button
+              onClick={handleUploadClick}
+              disabled={isUploading}
+              className="absolute bottom-0 right-1/4 bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600 transition-colors shadow-lg"
+              aria-label={`Enviar nova foto para ${bird.name}`}
+              data-testid={`button-upload-${bird.id}`}
+            >
+              {isUploading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Camera className="h-4 w-4" />
+              )}
+            </button>
+          </>
         )}
       </div>
 
