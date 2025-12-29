@@ -7,9 +7,9 @@ const Footer = () => {
     <footer className="bg-gray-100 border-t border-[#DDEBDD]" role="contentinfo">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between">
-          <div className="mb-6 md:mb-0">
+          <div className="mb-6 md:mb-0 md:max-w-xs">
             <h3 className="font-montserrat font-bold text-lg mb-3">Cachoeira da Toca</h3>
-            <p className="text-sm text-gray-600 max-w-md">
+            <p className="text-sm text-gray-600">
               Localizada em meio à Mata Atlântica, a Cachoeira da Toca é um lugar único para observação de aves e contato com a natureza.
             </p>
           </div>
