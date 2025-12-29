@@ -33,6 +33,7 @@ export interface IStorage {
   addSightingRecord(record: InsertSightingRecord): Promise<SightingRecord>;
   getSightingRecords(): Promise<SightingRecord[]>;
   seedBirdsToDatabase(): Promise<number>;
+  updateBirdCustomImage(birdId: number, customImageUrl: string): Promise<Bird | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -348,6 +349,31 @@ export class MemStorage implements IStorage {
     } catch (error) {
       console.error('Error seeding birds to database:', error);
       throw error;
+    }
+  }
+
+  async updateBirdCustomImage(birdId: number, customImageUrl: string): Promise<Bird | undefined> {
+    try {
+      const [updatedBird] = await db
+        .update(birds)
+        .set({ customImageUrl })
+        .where(eq(birds.id, birdId))
+        .returning();
+      
+      if (updatedBird) {
+        this.birds.set(birdId, updatedBird);
+      }
+      
+      return updatedBird;
+    } catch (error) {
+      console.error('Error updating bird custom image:', error);
+      const bird = this.birds.get(birdId);
+      if (bird) {
+        bird.customImageUrl = customImageUrl;
+        this.birds.set(birdId, bird);
+        return bird;
+      }
+      return undefined;
     }
   }
 

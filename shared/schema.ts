@@ -10,6 +10,7 @@ export const birds = pgTable("birds", {
   habitat: text("habitat").notNull(),
   diet: text("diet").notNull(),
   imageUrl: text("image_url").notNull(),
+  customImageUrl: text("custom_image_url"),
   wikipediaUrl: text("wikipedia_url").notNull(),
 });
 

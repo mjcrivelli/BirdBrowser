@@ -3,8 +3,12 @@ import { createServer, type Server } from "http";
 import { storage, getSouthernHemisphereSeason } from "./storage";
 import { insertBirdSightingSchema, insertSightingRecordSchema } from "@shared/schema";
 import { z } from "zod";
+import { registerObjectStorageRoutes } from "./replit_integrations/object_storage";
+
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  registerObjectStorageRoutes(app);
   // API endpoint to get all birds
   app.get("/api/birds", async (req, res) => {
     res.setHeader('Cache-Control', 'public, max-age=3600');
@@ -232,6 +236,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error recording PDF generation:", error);
       res.status(500).json({ message: "Failed to record PDF generation" });
+    }
+  });
+
+  // Admin password verification endpoint
+  app.post("/api/admin/verify", (req, res) => {
+    const { password } = req.body;
+    if (password === ADMIN_PASSWORD) {
+      res.json({ success: true });
+    } else {
+      res.status(401).json({ success: false, message: "Invalid password" });
+    }
+  });
+
+  // Admin endpoint to update bird's custom image
+  app.put("/api/admin/birds/:id/image", async (req, res) => {
+    try {
+      const { password, customImageUrl } = req.body;
+      
+      if (password !== ADMIN_PASSWORD) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid bird ID" });
+      }
+
+      const updatedBird = await storage.updateBirdCustomImage(id, customImageUrl);
+      if (!updatedBird) {
+        return res.status(404).json({ message: "Bird not found" });
+      }
+
+      res.json(updatedBird);
+    } catch (error) {
+      console.error("Error updating bird image:", error);
+      res.status(500).json({ message: "Failed to update bird image" });
     }
   });
 
