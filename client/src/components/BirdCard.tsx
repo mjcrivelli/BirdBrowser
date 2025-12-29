@@ -118,7 +118,8 @@ const BirdCard: React.FC<BirdCardProps> = ({
 
       if (!updateRes.ok) throw new Error('Failed to update bird info');
 
-      queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
+      await queryClient.refetchQueries({ queryKey: ['/api/birds'] });
       setIsEditDialogOpen(false);
       toast({ title: 'Sucesso', description: 'Informações atualizadas com sucesso!' });
     } catch (error) {
