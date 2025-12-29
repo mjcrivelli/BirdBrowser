@@ -11,15 +11,8 @@ const Header: React.FC = () => {
   };
 
   const navLinks = [
-    { label: 'Início', href: '#', active: false },
-    { label: 'Nossa História', href: '#', active: false },
-    { label: 'Clube Toca', href: '#', active: false },
-    { label: 'Segurança', href: '#', active: false },
-    { label: 'Eventos', href: '#', active: false },
-    { label: 'Dicas', href: '#', active: false },
     { label: 'Aves da Toca', href: '/', active: true },
     { label: 'Jogo da Memória', href: '/memoria', active: true },
-    { label: 'Contato', href: '#', active: false },
   ];
 
   return (
