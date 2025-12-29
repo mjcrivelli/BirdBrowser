@@ -131,7 +131,7 @@ const BirdCard: React.FC<BirdCardProps> = ({
   return (
     <div
       id={`bird-card-${bird.id}`}
-      className={`${bird.seen ? 'bg-[#F5FFF5]' : 'bg-white'} rounded-lg p-2 sm:p-3 transition-all duration-300 ${isExpanded ? 'bg-[#F9FBF9]' : 'cursor-pointer hover:shadow-md hover:-translate-y-1'}`}
+      className={`${bird.seen ? 'bg-[#F5FFF5]' : 'bg-white'} rounded-lg p-2 sm:p-3 transition-all duration-300 flex flex-col h-full ${isExpanded ? 'bg-[#F9FBF9]' : 'cursor-pointer hover:shadow-md hover:-translate-y-1'}`}
       onClick={isExpanded ? undefined : () => onClick(bird)}
       role={isExpanded ? undefined : 'button'}
       tabIndex={isExpanded ? -1 : 0}
@@ -192,7 +192,7 @@ const BirdCard: React.FC<BirdCardProps> = ({
         )}
       </div>
 
-      <div className="text-center mt-2 sm:mt-3 flex flex-col items-center w-full px-1">
+      <div className="text-center mt-2 sm:mt-3 flex flex-col items-center w-full px-1 flex-1 justify-end">
         <h3 className="font-montserrat font-semibold text-base sm:text-lg w-full break-words">{bird.name}</h3>
         <p className="text-xs sm:text-sm text-gray-600 italic w-full break-words">{bird.scientificName}</p>
         <span id={descriptionId} className="visually-hidden">
