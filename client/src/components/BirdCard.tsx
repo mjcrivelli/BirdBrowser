@@ -192,17 +192,19 @@ const BirdCard: React.FC<BirdCardProps> = ({
         )}
       </div>
 
-      <div className="text-center mt-2 sm:mt-3 flex flex-col items-center w-full px-1 flex-1 justify-end">
+      <div className="text-center mt-2 sm:mt-3 flex flex-col items-center w-full px-1">
         <h3 className="font-montserrat font-semibold text-base sm:text-lg w-full break-words">{bird.name}</h3>
         <p className="text-xs sm:text-sm text-gray-600 italic w-full break-words">{bird.scientificName}</p>
         <span id={descriptionId} className="visually-hidden">
           Nome científico {bird.scientificName}. {bird.seen ? 'Marcada como vista.' : 'Ainda não vista.'} Pressione Enter ou Espaço para abrir os detalhes.
         </span>
+      </div>
 
-        {onToggleSeen && (
+      {onToggleSeen && (
+        <div className="flex-1 flex flex-col items-center justify-end w-full px-1 mt-2 sm:mt-3">
           <button
             onClick={handleSeenToggle}
-            className={`mt-2 px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-colors z-50 relative ${
+            className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-colors z-50 relative ${
               bird.seen
                 ? 'bg-[#DDEBDD] text-[#4CAF50] hover:bg-[#C8E6C9]'
                 : 'bg-[#4CAF50] text-white hover:bg-[#388E3C]'
@@ -212,8 +214,8 @@ const BirdCard: React.FC<BirdCardProps> = ({
           >
             {bird.seen ? 'Visto ✓' : 'Vi na Toca!'}
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
