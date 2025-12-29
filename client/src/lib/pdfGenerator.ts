@@ -166,11 +166,16 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
   tempContainer.appendChild(birdsContainer);
 
   try {
+    // Wait a bit for images to load
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     // Use html2canvas to capture the content
     const canvas = await html2canvas(tempContainer, {
-      scale: 1,
+      scale: 2,
       useCORS: true,
       allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: false,
     });
 
     // Create PDF
@@ -198,12 +203,16 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
     }
 
     // Save the PDF
-    pdf.save('aves-vistas-toca.pdf');
+    const fileName = `aves-vistas-${new Date().toISOString().split('T')[0]}.pdf`;
+    pdf.save(fileName);
+    console.log('PDF gerado e baixado com sucesso:', fileName);
   } catch (error) {
     console.error('Erro ao gerar o PDF:', error);
     alert('Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.');
   } finally {
     // Clean up the temporary element
-    document.body.removeChild(tempContainer);
+    if (tempContainer && tempContainer.parentNode) {
+      document.body.removeChild(tempContainer);
+    }
   }
 };
