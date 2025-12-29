@@ -79,17 +79,17 @@ const BirdCard: React.FC<BirdCardProps> = ({
       aria-expanded={isExpanded}
       aria-controls={isExpanded ? undefined : `bird-${bird.id}-details`}
     >
-      <div className="relative">
+      <div className="relative flex justify-center">
         {/* Placeholder shown until image loads */}
         {!imageLoaded && !imageError && (
-          <div className="w-[7.5rem] h-[7.5rem] sm:w-[8.125rem] sm:h-[8.125rem] rounded-full bg-gray-200 animate-pulse block mx-auto"></div>
+          <div className="w-[7.5rem] h-[7.5rem] sm:w-[8.125rem] sm:h-[8.125rem] rounded-full bg-gray-200 animate-pulse"></div>
         )}
 
         <LazyLoadImage
           src={imageUrl}
           alt={`Foto da ave ${bird.name}`}
           effect="blur"
-          className={`w-[7.5rem] h-[7.5rem] sm:w-[8.125rem] sm:h-[8.125rem] rounded-full object-cover block mx-auto ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+          className={`w-[7.5rem] h-[7.5rem] sm:w-[8.125rem] sm:h-[8.125rem] rounded-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
           onLoad={handleImageLoad}
           onError={handleImageError}
           loading="lazy"
@@ -97,7 +97,7 @@ const BirdCard: React.FC<BirdCardProps> = ({
 
         {/* Seen indicator */}
         {bird.seen && (
-          <div className="absolute top-0 right-0 bg-[#4CAF50] text-white rounded-full p-1" aria-hidden="true">
+          <div className="absolute top-0 right-1/4 bg-[#4CAF50] text-white rounded-full p-1" aria-hidden="true">
             <Check className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
           </div>
         )}
