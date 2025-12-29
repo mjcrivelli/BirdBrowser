@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
-import { Check, Camera, Loader2 } from 'lucide-react';
+import { Check, Camera, Loader2, Edit2 } from 'lucide-react';
 import type { BirdWithSeenStatus } from '@shared/schema';
 import { announce } from '@/lib/utils';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient } from '@/lib/queryClient';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface BirdCardProps {
   bird: BirdWithSeenStatus;
@@ -25,6 +28,16 @@ const BirdCard: React.FC<BirdCardProps> = ({
   const [imageError, setImageError] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isEditingInfo, setIsEditingInfo] = useState(false);
+  const [editData, setEditData] = useState({
+    name: bird.name,
+    scientificName: bird.scientificName,
+    description: bird.description,
+    habitat: bird.habitat,
+    diet: bird.diet,
+    wikipediaUrl: bird.wikipediaUrl,
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isAdminMode, adminPassword } = useAdmin();
   const { toast } = useToast();
@@ -91,6 +104,28 @@ const BirdCard: React.FC<BirdCardProps> = ({
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleEditSave = async () => {
+    setIsEditingInfo(true);
+    try {
+      const updateRes = await fetch(`/api/admin/birds/${bird.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: adminPassword, ...editData }),
+      });
+
+      if (!updateRes.ok) throw new Error('Failed to update bird info');
+
+      queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
+      setIsEditDialogOpen(false);
+      toast({ title: 'Sucesso', description: 'Informações atualizadas com sucesso!' });
+    } catch (error) {
+      console.error('Edit error:', error);
+      toast({ title: 'Erro', description: 'Falha ao atualizar informações.', variant: 'destructive' });
+    } finally {
+      setIsEditingInfo(false);
     }
   };
 
@@ -164,7 +199,7 @@ const BirdCard: React.FC<BirdCardProps> = ({
           </div>
         )}
 
-        {/* Admin upload button */}
+        {/* Admin buttons */}
         {isAdminMode && (
           <>
             <input
@@ -187,6 +222,14 @@ const BirdCard: React.FC<BirdCardProps> = ({
               ) : (
                 <Camera className="h-4 w-4" />
               )}
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); setIsEditDialogOpen(true); }}
+              className="absolute bottom-0 left-1/4 bg-orange-500 text-white rounded-full p-2 hover:bg-orange-600 transition-colors shadow-lg"
+              aria-label={`Editar informações de ${bird.name}`}
+              data-testid={`button-edit-${bird.id}`}
+            >
+              <Edit2 className="h-4 w-4" />
             </button>
           </>
         )}
@@ -216,6 +259,44 @@ const BirdCard: React.FC<BirdCardProps> = ({
           </button>
         </div>
       )}
+
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Editar informações de {bird.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">Nome</label>
+              <Input value={editData.name} onChange={(e) => setEditData({...editData, name: e.target.value})} />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Nome Científico</label>
+              <Input value={editData.scientificName} onChange={(e) => setEditData({...editData, scientificName: e.target.value})} />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Descrição</label>
+              <textarea className="w-full p-2 border rounded-md text-sm" rows={3} value={editData.description} onChange={(e) => setEditData({...editData, description: e.target.value})} />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Habitat</label>
+              <textarea className="w-full p-2 border rounded-md text-sm" rows={2} value={editData.habitat} onChange={(e) => setEditData({...editData, habitat: e.target.value})} />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Dieta</label>
+              <textarea className="w-full p-2 border rounded-md text-sm" rows={2} value={editData.diet} onChange={(e) => setEditData({...editData, diet: e.target.value})} />
+            </div>
+            <div>
+              <label className="text-sm font-medium">URL Wikipedia</label>
+              <Input value={editData.wikipediaUrl} onChange={(e) => setEditData({...editData, wikipediaUrl: e.target.value})} />
+            </div>
+            <div className="flex gap-2 justify-end pt-4">
+              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancelar</Button>
+              <Button onClick={handleEditSave} disabled={isEditingInfo}>{isEditingInfo ? 'Salvando...' : 'Salvar'}</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

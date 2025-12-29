@@ -275,6 +275,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin endpoint to update bird info
+  app.put("/api/admin/birds/:id", async (req, res) => {
+    try {
+      const { password, name, scientificName, description, habitat, diet, wikipediaUrl } = req.body;
+      
+      if (password !== ADMIN_PASSWORD) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid bird ID" });
+      }
+
+      const updateData: Record<string, any> = {};
+      if (name) updateData.name = name;
+      if (scientificName) updateData.scientificName = scientificName;
+      if (description) updateData.description = description;
+      if (habitat) updateData.habitat = habitat;
+      if (diet) updateData.diet = diet;
+      if (wikipediaUrl) updateData.wikipediaUrl = wikipediaUrl;
+
+      const updatedBird = await storage.updateBirdInfo(id, updateData);
+      if (!updatedBird) {
+        return res.status(404).json({ message: "Bird not found" });
+      }
+
+      res.json(updatedBird);
+    } catch (error) {
+      console.error("Error updating bird info:", error);
+      res.status(500).json({ message: "Failed to update bird info" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
