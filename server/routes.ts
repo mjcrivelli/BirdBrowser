@@ -289,15 +289,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid bird ID" });
       }
 
+      console.log("Updating bird", id, "with data:", { name, scientificName, description, habitat, diet, wikipediaUrl });
+
       const updateData: Record<string, any> = {};
-      if (name) updateData.name = name;
-      if (scientificName) updateData.scientificName = scientificName;
-      if (description) updateData.description = description;
-      if (habitat) updateData.habitat = habitat;
-      if (diet) updateData.diet = diet;
-      if (wikipediaUrl) updateData.wikipediaUrl = wikipediaUrl;
+      if (name !== undefined && name !== null) updateData.name = name;
+      if (scientificName !== undefined && scientificName !== null) updateData.scientificName = scientificName;
+      if (description !== undefined && description !== null) updateData.description = description;
+      if (habitat !== undefined && habitat !== null) updateData.habitat = habitat;
+      if (diet !== undefined && diet !== null) updateData.diet = diet;
+      if (wikipediaUrl !== undefined && wikipediaUrl !== null) updateData.wikipediaUrl = wikipediaUrl;
+
+      console.log("Update data to apply:", updateData);
 
       const updatedBird = await storage.updateBirdInfo(id, updateData);
+      console.log("Update result:", updatedBird);
+      
       if (!updatedBird) {
         return res.status(404).json({ message: "Bird not found" });
       }

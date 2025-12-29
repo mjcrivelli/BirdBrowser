@@ -380,25 +380,42 @@ export class MemStorage implements IStorage {
 
   async updateBirdInfo(birdId: number, data: Partial<InsertBird>): Promise<Bird | undefined> {
     try {
-      const [updatedBird] = await db
-        .update(birds)
-        .set(data)
-        .where(eq(birds.id, birdId))
-        .returning();
+      // First try to find the bird in memory
+      let bird = this.birds.get(birdId);
       
-      if (updatedBird) {
-        this.birds.set(birdId, updatedBird);
+      if (!bird) {
+        // If not in memory, try to get from database
+        const dbBirds = await db.select().from(birds).where(eq(birds.id, birdId));
+        if (dbBirds.length > 0) {
+          bird = dbBirds[0];
+        } else {
+          console.error(`Bird ${birdId} not found in memory or database`);
+          return undefined;
+        }
+      }
+
+      // Update in database if bird exists there
+      try {
+        const [updatedBird] = await db
+          .update(birds)
+          .set(data)
+          .where(eq(birds.id, birdId))
+          .returning();
+        
+        if (updatedBird) {
+          this.birds.set(birdId, updatedBird);
+          return updatedBird;
+        }
+      } catch (dbError) {
+        console.warn('Database update failed, updating memory only:', dbError);
       }
       
-      return updatedBird;
+      // Update in memory
+      Object.assign(bird, data);
+      this.birds.set(birdId, bird);
+      return bird;
     } catch (error) {
       console.error('Error updating bird info:', error);
-      const bird = this.birds.get(birdId);
-      if (bird) {
-        Object.assign(bird, data);
-        this.birds.set(birdId, bird);
-        return bird;
-      }
       return undefined;
     }
   }
