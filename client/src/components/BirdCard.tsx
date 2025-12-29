@@ -118,12 +118,23 @@ const BirdCard: React.FC<BirdCardProps> = ({
 
       if (!updateRes.ok) throw new Error('Failed to update bird info');
 
-      console.log('Edit saved, invalidating and refetching queries...');
-      // Invalidate all bird-related queries to force a refetch
-      await queryClient.invalidateQueries({ queryKey: ['/api/birds'] });
-      // Force a refetch to ensure we get the latest data
-      const result = await queryClient.refetchQueries({ queryKey: ['/api/birds'], type: 'active' });
-      console.log('Refetch result:', result);
+      const updatedBird = await updateRes.json();
+      console.log('Edit saved, updated bird:', updatedBird);
+
+      // Update all queries that match the /api/birds pattern
+      const DEFAULT_USER_ID = 1;
+      const queryKey = ['/api/birds', { userId: DEFAULT_USER_ID }];
+      
+      // Get the current data
+      const currentData = queryClient.getQueryData<any[]>(queryKey);
+      if (currentData) {
+        // Update the specific bird in the cache
+        const updatedData = currentData.map(b => 
+          b.id === bird.id ? { ...b, ...updatedBird, seen: b.seen } : b
+        );
+        queryClient.setQueryData(queryKey, updatedData);
+        console.log('Updated cache with new bird data');
+      }
       
       setIsEditDialogOpen(false);
       toast({ title: 'Sucesso', description: 'Informações atualizadas com sucesso!' });
