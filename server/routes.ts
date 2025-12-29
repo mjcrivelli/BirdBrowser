@@ -1,7 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
-import { insertBirdSightingSchema } from "@shared/schema";
+import { storage, getSouthernHemisphereSeason } from "./storage";
+import { insertBirdSightingSchema, insertSightingRecordSchema } from "@shared/schema";
+import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API endpoint to get all birds
@@ -129,6 +130,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error(`Error fetching sightings for user ${req.params.userId}:`, error);
       res.status(500).json({ message: "Failed to fetch sightings" });
+    }
+  });
+
+  // API endpoint to record a bird sighting with location data
+  app.post("/api/sighting-records", async (req, res) => {
+    try {
+      console.log("POST /api/sighting-records - Request body:", req.body);
+      
+      const recordSchema = z.object({
+        birdId: z.number(),
+        birdName: z.string(),
+        latitude: z.number().nullable().optional(),
+        longitude: z.number().nullable().optional(),
+      });
+      
+      const validationResult = recordSchema.safeParse(req.body);
+
+      if (!validationResult.success) {
+        console.log("Validation failed:", validationResult.error.errors);
+        return res.status(400).json({ 
+          message: "Invalid sighting record data", 
+          errors: validationResult.error.errors 
+        });
+      }
+
+      const season = getSouthernHemisphereSeason();
+      
+      const record = await storage.addSightingRecord({
+        birdId: validationResult.data.birdId,
+        birdName: validationResult.data.birdName,
+        latitude: validationResult.data.latitude ?? null,
+        longitude: validationResult.data.longitude ?? null,
+        season,
+      });
+      
+      console.log("Sighting record created:", record);
+      res.status(201).json(record);
+    } catch (error) {
+      console.error("Error creating sighting record:", error);
+      res.status(500).json({ message: "Failed to create sighting record" });
+    }
+  });
+
+  // API endpoint to get all sighting records
+  app.get("/api/sighting-records", async (req, res) => {
+    try {
+      const records = await storage.getSightingRecords();
+      res.json(records);
+    } catch (error) {
+      console.error("Error fetching sighting records:", error);
+      res.status(500).json({ message: "Failed to fetch sighting records" });
     }
   });
 

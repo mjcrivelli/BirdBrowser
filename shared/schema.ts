@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, real } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -59,3 +59,22 @@ export const insertBirdSightingSchema = createInsertSchema(birdSightings).pick({
 
 export type InsertBirdSighting = z.infer<typeof insertBirdSightingSchema>;
 export type BirdSighting = typeof birdSightings.$inferSelect;
+
+// Sighting records table to log every bird selection with location and time data
+export const sightingRecords = pgTable("sighting_records", {
+  id: serial("id").primaryKey(),
+  birdId: integer("bird_id").notNull(),
+  birdName: text("bird_name").notNull(),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  latitude: real("latitude"),
+  longitude: real("longitude"),
+  season: text("season").notNull(),
+});
+
+export const insertSightingRecordSchema = createInsertSchema(sightingRecords).omit({
+  id: true,
+  timestamp: true,
+});
+
+export type InsertSightingRecord = z.infer<typeof insertSightingRecordSchema>;
+export type SightingRecord = typeof sightingRecords.$inferSelect;

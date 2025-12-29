@@ -1,5 +1,19 @@
 import { readFileSync } from 'fs';
-import { Bird, BirdSighting, BirdWithSeenStatus, InsertBird, InsertBirdSighting, InsertUser, User } from '@shared/schema';
+import { Bird, BirdSighting, BirdWithSeenStatus, InsertBird, InsertBirdSighting, InsertUser, User, InsertSightingRecord, SightingRecord } from '@shared/schema';
+
+export function getSouthernHemisphereSeason(date: Date = new Date()): string {
+  const month = date.getMonth() + 1;
+  
+  if (month >= 12 || month <= 2) {
+    return 'summer';
+  } else if (month >= 3 && month <= 5) {
+    return 'autumn';
+  } else if (month >= 6 && month <= 8) {
+    return 'winter';
+  } else {
+    return 'spring';
+  }
+}
 
 const DEFAULT_USER_ID = 1;
 
@@ -14,23 +28,29 @@ export interface IStorage {
   addBirdSighting(sighting: InsertBirdSighting): Promise<BirdSighting>;
   removeBirdSighting(userId: number, birdId: number): Promise<boolean>;
   getBirdSightings(userId: number): Promise<BirdSighting[]>;
+  addSightingRecord(record: InsertSightingRecord): Promise<SightingRecord>;
+  getSightingRecords(): Promise<SightingRecord[]>;
 }
 
 export class MemStorage implements IStorage {
   private birds: Map<number, Bird>;
   private users: Map<number, User>;
   private birdSightings: Map<number, BirdSighting>;
+  private sightingRecords: Map<number, SightingRecord>;
   currentBirdId: number;
   currentUserId: number;
   currentSightingId: number;
+  currentRecordId: number;
 
   constructor() {
     this.birds = new Map();
     this.users = new Map();
     this.birdSightings = new Map();
+    this.sightingRecords = new Map();
     this.currentBirdId = 1;
     this.currentUserId = 1;
     this.currentSightingId = 1;
+    this.currentRecordId = 1;
     
     // Initialize with data
     this.initializeBirds();
@@ -255,6 +275,26 @@ export class MemStorage implements IStorage {
     return Array.from(this.birdSightings.values()).filter(
       sighting => sighting.userId === userId
     );
+  }
+
+  async addSightingRecord(record: InsertSightingRecord): Promise<SightingRecord> {
+    const id = this.currentRecordId++;
+    const newRecord: SightingRecord = {
+      id,
+      birdId: record.birdId,
+      birdName: record.birdName,
+      timestamp: new Date(),
+      latitude: record.latitude ?? null,
+      longitude: record.longitude ?? null,
+      season: record.season,
+    };
+    this.sightingRecords.set(id, newRecord);
+    console.log(`Created new sighting record: id=${id}, bird=${record.birdName}, season=${record.season}`);
+    return newRecord;
+  }
+
+  async getSightingRecords(): Promise<SightingRecord[]> {
+    return Array.from(this.sightingRecords.values());
   }
 }
 

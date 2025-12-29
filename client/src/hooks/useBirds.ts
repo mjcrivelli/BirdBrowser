@@ -1,9 +1,47 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Bird, BirdWithSeenStatus, BirdSighting } from "@shared/schema";
+import type { Bird, BirdWithSeenStatus, BirdSighting, SightingRecord } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
+import { useState, useEffect } from "react";
 
 // Default user ID until we implement authentication
 const DEFAULT_USER_ID = 1;
+
+interface UserLocation {
+  latitude: number | null;
+  longitude: number | null;
+}
+
+function useUserLocation() {
+  const [location, setLocation] = useState<UserLocation>({ latitude: null, longitude: null });
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser");
+      setIsLoading(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        setIsLoading(false);
+      },
+      (err) => {
+        console.log("Geolocation error:", err.message);
+        setError(err.message);
+        setIsLoading(false);
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 600000 }
+    );
+  }, []);
+
+  return { location, error, isLoading };
+}
 
 // Type for API responses
 interface MarkBirdResponse {
@@ -65,17 +103,52 @@ export function useBirdDetail(id: number) {
   });
 }
 
+interface MarkBirdWithNameArgs {
+  birdId: number;
+  birdName: string;
+}
+
 /**
  * Hook for managing bird sightings (marking birds as seen/unseen)
  */
 export function useBirdSightings() {
   const queryClient = useQueryClient();
   const userId = DEFAULT_USER_ID;
+  const { location } = useUserLocation();
+  
+  // Helper to record sighting with location
+  const recordSighting = async (birdId: number, birdName: string) => {
+    try {
+      const response = await fetch('/api/sighting-records', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          birdId,
+          birdName,
+          latitude: location.latitude,
+          longitude: location.longitude,
+        }),
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to record sighting:', response.status);
+      } else {
+        console.log('Sighting recorded successfully');
+      }
+    } catch (error) {
+      console.error('Error recording sighting:', error);
+    }
+  };
   
   // Mark a bird as seen
-  const markBirdAsSeen = useMutation<MarkBirdResponse, Error, number>({
-    mutationFn: async (birdId: number) => {
+  const markBirdAsSeen = useMutation<MarkBirdResponse, Error, MarkBirdWithNameArgs>({
+    mutationFn: async ({ birdId, birdName }: MarkBirdWithNameArgs) => {
       console.log(`Marking bird as seen: ${birdId}`);
+      
+      // Record the sighting with location data
+      await recordSighting(birdId, birdName);
+      
       const response = await fetch('/api/sightings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -89,7 +162,7 @@ export function useBirdSightings() {
       
       return response.json();
     },
-    onMutate: async (birdId) => {
+    onMutate: async ({ birdId }) => {
       // Cancel any outgoing refetches to avoid overwriting our optimistic update
       await queryClient.cancelQueries({ queryKey: ['/api/birds', { userId }] });
       
@@ -121,7 +194,7 @@ export function useBirdSightings() {
       // as we're handling it on the backend already
     },
     
-    onError: (error, birdId, context: any) => {
+    onError: (error, { birdId }, context: any) => {
       console.error('Failed to mark bird as seen:', error);
       
       // If the mutation fails, roll back to the previous state
@@ -201,7 +274,7 @@ export function useBirdSightings() {
     if (bird.seen) {
       markBirdAsUnseen.mutate(bird.id);
     } else {
-      markBirdAsSeen.mutate(bird.id);
+      markBirdAsSeen.mutate({ birdId: bird.id, birdName: bird.name });
     }
   };
   
