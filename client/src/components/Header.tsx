@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { Menu, Settings, X, LogOut } from 'lucide-react';
 import Logo from './ui/logo';
 import { useAdmin } from '@/contexts/AdminContext';
@@ -19,6 +19,7 @@ const Header: React.FC = () => {
   const [adminDialogOpen, setAdminDialogOpen] = useState(false);
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [location] = useLocation();
   const { isAdminMode, setAdminMode, exitAdminMode } = useAdmin();
   const { toast } = useToast();
 
@@ -46,9 +47,9 @@ const Header: React.FC = () => {
   };
 
   const navLinks = [
-    { label: 'Aves da Toca', href: '/', active: true },
-    { label: 'Jogo da Memória', href: '/memoria', active: true },
-    { label: 'Sobre o catálogo', href: '/sobre-o-catalogo', active: true },
+    { label: 'Aves da Toca', href: '/' },
+    { label: 'Jogo da Memória', href: '/memoria' },
+    { label: 'Sobre o catálogo', href: '/sobre-o-catalogo' },
   ];
 
   return (
@@ -60,19 +61,22 @@ const Header: React.FC = () => {
 
         <div className="hidden md:flex items-center space-x-6">
           <nav className="flex space-x-6 text-sm font-montserrat" role="navigation" aria-label="Navegação principal">
-            {navLinks.map((link, index) => (
-              <Link
-                key={index}
-                href={link.href}
-                className={`transition-colors uppercase ${
-                  link.active
-                    ? "text-[#4CAF50] hover:text-[#388E3C] font-semibold"
-                    : "text-[#333333] hover:text-[#4CAF50]"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link, index) => {
+              const isActive = location === link.href;
+              return (
+                <Link
+                  key={index}
+                  href={link.href}
+                  className={`transition-colors uppercase ${
+                    isActive
+                      ? "text-[#4CAF50] hover:text-[#388E3C] font-bold"
+                      : "text-gray-500 hover:text-[#4CAF50]"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {isAdminMode ? (
@@ -144,20 +148,23 @@ const Header: React.FC = () => {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white shadow-md px-4 py-2">
           <nav id="mobile-navigation" className="flex flex-col space-y-3 font-montserrat text-sm" role="navigation" aria-label="Navegação móvel">
-            {navLinks.map((link, index) => (
-              <Link
-                key={index}
-                href={link.href}
-                className={`py-2 transition-colors uppercase ${
-                  link.active
-                    ? "text-[#4CAF50] hover:text-[#388E3C] font-semibold"
-                    : "text-[#333333] hover:text-[#4CAF50]"
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link, index) => {
+              const isActive = location === link.href;
+              return (
+                <Link
+                  key={index}
+                  href={link.href}
+                  className={`py-2 transition-colors uppercase ${
+                    isActive
+                      ? "text-[#4CAF50] hover:text-[#388E3C] font-bold"
+                      : "text-gray-500 hover:text-[#4CAF50]"
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
       )}
