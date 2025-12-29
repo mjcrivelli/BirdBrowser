@@ -6,12 +6,14 @@ import { AdminProvider } from "@/contexts/AdminContext";
 import NotFound from "@/pages/not-found";
 import BirdGrid from "@/pages/BirdGrid";
 import Memoria from "@/pages/memoria";
+import SobreOCatalogo from "@/pages/SobreOCatalogo";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={BirdGrid} />
       <Route path="/memoria" component={Memoria} />
+      <Route path="/sobre-o-catalogo" component={SobreOCatalogo} />
       <Route component={NotFound} />
     </Switch>
   );

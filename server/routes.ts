@@ -315,6 +315,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get catalog about page content
+  app.get("/api/catalog-about", async (req, res) => {
+    try {
+      const aboutData = await storage.getCatalogAbout();
+      res.json(aboutData || { id: 1, title: "Sobre o Catálogo", content: "" });
+    } catch (error) {
+      console.error("Error fetching catalog about:", error);
+      res.status(500).json({ message: "Failed to fetch catalog about" });
+    }
+  });
+
+  // Update catalog about page content (admin only)
+  app.put("/api/admin/catalog-about", async (req, res) => {
+    try {
+      const { password, title, content } = req.body;
+      
+      if (password !== ADMIN_PASSWORD) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const updatedAbout = await storage.updateCatalogAbout({ title, content });
+      
+      if (!updatedAbout) {
+        return res.status(500).json({ message: "Failed to update catalog about" });
+      }
+
+      res.json(updatedAbout);
+    } catch (error) {
+      console.error("Error updating catalog about:", error);
+      res.status(500).json({ message: "Failed to update catalog about" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

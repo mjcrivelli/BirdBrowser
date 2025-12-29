@@ -79,3 +79,18 @@ export const insertSightingRecordSchema = createInsertSchema(sightingRecords).om
 
 export type InsertSightingRecord = z.infer<typeof insertSightingRecordSchema>;
 export type SightingRecord = typeof sightingRecords.$inferSelect;
+
+// Catalog about page content
+export const catalogAbout = pgTable("catalog_about", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull().default("Sobre o Catálogo"),
+  content: text("content").notNull().default(""),
+});
+
+export const insertCatalogAboutSchema = createInsertSchema(catalogAbout).pick({
+  title: true,
+  content: true,
+});
+
+export type InsertCatalogAbout = z.infer<typeof insertCatalogAboutSchema>;
+export type CatalogAbout = typeof catalogAbout.$inferSelect;

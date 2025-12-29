@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { Bird, BirdSighting, BirdWithSeenStatus, InsertBird, InsertBirdSighting, InsertUser, User, InsertSightingRecord, SightingRecord, birds, sightingRecords, birdSightings, users } from '@shared/schema';
+import { Bird, BirdSighting, BirdWithSeenStatus, InsertBird, InsertBirdSighting, InsertUser, User, InsertSightingRecord, SightingRecord, birds, sightingRecords, birdSightings, users, CatalogAbout, InsertCatalogAbout, catalogAbout } from '@shared/schema';
 import { db } from './db';
 import { eq, and } from 'drizzle-orm';
 
@@ -35,6 +35,8 @@ export interface IStorage {
   seedBirdsToDatabase(): Promise<number>;
   updateBirdCustomImage(birdId: number, customImageUrl: string): Promise<Bird | undefined>;
   updateBirdInfo(birdId: number, data: Partial<InsertBird>): Promise<Bird | undefined>;
+  getCatalogAbout(): Promise<CatalogAbout | undefined>;
+  updateCatalogAbout(data: InsertCatalogAbout): Promise<CatalogAbout | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -42,6 +44,7 @@ export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private birdSightings: Map<number, BirdSighting>;
   private sightingRecords: Map<number, SightingRecord>;
+  private catalogAboutData: CatalogAbout | null;
   currentBirdId: number;
   currentUserId: number;
   currentSightingId: number;
@@ -52,6 +55,7 @@ export class MemStorage implements IStorage {
     this.users = new Map();
     this.birdSightings = new Map();
     this.sightingRecords = new Map();
+    this.catalogAboutData = null;
     this.currentBirdId = 1;
     this.currentUserId = 1;
     this.currentSightingId = 1;
@@ -59,6 +63,15 @@ export class MemStorage implements IStorage {
     
     // Initialize with data
     this.initializeBirds();
+    this.initializeCatalogAbout();
+  }
+
+  private initializeCatalogAbout() {
+    this.catalogAboutData = {
+      id: 1,
+      title: "Sobre o Catálogo",
+      content: "Bem-vindo ao catálogo de aves da Cachoeira da Toca. Este é um lugar especial para observação de pássaros e registro de espécies locais.",
+    };
   }
 
   private initializeBirds() {
@@ -416,6 +429,24 @@ export class MemStorage implements IStorage {
       return bird;
     } catch (error) {
       console.error('Error updating bird info:', error);
+      return undefined;
+    }
+  }
+
+  async getCatalogAbout(): Promise<CatalogAbout | undefined> {
+    return this.catalogAboutData || undefined;
+  }
+
+  async updateCatalogAbout(data: InsertCatalogAbout): Promise<CatalogAbout | undefined> {
+    try {
+      if (!this.catalogAboutData) {
+        this.catalogAboutData = { id: 1, title: data.title, content: data.content };
+      } else {
+        this.catalogAboutData = { ...this.catalogAboutData, ...data };
+      }
+      return this.catalogAboutData;
+    } catch (error) {
+      console.error('Error updating catalog about:', error);
       return undefined;
     }
   }

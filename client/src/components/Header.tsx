@@ -48,7 +48,7 @@ const Header: React.FC = () => {
   const navLinks = [
     { label: 'Aves da Toca', href: '/', active: true },
     { label: 'Jogo da Memória', href: '/memoria', active: true },
-    { label: 'Sobre o catálogo', href: '#', active: false },
+    { label: 'Sobre o catálogo', href: '/sobre-o-catalogo', active: true },
   ];
 
   return (
