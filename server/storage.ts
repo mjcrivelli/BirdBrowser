@@ -458,20 +458,49 @@ export class MemStorage implements IStorage {
   }
 
   async getCatalogAbout(): Promise<CatalogAbout | undefined> {
+    try {
+      const [dbData] = await db.select().from(catalogAbout).limit(1);
+      if (dbData) {
+        this.catalogAboutData = dbData;
+        return dbData;
+      }
+    } catch (error) {
+      console.warn('Database read failed, using memory:', error);
+    }
     return this.catalogAboutData || undefined;
   }
 
   async updateCatalogAbout(data: InsertCatalogAbout): Promise<CatalogAbout | undefined> {
     try {
+      const existing = await db.select().from(catalogAbout).limit(1);
+      
+      let result: CatalogAbout;
+      if (existing.length > 0) {
+        const [updated] = await db
+          .update(catalogAbout)
+          .set(data)
+          .where(eq(catalogAbout.id, existing[0].id))
+          .returning();
+        result = updated;
+      } else {
+        const [inserted] = await db
+          .insert(catalogAbout)
+          .values(data)
+          .returning();
+        result = inserted;
+      }
+      
+      this.catalogAboutData = result;
+      console.log('Catalog about saved to database:', result);
+      return result;
+    } catch (error) {
+      console.error('Error updating catalog about in database:', error);
       if (!this.catalogAboutData) {
         this.catalogAboutData = { id: 1, title: data.title, content: data.content };
       } else {
         this.catalogAboutData = { ...this.catalogAboutData, ...data };
       }
       return this.catalogAboutData;
-    } catch (error) {
-      console.error('Error updating catalog about:', error);
-      return undefined;
     }
   }
 
