@@ -33,6 +33,7 @@ export interface IStorage {
   getBirdSightings(userId: number): Promise<BirdSighting[]>;
   addSightingRecord(record: InsertSightingRecord): Promise<SightingRecord>;
   getSightingRecords(): Promise<SightingRecord[]>;
+  getSightingsByMonth(): Promise<{ monthKey: string; birdName: string; count: number }[]>;
   seedBirdsToDatabase(): Promise<number>;
   updateBirdCustomImage(birdId: number, customImageUrl: string): Promise<Bird | undefined>;
   updateBirdInfo(birdId: number, data: Partial<InsertBird>): Promise<Bird | undefined>;
@@ -355,6 +356,29 @@ export class MemStorage implements IStorage {
     } catch (error) {
       console.error('Error fetching sighting records from database:', error);
       return Array.from(this.sightingRecords.values());
+    }
+  }
+
+  async getSightingsByMonth(): Promise<{ monthKey: string; birdName: string; count: number }[]> {
+    try {
+      const records = await db.select().from(sightingRecords);
+      const counts: Record<string, number> = {};
+
+      for (const r of records) {
+        if (r.birdId === 0) continue;
+        const d = new Date(r.timestamp);
+        const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        const key = `${monthKey}||${r.birdName}`;
+        counts[key] = (counts[key] || 0) + 1;
+      }
+
+      return Object.entries(counts).map(([key, count]) => {
+        const [monthKey, birdName] = key.split('||');
+        return { monthKey, birdName, count };
+      });
+    } catch (error) {
+      console.error('Error fetching sightings by month:', error);
+      return [];
     }
   }
 

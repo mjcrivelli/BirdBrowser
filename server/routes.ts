@@ -106,6 +106,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Sightings by month endpoint for the Avistamentos chart
+  app.get("/api/sightings/by-month", async (req, res) => {
+    try {
+      const rows = await storage.getSightingsByMonth();
+      res.json(rows);
+    } catch (error) {
+      console.error("Error fetching sightings by month:", error);
+      res.status(500).json({ message: "Failed to fetch sightings" });
+    }
+  });
+
   // API endpoint to get all bird sightings for a user
   app.get("/api/sightings/:userId", async (req, res) => {
     try {
