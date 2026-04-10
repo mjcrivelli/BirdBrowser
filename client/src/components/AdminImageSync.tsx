@@ -82,9 +82,10 @@ const AdminImageSync: React.FC<AdminImageSyncProps> = ({ birds }) => {
       try {
         await downloadAndUpload(bird);
         setResults(prev => prev.map(r => r.id === bird.id ? { ...r, status: 'done' } : r));
-      } catch (err: any) {
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Erro desconhecido';
         setResults(prev => prev.map(r =>
-          r.id === bird.id ? { ...r, status: 'failed', error: err.message } : r
+          r.id === bird.id ? { ...r, status: 'failed', error: message } : r
         ));
       }
 
