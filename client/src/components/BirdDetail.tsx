@@ -16,7 +16,10 @@ interface BirdDetailProps {
 
 const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState<string>(() => {
+    const url = bird.customImageUrl || bird.imageUrl;
+    return url?.startsWith('//') ? `https:${url}` : (url || '');
+  });
   const retriedRef = useRef(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isEditingInfo, setIsEditingInfo] = useState(false);

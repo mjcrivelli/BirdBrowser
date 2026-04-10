@@ -88,14 +88,17 @@ Preferred communication style: Simple, everyday language.
 ### External Dependencies
 
 **Third-Party Services:**
-- **Wikipedia/Wikimedia Commons** - Bird images and reference links sourced from Wikipedia articles
-- **WikiAves** - Alternative bird image source (Brazilian bird database)
+- **iNaturalist** - Bird images sourced from iNaturalist observations (reliable, no rate limiting)
+- **Wikipedia/Wikimedia Commons** - Reference links for each bird species
+- **WikiAves** - Alternative bird image source reference
 
-**Image Handling:**
-- Protocol-relative URLs (`//upload.wikimedia.org/...`) converted to HTTPS
+**Image Hosting:**
+- All 70 bird images stored locally in `client/public/birds/bird-N.jpg`
+- Images sourced from iNaturalist API (by scientific name) at build/setup time
+- `bird_data.json` imageUrl fields point to `/birds/bird-N.jpg` (local static paths)
 - Lazy loading with blur-up effect using `react-lazy-load-image-component`
-- Fallback image handling for broken URLs
-- Python scripts for scraping and fixing image URLs from external sources
+- Admin can upload custom photos per bird which are stored in object storage (`customImageUrl`)
+- BirdCard and BirdDetail: initialized imageUrl from bird prop (no empty-string initial state), single retry guard via `retriedRef`
 
 **PDF Generation:**
 - jsPDF library for PDF creation

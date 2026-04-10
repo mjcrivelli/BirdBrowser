@@ -26,7 +26,10 @@ const BirdCard: React.FC<BirdCardProps> = ({
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState<string>(() => {
+    const url = bird.customImageUrl || bird.imageUrl;
+    return url?.startsWith('//') ? `https:${url}` : (url || '');
+  });
   const retriedRef = useRef(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
