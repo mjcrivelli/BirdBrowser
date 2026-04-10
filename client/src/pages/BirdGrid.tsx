@@ -3,6 +3,7 @@ import BirdCard from '@/components/BirdCard';
 import BirdDetail from '@/components/BirdDetail';
 import BirdCounter from '@/components/BirdCounter';
 import EmptyState from '@/components/EmptyState';
+import AdminImageSync from '@/components/AdminImageSync';
 import { useBirds, useBirdSightings } from '@/hooks/useBirds';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -12,11 +13,13 @@ import { Button } from '@/components/ui/button';
 import { Eye, Filter } from 'lucide-react';
 import type { BirdWithSeenStatus } from '@shared/schema';
 import { announce } from '@/lib/utils';
+import { useAdmin } from '@/contexts/AdminContext';
 
 const BirdGrid: React.FC = () => {
   // Get bird data using our hooks
   const { birds, seenBirds, unseenBirds, isLoading, isError, refetch } = useBirds();
   const { toggleBirdSeenStatus, isPending } = useBirdSightings();
+  const { isAdminMode } = useAdmin();
 
   // Local state
   const [selectedBirdId, setSelectedBirdId] = useState<number | null>(null);
@@ -116,6 +119,11 @@ const BirdGrid: React.FC = () => {
         {/* Seen birds counter */}
         {seenBirds.length > 0 && (
           <BirdCounter seenBirds={seenBirds} />
+        )}
+
+        {/* Admin image sync panel */}
+        {isAdminMode && birds.length > 0 && (
+          <AdminImageSync birds={birds} />
         )}
 
         {/* Tabs for filtering birds */}

@@ -27,6 +27,7 @@ const BirdCard: React.FC<BirdCardProps> = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
+  const retriedRef = useRef(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isEditingInfo, setIsEditingInfo] = useState(false);
@@ -44,6 +45,9 @@ const BirdCard: React.FC<BirdCardProps> = ({
 
   useEffect(() => {
     const url = bird.customImageUrl || bird.imageUrl;
+    retriedRef.current = false;
+    setImageLoaded(false);
+    setImageError(false);
     if (url && url.startsWith('//')) {
       setImageUrl(`https:${url}`);
     } else {
@@ -151,13 +155,18 @@ const BirdCard: React.FC<BirdCardProps> = ({
   };
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    setImageError(true);
-    console.log(`Failed to load image for ${bird.name}: ${imageUrl}`);
+    if (retriedRef.current) {
+      setImageError(true);
+      return;
+    }
+    retriedRef.current = true;
 
-    // Only attempt one simple fallback - add https: if it's missing
-    if (bird.imageUrl && bird.imageUrl.startsWith('//')) {
-      const fixedUrl = `https:${bird.imageUrl}`;
-      (e.target as HTMLImageElement).src = fixedUrl;
+    const url = bird.customImageUrl || bird.imageUrl;
+    if (url && url.startsWith('//')) {
+      (e.target as HTMLImageElement).src = `https:${url}`;
+    } else {
+      setImageError(true);
+      console.log(`Failed to load image for ${bird.name}: ${imageUrl}`);
     }
   };
 

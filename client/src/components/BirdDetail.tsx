@@ -17,6 +17,7 @@ interface BirdDetailProps {
 const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
+  const retriedRef = useRef(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isEditingInfo, setIsEditingInfo] = useState(false);
   const [editData, setEditData] = useState({
@@ -31,14 +32,15 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
   const { toast } = useToast();
 
   useEffect(() => {
-    // Use the image URL directly from the bird data
-    // Add https: prefix to protocol-relative URLs
-    if (bird.imageUrl && bird.imageUrl.startsWith('//')) {
-      setImageUrl(`https:${bird.imageUrl}`);
+    retriedRef.current = false;
+    setImageLoaded(false);
+    const url = bird.customImageUrl || bird.imageUrl;
+    if (url && url.startsWith('//')) {
+      setImageUrl(`https:${url}`);
     } else {
-      setImageUrl(bird.imageUrl);
+      setImageUrl(url);
     }
-  }, [bird.imageUrl]);
+  }, [bird.imageUrl, bird.customImageUrl]);
 
   const handleOpenWikipedia = () => {
     if (bird?.wikipediaUrl) {
@@ -165,9 +167,11 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
             className={`w-full h-auto max-h-[15.625rem] rounded-lg object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
             onLoad={() => setImageLoaded(true)}
             onError={(e) => {
-              console.log(`Failed to load detail image for ${bird.name}: ${imageUrl}`);
-              if (bird.imageUrl && bird.imageUrl.startsWith('//')) {
-                (e.target as HTMLImageElement).src = `https:${bird.imageUrl}`;
+              if (retriedRef.current) return;
+              retriedRef.current = true;
+              const url = bird.customImageUrl || bird.imageUrl;
+              if (url && url.startsWith('//')) {
+                (e.target as HTMLImageElement).src = `https:${url}`;
               }
             }}
           />
