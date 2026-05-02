@@ -356,8 +356,8 @@ export default function Avistamentos() {
             {/* Scrollable bar chart */}
             <div className="overflow-x-auto">
               <div
-                className="flex items-end gap-1 pb-2"
-                style={{ minWidth: totalWidth, height: MAX_BAR_H + PHOTO_SIZE + 92 }}
+                className="flex items-end gap-1 pb-2 pt-2"
+                style={{ minWidth: totalWidth, height: MAX_BAR_H + PHOTO_SIZE + 100 }}
               >
                 {/* ── BIRD MODE ── */}
                 {viewMode === 'bird' && activeBirdData.map((bird, idx) => {
@@ -397,9 +397,9 @@ export default function Avistamentos() {
                       {rank <= 3 ? (
                         <div className="mb-1 flex items-center justify-center">
                           <div className="flex flex-col items-center justify-center rounded-lg shadow-sm"
-                            style={{ width: COL_W_BIRD - 10, height: 44, border: `2px solid ${color}`, background: `${color}18` }}>
-                            <span className="text-sm leading-none">{rankLabel(rank)}</span>
-                            <span className="text-[11px] font-bold mt-0.5" style={{ color }}>{bird.count}</span>
+                            style={{ width: COL_W_BIRD - 10, height: rank === 1 ? 54 : 44, border: `2px solid ${color}`, background: `${color}18` }}>
+                            <span style={{ fontSize: rank === 1 ? 18 : 14 }} className="leading-none">{rankLabel(rank)}</span>
+                            <span className="font-bold mt-1" style={{ color, fontSize: rank === 1 ? 13 : 11 }}>{bird.count}</span>
                           </div>
                         </div>
                       ) : (
@@ -469,9 +469,9 @@ export default function Avistamentos() {
                       {rank <= 3 ? (
                         <div className="mb-1 flex items-center justify-center">
                           <div className="flex flex-col items-center justify-center rounded-lg shadow-sm"
-                            style={{ width: COL_W_FAMILY - 10, height: 44, border: `2px solid ${color}`, background: `${color}18` }}>
-                            <span className="text-sm leading-none">{rankLabel(rank)}</span>
-                            <span className="text-[11px] font-bold mt-0.5" style={{ color }}>{fam.count}</span>
+                            style={{ width: COL_W_FAMILY - 10, height: rank === 1 ? 54 : 44, border: `2px solid ${color}`, background: `${color}18` }}>
+                            <span style={{ fontSize: rank === 1 ? 18 : 14 }} className="leading-none">{rankLabel(rank)}</span>
+                            <span className="font-bold mt-1" style={{ color, fontSize: rank === 1 ? 13 : 11 }}>{fam.count}</span>
                           </div>
                         </div>
                       ) : (
