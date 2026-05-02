@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { BirdWithSeenStatus } from '@shared/schema';
 import {
   Select,
   SelectContent,
@@ -33,16 +32,31 @@ interface BirdCount {
   count: number;
 }
 
+interface FamilyBird {
+  birdId: number;
+  birdName: string;
+  count: number;
+  scientificName: string;
+  imageUrl: string | null;
+}
+
+interface FamilyCount {
+  family: string;
+  count: number;
+  birds: FamilyBird[];
+}
+
 const MAX_BAR_H = 260;
-const COL_W = 76;
-const PHOTO_SIZE = 44;
+const COL_W_BIRD   = 76;
+const COL_W_FAMILY = 110;
+const PHOTO_SIZE   = 44;
 
 function barColor(rank: number): string {
-  if (rank === 1) return '#F59E0B'; // amber
-  if (rank === 2) return '#94A3B8'; // slate
-  if (rank === 3) return '#FB923C'; // orange
-  if (rank <= 10) return '#22C55E'; // green-500
-  return '#86EFAC';                 // green-300
+  if (rank === 1) return '#F59E0B';
+  if (rank === 2) return '#94A3B8';
+  if (rank === 3) return '#FB923C';
+  if (rank <= 10) return '#22C55E';
+  return '#86EFAC';
 }
 
 function rankLabel(rank: number): string {
@@ -52,7 +66,8 @@ function rankLabel(rank: number): string {
   return `#${rank}`;
 }
 
-interface TooltipInfo {
+interface BirdTooltipInfo {
+  kind: 'bird';
   birdName: string;
   scientificName: string;
   count: number;
@@ -61,12 +76,24 @@ interface TooltipInfo {
   y: number;
 }
 
+interface FamilyTooltipInfo {
+  kind: 'family';
+  family: string;
+  count: number;
+  birds: FamilyBird[];
+  x: number;
+  y: number;
+}
+
+type TooltipInfo = BirdTooltipInfo | FamilyTooltipInfo;
+
 export default function Avistamentos() {
-  const [year, setYear]       = useState<string>('all');
-  const [period, setPeriod]   = useState<string>('alltime');
-  const [season, setSeason]   = useState<string>('');
-  const [geoOnly, setGeoOnly] = useState<boolean>(false);
-  const [tooltip, setTooltip] = useState<TooltipInfo | null>(null);
+  const [year, setYear]         = useState<string>('all');
+  const [period, setPeriod]     = useState<string>('alltime');
+  const [season, setSeason]     = useState<string>('');
+  const [geoOnly, setGeoOnly]   = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<'bird' | 'family'>('bird');
+  const [tooltip, setTooltip]   = useState<TooltipInfo | null>(null);
 
   const { data: years = [] } = useQuery<number[]>({
     queryKey: ['/api/sightings/years'],
@@ -77,19 +104,48 @@ export default function Avistamentos() {
   if (period !== 'alltime') params.set('period', period);
   if (season) params.set('season', season);
   if (geoOnly) params.set('geoOnly', 'true');
-  const queryUrl = `/api/sightings/by-bird${params.toString() ? '?' + params.toString() : ''}`;
+  const qs = params.toString() ? '?' + params.toString() : '';
 
-  const { data: birdData = [], isLoading, isError } = useQuery<BirdCount[]>({
-    queryKey: [queryUrl],
+  const birdQueryUrl   = `/api/sightings/by-bird${qs}`;
+  const familyQueryUrl = `/api/sightings/by-family${qs}`;
+
+  const { data: birdData = [], isLoading: birdLoading, isError: birdError } = useQuery<BirdCount[]>({
+    queryKey: [birdQueryUrl],
+    enabled: viewMode === 'bird',
   });
 
-  const { data: allBirds = [] } = useQuery<BirdWithSeenStatus[]>({
+  const { data: familyData = [], isLoading: familyLoading, isError: familyError } = useQuery<FamilyCount[]>({
+    queryKey: [familyQueryUrl],
+    enabled: viewMode === 'family',
+  });
+
+  // For bird-mode photo lookup
+  const { data: allBirds = [] } = useQuery<any[]>({
     queryKey: ['/api/birds'],
   });
 
-  const maxCount = birdData.length > 0 ? birdData[0].count : 1;
-  const totalSightings = birdData.reduce((s, b) => s + b.count, 0);
-  const totalWidth = birdData.length * (COL_W + 4);
+  const isLoading = viewMode === 'bird' ? birdLoading : familyLoading;
+  const isError   = viewMode === 'bird' ? birdError   : familyError;
+
+  const activeBirdData   = viewMode === 'bird'   ? birdData   : [];
+  const activeFamilyData = viewMode === 'family' ? familyData : [];
+
+  const maxBirdCount   = activeBirdData.length   > 0 ? activeBirdData[0].count   : 1;
+  const maxFamilyCount = activeFamilyData.length > 0 ? activeFamilyData[0].count : 1;
+
+  const totalSightings = viewMode === 'bird'
+    ? activeBirdData.reduce((s, b) => s + b.count, 0)
+    : activeFamilyData.reduce((s, f) => s + f.count, 0);
+
+  const speciesCount = viewMode === 'bird'
+    ? activeBirdData.length
+    : activeFamilyData.reduce((s, f) => s + f.birds.length, 0);
+
+  const familiesCount = activeFamilyData.length;
+
+  const totalWidth = viewMode === 'bird'
+    ? activeBirdData.length   * (COL_W_BIRD   + 4)
+    : activeFamilyData.length * (COL_W_FAMILY + 4);
 
   return (
     <div className="min-h-screen bg-[#F9FBF9] flex flex-col">
@@ -207,7 +263,7 @@ export default function Avistamentos() {
         )}
 
         {/* Empty */}
-        {!isLoading && !isError && birdData.length === 0 && (
+        {!isLoading && !isError && totalSightings === 0 && (
           <div className="flex flex-col items-center justify-center h-72 text-center gap-3">
             <svg className="w-16 h-16 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -218,41 +274,76 @@ export default function Avistamentos() {
         )}
 
         {/* Chart */}
-        {!isLoading && !isError && birdData.length > 0 && (
+        {!isLoading && !isError && totalSightings > 0 && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            {/* Stats */}
-            <div className="flex flex-wrap gap-5 mb-6 text-sm text-gray-500">
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#22C55E]" />
-                {birdData.length} espécie{birdData.length !== 1 ? 's' : ''}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#1565c0]" />
-                {totalSightings} avistamento{totalSightings !== 1 ? 's' : ''} no total
-              </span>
+
+            {/* Stats row + view toggle */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <div className="flex flex-wrap gap-5 text-sm text-gray-500">
+                {viewMode === 'family' && (
+                  <span className="flex items-center gap-1.5">
+                    <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#8B5CF6]" />
+                    {familiesCount} famíli{familiesCount !== 1 ? 'as' : 'a'}
+                  </span>
+                )}
+                <span className="flex items-center gap-1.5">
+                  <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#22C55E]" />
+                  {speciesCount} espécie{speciesCount !== 1 ? 's' : ''}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#1565c0]" />
+                  {totalSightings} avistamento{totalSightings !== 1 ? 's' : ''} no total
+                </span>
+              </div>
+
+              {/* View-mode toggle */}
+              <div className="flex items-center gap-0 rounded-lg border border-gray-200 overflow-hidden text-xs font-medium">
+                <button
+                  onClick={() => { setViewMode('bird'); setTooltip(null); }}
+                  className={`px-3 py-1.5 transition-colors ${
+                    viewMode === 'bird'
+                      ? 'bg-[#4CAF50] text-white'
+                      : 'bg-white text-gray-500 hover:bg-gray-50'
+                  }`}
+                >
+                  Por espécie
+                </button>
+                <button
+                  onClick={() => { setViewMode('family'); setTooltip(null); }}
+                  className={`px-3 py-1.5 transition-colors border-l border-gray-200 ${
+                    viewMode === 'family'
+                      ? 'bg-[#8B5CF6] text-white'
+                      : 'bg-white text-gray-500 hover:bg-gray-50'
+                  }`}
+                >
+                  Por família
+                </button>
+              </div>
             </div>
 
             {/* Scrollable bar chart */}
             <div className="overflow-x-auto">
               <div
                 className="flex items-end gap-1 pb-2"
-                style={{ minWidth: totalWidth, height: MAX_BAR_H + PHOTO_SIZE + 48 }}
+                style={{ minWidth: totalWidth, height: MAX_BAR_H + PHOTO_SIZE + 60 }}
               >
-                {birdData.map((bird, idx) => {
+                {/* ── BIRD MODE ── */}
+                {viewMode === 'bird' && activeBirdData.map((bird, idx) => {
                   const rank   = idx + 1;
-                  const barH   = Math.max(6, Math.round((bird.count / maxCount) * MAX_BAR_H));
+                  const barH   = Math.max(6, Math.round((bird.count / maxBirdCount) * MAX_BAR_H));
                   const color  = barColor(rank);
-                  const bInfo  = allBirds.find(b => b.name === bird.birdName);
+                  const bInfo  = allBirds.find((b: any) => b.name === bird.birdName);
                   const imgUrl = bInfo ? (bInfo.customImageUrl || bInfo.imageUrl) : null;
 
                   return (
                     <div
                       key={bird.birdName}
                       className="flex flex-col items-center flex-shrink-0 cursor-pointer"
-                      style={{ width: COL_W }}
+                      style={{ width: COL_W_BIRD }}
                       onMouseEnter={(e) => {
                         const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
                         setTooltip({
+                          kind: 'bird',
                           birdName: bird.birdName,
                           scientificName: bInfo?.scientificName ?? '',
                           count: bird.count,
@@ -263,39 +354,19 @@ export default function Avistamentos() {
                       }}
                       onMouseLeave={() => setTooltip(null)}
                     >
-                      {/* Rank */}
-                      <span className="text-xs font-semibold text-gray-400 mb-0.5 leading-none">
-                        {rankLabel(rank)}
-                      </span>
-
-                      {/* Count */}
-                      <span className="text-xs font-bold text-gray-700 mb-1 leading-none">
-                        {bird.count}
-                      </span>
-
-                      {/* Bar */}
-                      <div
-                        className="w-11 rounded-t-lg transition-all duration-300"
-                        style={{ height: barH, backgroundColor: color }}
-                      />
-
-                      {/* Photo */}
+                      <span className="text-xs font-semibold text-gray-400 mb-0.5 leading-none">{rankLabel(rank)}</span>
+                      <span className="text-xs font-bold text-gray-700 mb-1 leading-none">{bird.count}</span>
+                      <div className="w-11 rounded-t-lg transition-all duration-300" style={{ height: barH, backgroundColor: color }} />
                       <div className="mt-2">
                         {imgUrl ? (
-                          <img
-                            src={imgUrl}
-                            alt={bird.birdName}
+                          <img src={imgUrl} alt={bird.birdName}
                             className="rounded-full object-cover border-2 border-white shadow-sm"
                             style={{ width: PHOTO_SIZE, height: PHOTO_SIZE }}
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = 'none';
-                            }}
+                            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                           />
                         ) : (
-                          <div
-                            className="rounded-full bg-gray-100 border-2 border-white shadow-sm flex items-center justify-center"
-                            style={{ width: PHOTO_SIZE, height: PHOTO_SIZE }}
-                          >
+                          <div className="rounded-full bg-gray-100 border-2 border-white shadow-sm flex items-center justify-center"
+                            style={{ width: PHOTO_SIZE, height: PHOTO_SIZE }}>
                             <svg className="w-5 h-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -303,19 +374,76 @@ export default function Avistamentos() {
                           </div>
                         )}
                       </div>
-
-                      {/* Bird name */}
-                      <p
-                        className="text-center text-[9px] leading-tight text-gray-500 mt-1"
-                        style={{
-                          width: COL_W - 6,
-                          overflow: 'hidden',
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                        } as React.CSSProperties}
-                      >
+                      <p className="text-center text-[9px] leading-tight text-gray-500 mt-1"
+                        style={{ width: COL_W_BIRD - 6, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' } as React.CSSProperties}>
                         {bird.birdName}
+                      </p>
+                    </div>
+                  );
+                })}
+
+                {/* ── FAMILY MODE ── */}
+                {viewMode === 'family' && activeFamilyData.map((fam, idx) => {
+                  const rank  = idx + 1;
+                  const barH  = Math.max(6, Math.round((fam.count / maxFamilyCount) * MAX_BAR_H));
+                  const color = barColor(rank);
+                  // Use top-bird's photo as the family thumbnail
+                  const topBird  = fam.birds[0];
+                  const imgUrl   = topBird?.imageUrl ?? null;
+
+                  return (
+                    <div
+                      key={fam.family}
+                      className="flex flex-col items-center flex-shrink-0 cursor-pointer"
+                      style={{ width: COL_W_FAMILY }}
+                      onMouseEnter={(e) => {
+                        const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+                        setTooltip({
+                          kind: 'family',
+                          family: fam.family,
+                          count: fam.count,
+                          birds: fam.birds,
+                          x: rect.left + rect.width / 2,
+                          y: rect.top,
+                        });
+                      }}
+                      onMouseLeave={() => setTooltip(null)}
+                    >
+                      <span className="text-xs font-semibold text-gray-400 mb-0.5 leading-none">{rankLabel(rank)}</span>
+                      <span className="text-xs font-bold text-gray-700 mb-1 leading-none">{fam.count}</span>
+                      <div className="w-14 rounded-t-lg transition-all duration-300" style={{ height: barH, backgroundColor: color }} />
+                      {/* Row of up to 3 bird thumbnails */}
+                      <div className="mt-2 flex gap-0.5 justify-center">
+                        {fam.birds.slice(0, 3).map((b, i) => (
+                          b.imageUrl ? (
+                            <img key={i} src={b.imageUrl} alt={b.birdName}
+                              className="rounded-full object-cover border-2 border-white shadow-sm"
+                              style={{ width: 28, height: 28 }}
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                            />
+                          ) : (
+                            <div key={i} className="rounded-full bg-gray-100 border-2 border-white shadow-sm flex items-center justify-center"
+                              style={{ width: 28, height: 28 }}>
+                              <svg className="w-3 h-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                            </div>
+                          )
+                        ))}
+                        {fam.birds.length > 3 && (
+                          <div className="rounded-full bg-gray-200 border-2 border-white shadow-sm flex items-center justify-center"
+                            style={{ width: 28, height: 28 }}>
+                            <span className="text-[8px] font-bold text-gray-500">+{fam.birds.length - 3}</span>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-center text-[9px] leading-tight text-[#8B5CF6] font-semibold mt-1.5"
+                        style={{ width: COL_W_FAMILY - 8, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' } as React.CSSProperties}>
+                        {fam.family}
+                      </p>
+                      <p className="text-center text-[8px] leading-tight text-gray-400 mt-0.5">
+                        {fam.birds.length} sp.
                       </p>
                     </div>
                   );
@@ -324,7 +452,7 @@ export default function Avistamentos() {
             </div>
 
             <p className="text-xs text-center text-gray-300 mt-2">
-              Role para o lado para ver todas as espécies · Passe o mouse sobre a barra para ver detalhes
+              Role para o lado para ver {viewMode === 'bird' ? 'todas as espécies' : 'todas as famílias'} · Passe o mouse sobre a barra para ver detalhes
             </p>
           </div>
         )}
@@ -332,29 +460,19 @@ export default function Avistamentos() {
 
       <Footer />
 
-      {/* Rich hover tooltip */}
-      {tooltip && (
+      {/* ── BIRD TOOLTIP ── */}
+      {tooltip?.kind === 'bird' && (
         <div
           className="fixed z-50 pointer-events-none"
-          style={{
-            left: tooltip.x,
-            top: tooltip.y - 8,
-            transform: 'translate(-50%, -100%)',
-          }}
+          style={{ left: tooltip.x, top: tooltip.y - 8, transform: 'translate(-50%, -100%)' }}
         >
           <div className="bg-white rounded-xl shadow-xl border border-gray-100 p-3 flex items-center gap-3 min-w-[200px] max-w-[260px]">
             {tooltip.imgUrl ? (
-              <img
-                src={tooltip.imgUrl}
-                alt={tooltip.birdName}
+              <img src={tooltip.imgUrl} alt={tooltip.birdName}
                 className="rounded-lg object-cover flex-shrink-0 border border-gray-100"
-                style={{ width: 52, height: 52 }}
-              />
+                style={{ width: 52, height: 52 }} />
             ) : (
-              <div
-                className="rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0"
-                style={{ width: 52, height: 52 }}
-              >
+              <div className="rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0" style={{ width: 52, height: 52 }}>
                 <svg className="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -362,20 +480,70 @@ export default function Avistamentos() {
               </div>
             )}
             <div className="flex flex-col gap-0.5 min-w-0">
-              <span className="text-sm font-semibold text-gray-800 leading-tight truncate">
-                {tooltip.birdName}
-              </span>
+              <span className="text-sm font-semibold text-gray-800 leading-tight truncate">{tooltip.birdName}</span>
               {tooltip.scientificName && (
-                <span className="text-xs italic text-gray-400 leading-tight truncate">
-                  {tooltip.scientificName}
-                </span>
+                <span className="text-xs italic text-gray-400 leading-tight truncate">{tooltip.scientificName}</span>
               )}
               <span className="text-xs font-bold text-[#22C55E] mt-1">
                 {tooltip.count} avistamento{tooltip.count !== 1 ? 's' : ''}
               </span>
             </div>
           </div>
-          {/* Arrow */}
+          <div className="flex justify-center -mt-px">
+            <div className="w-3 h-3 bg-white border-r border-b border-gray-100 rotate-45 -translate-y-1.5 shadow-sm" />
+          </div>
+        </div>
+      )}
+
+      {/* ── FAMILY TOOLTIP ── */}
+      {tooltip?.kind === 'family' && (
+        <div
+          className="fixed z-50 pointer-events-none"
+          style={{ left: tooltip.x, top: tooltip.y - 8, transform: 'translate(-50%, -100%)' }}
+        >
+          <div className="bg-white rounded-xl shadow-xl border border-gray-100 p-3 min-w-[240px] max-w-[300px]">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-2 pb-2 border-b border-gray-100">
+              <span className="text-sm font-bold text-[#8B5CF6] italic">{tooltip.family}</span>
+              <span className="text-xs font-bold text-gray-500 ml-2 whitespace-nowrap">
+                {tooltip.count} avistamento{tooltip.count !== 1 ? 's' : ''}
+              </span>
+            </div>
+            {/* Bird list */}
+            <div className="flex flex-col gap-1.5">
+              {tooltip.birds.slice(0, 8).map((b, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  {b.imageUrl ? (
+                    <img src={b.imageUrl} alt={b.birdName}
+                      className="rounded-full object-cover flex-shrink-0 border border-gray-100"
+                      style={{ width: 28, height: 28 }}
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  ) : (
+                    <div className="rounded-full bg-gray-100 flex-shrink-0 flex items-center justify-center"
+                      style={{ width: 28, height: 28 }}>
+                      <svg className="w-3.5 h-3.5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-700 truncate leading-tight">{b.birdName}</p>
+                    {b.scientificName && (
+                      <p className="text-[10px] italic text-gray-400 truncate leading-tight">{b.scientificName}</p>
+                    )}
+                  </div>
+                  <span className="text-xs font-bold text-[#22C55E] flex-shrink-0">{b.count}</span>
+                </div>
+              ))}
+              {tooltip.birds.length > 8 && (
+                <p className="text-[10px] text-gray-400 text-center mt-0.5">
+                  +{tooltip.birds.length - 8} mais espécie{tooltip.birds.length - 8 !== 1 ? 's' : ''}
+                </p>
+              )}
+            </div>
+          </div>
           <div className="flex justify-center -mt-px">
             <div className="w-3 h-3 bg-white border-r border-b border-gray-100 rotate-45 -translate-y-1.5 shadow-sm" />
           </div>

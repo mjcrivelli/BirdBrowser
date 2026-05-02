@@ -137,6 +137,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Sightings ranked by family (vertical bar chart — family view)
+  app.get("/api/sightings/by-family", async (req, res) => {
+    try {
+      const year = req.query.year ? parseInt(req.query.year as string) : undefined;
+      const period = req.query.period as string | undefined;
+      const season = req.query.season as string | undefined;
+      const geoOnly = req.query.geoOnly === 'true';
+      const results = await storage.getSightingsByFamily({ year, period, season: season || undefined, geoOnly });
+      res.json(results);
+    } catch (error) {
+      console.error("Error fetching sightings by family:", error);
+      res.status(500).json({ message: "Failed to fetch sightings" });
+    }
+  });
+
   // Available years for the year filter dropdown
   app.get("/api/sightings/years", async (req, res) => {
     try {
