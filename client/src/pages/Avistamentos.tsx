@@ -288,13 +288,6 @@ export default function Avistamentos() {
           </p>
         )}
 
-        {/* Loading */}
-        {isLoading && (
-          <div className="flex items-center justify-center h-72">
-            <div className="w-8 h-8 border-4 border-[#4CAF50] border-t-transparent rounded-full animate-spin" />
-          </div>
-        )}
-
         {/* Error */}
         {isError && (
           <div className="flex items-center justify-center h-72 text-gray-400">
@@ -313,54 +306,169 @@ export default function Avistamentos() {
           </div>
         )}
 
-        {/* Chart */}
-        {!isLoading && !isError && totalSightings > 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-
-            {/* Stats row + view toggle */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <div className="flex flex-wrap gap-5 text-sm text-gray-500">
-                {viewMode === 'family' && (
+        {/* ── STICKY PODIUM ── always visible when data is present (or loading) */}
+        {!isError && (isLoading || totalSightings > 0) && (
+          <div className="sticky top-14 z-[9] bg-[#F9FBF9] pb-4 pt-1">
+            {/* Stats + view toggle */}
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                {viewMode === 'family' && !isLoading && (
                   <span className="flex items-center gap-1.5">
                     <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#8B5CF6]" />
                     {familiesCount} famíli{familiesCount !== 1 ? 'as' : 'a'}
                   </span>
                 )}
-                <span className="flex items-center gap-1.5">
-                  <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#22C55E]" />
-                  {speciesCount} espécie{speciesCount !== 1 ? 's' : ''}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#1565c0]" />
-                  {totalSightings} avistamento{totalSightings !== 1 ? 's' : ''} no total
-                </span>
+                {!isLoading && (
+                  <>
+                    <span className="flex items-center gap-1.5">
+                      <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#22C55E]" />
+                      {speciesCount} espécie{speciesCount !== 1 ? 's' : ''}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#1565c0]" />
+                      {totalSightings} avistamento{totalSightings !== 1 ? 's' : ''} no total
+                    </span>
+                  </>
+                )}
               </div>
-
-              {/* View-mode toggle */}
               <div className="flex items-center gap-0 rounded-lg border border-gray-200 overflow-hidden text-xs font-medium">
                 <button
                   onClick={() => { setViewMode('bird'); setTooltip(null); setSelectedItem(null); }}
-                  className={`px-3 py-1.5 transition-colors ${
-                    viewMode === 'bird'
-                      ? 'bg-[#4CAF50] text-white'
-                      : 'bg-white text-gray-500 hover:bg-gray-50'
-                  }`}
-                >
-                  Por espécie
-                </button>
+                  className={`px-3 py-1.5 transition-colors ${viewMode === 'bird' ? 'bg-[#4CAF50] text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                >Por espécie</button>
                 <button
                   onClick={() => { setViewMode('family'); setTooltip(null); setSelectedItem(null); }}
-                  className={`px-3 py-1.5 transition-colors border-l border-gray-200 ${
-                    viewMode === 'family'
-                      ? 'bg-[#8B5CF6] text-white'
-                      : 'bg-white text-gray-500 hover:bg-gray-50'
-                  }`}
-                >
-                  Por família
-                </button>
+                  className={`px-3 py-1.5 transition-colors border-l border-gray-200 ${viewMode === 'family' ? 'bg-[#8B5CF6] text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                >Por família</button>
               </div>
             </div>
 
+            {/* Podium skeleton */}
+            {isLoading && (
+              <div className="flex items-end justify-center gap-3">
+                {[{ w: 168, h: 168 }, { w: 200, h: 208 }, { w: 168, h: 168 }].map((s, i) => (
+                  <div key={i} className="rounded-2xl border-2 border-gray-100 bg-gray-50 animate-pulse"
+                    style={{ width: s.w, height: s.h }} />
+                ))}
+              </div>
+            )}
+
+            {/* Podium — bird mode */}
+            {!isLoading && viewMode === 'bird' && (
+              <div className="flex items-end justify-center gap-3">
+                {([1, 0, 2] as number[]).map((dataIdx) => {
+                  const bird = activeBirdData[dataIdx];
+                  if (!bird) return null;
+                  const rank = dataIdx + 1;
+                  const bInfo = allBirds.find((b: any) => b.name === bird.birdName);
+                  const imgUrl = bInfo ? (bInfo.customImageUrl || bInfo.imageUrl) : null;
+                  const isGold = dataIdx === 0;
+                  const isSel = selectedItem?.kind === 'bird' && selectedItem.birdId === bird.birdId;
+                  const photoSz = isGold ? 88 : 72;
+                  const borderCol = dataIdx === 0 ? '#F59E0B' : dataIdx === 1 ? '#94A3B8' : '#C2773A';
+                  const bgBorder = dataIdx === 0 ? 'bg-amber-50 border-amber-300' : dataIdx === 1 ? 'bg-gray-50 border-gray-200' : 'bg-orange-50 border-orange-200';
+                  return (
+                    <div
+                      key={bird.birdId}
+                      onClick={() => {
+                        const item: SelectedBird = { kind: 'bird', birdId: bird.birdId, birdName: bird.birdName, scientificName: bInfo?.scientificName ?? '', imgUrl };
+                        setSelectedItem(prev => prev?.kind === 'bird' && prev.birdId === bird.birdId ? null : item);
+                      }}
+                      className={`flex flex-col items-center rounded-2xl border-2 p-4 cursor-pointer transition-all shadow-sm hover:shadow-md ${bgBorder} ${isSel ? 'ring-2 ring-[#4CAF50] ring-offset-1' : ''}`}
+                      style={{ minHeight: isGold ? 208 : 170, width: isGold ? 200 : 168 }}
+                    >
+                      <div className="text-2xl mb-2">{rankLabel(rank)}</div>
+                      {imgUrl ? (
+                        <img src={imgUrl} alt={bird.birdName}
+                          className="rounded-full object-cover shadow"
+                          style={{ width: photoSz, height: photoSz, border: `3px solid ${borderCol}` }}
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      ) : (
+                        <div className="rounded-full bg-gray-100 flex items-center justify-center"
+                          style={{ width: photoSz, height: photoSz, border: `3px solid ${borderCol}` }}>
+                          <svg className="text-gray-300" style={{ width: photoSz * 0.4, height: photoSz * 0.4 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+                      <p className="font-bold text-sm text-center mt-3 text-gray-800 leading-tight line-clamp-2">{bird.birdName}</p>
+                      {bInfo?.scientificName && (
+                        <p className="text-[10px] italic text-gray-400 text-center mt-0.5 leading-tight line-clamp-1">{bInfo.scientificName}</p>
+                      )}
+                      <div className="mt-auto pt-3 flex items-baseline gap-1">
+                        <span className="font-bold leading-none" style={{ color: borderCol, fontSize: isGold ? 28 : 22 }}>{bird.count}</span>
+                        <span className="text-[10px] text-gray-400">avistamentos</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Podium — family mode */}
+            {!isLoading && viewMode === 'family' && (
+              <div className="flex items-end justify-center gap-3">
+                {([1, 0, 2] as number[]).map((dataIdx) => {
+                  const fam = activeFamilyData[dataIdx];
+                  if (!fam) return null;
+                  const rank = dataIdx + 1;
+                  const isGold = dataIdx === 0;
+                  const isSel = selectedItem?.kind === 'family' && selectedItem.family === fam.family;
+                  const borderCol = dataIdx === 0 ? '#F59E0B' : dataIdx === 1 ? '#94A3B8' : '#C2773A';
+                  const bgBorder = dataIdx === 0 ? 'bg-amber-50 border-amber-300' : dataIdx === 1 ? 'bg-gray-50 border-gray-200' : 'bg-orange-50 border-orange-200';
+                  const thumbSz = isGold ? 32 : 26;
+                  return (
+                    <div
+                      key={fam.family}
+                      onClick={() => {
+                        const item: SelectedFamily = { kind: 'family', family: fam.family };
+                        setSelectedItem(prev => prev?.kind === 'family' && prev.family === fam.family ? null : item);
+                      }}
+                      className={`flex flex-col items-center rounded-2xl border-2 p-4 cursor-pointer transition-all shadow-sm hover:shadow-md ${bgBorder} ${isSel ? 'ring-2 ring-[#8B5CF6] ring-offset-1' : ''}`}
+                      style={{ minHeight: isGold ? 208 : 170, width: isGold ? 200 : 168 }}
+                    >
+                      <div className="text-2xl mb-3">{rankLabel(rank)}</div>
+                      <div className="flex gap-1 justify-center">
+                        {fam.birds.slice(0, 3).map((b, i) => {
+                          const img = birdImgById.get(b.birdId) ?? null;
+                          return img ? (
+                            <img key={i} src={img} alt={b.birdName}
+                              className="rounded-full object-cover shadow-sm"
+                              style={{ width: thumbSz, height: thumbSz, border: `2px solid ${borderCol}` }}
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                            />
+                          ) : (
+                            <div key={i} className="rounded-full bg-gray-100"
+                              style={{ width: thumbSz, height: thumbSz, border: `2px solid ${borderCol}` }} />
+                          );
+                        })}
+                      </div>
+                      <p className="font-bold text-sm text-center mt-3 text-[#8B5CF6] italic leading-tight line-clamp-2">{fam.family}</p>
+                      <p className="text-[10px] text-gray-400 text-center mt-0.5">{fam.birds.length} espécie{fam.birds.length !== 1 ? 's' : ''}</p>
+                      <div className="mt-auto pt-3 flex items-baseline gap-1">
+                        <span className="font-bold leading-none" style={{ color: borderCol, fontSize: isGold ? 28 : 22 }}>{fam.count}</span>
+                        <span className="text-[10px] text-gray-400">avistamentos</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── EXPLORE section (bar chart) ── */}
+        {!isLoading && !isError && totalSightings > 0 && (
+          <>
+            {/* "Explorar" divider */}
+            <div className="flex items-center gap-3 mt-2 mb-4">
+              <div className="flex-1 h-px bg-gray-200" />
+              <span className="text-[10px] text-gray-400 uppercase tracking-widest font-medium select-none">Explorar</span>
+              <div className="flex-1 h-px bg-gray-200" />
+            </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             {/* Scrollable bar chart */}
             <div className="overflow-x-auto">
               <div
@@ -509,6 +617,7 @@ export default function Avistamentos() {
               Role para o lado para ver {viewMode === 'bird' ? 'todas as espécies' : 'todas as famílias'} · Clique em uma barra para ver o gráfico mensal
             </p>
           </div>
+          </>
         )}
 
         {/* ── MONTHLY LINE CHART ── */}
