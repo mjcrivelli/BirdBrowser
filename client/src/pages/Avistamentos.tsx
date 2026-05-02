@@ -110,6 +110,7 @@ export default function Avistamentos() {
   const [viewMode, setViewMode]       = useState<'bird' | 'family'>('bird');
   const [tooltip, setTooltip]         = useState<TooltipInfo | null>(null);
   const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
+  const [showAll, setShowAll]         = useState<boolean>(false);
 
   const { data: years = [] } = useQuery<number[]>({
     queryKey: ['/api/sightings/years'],
@@ -183,9 +184,16 @@ export default function Avistamentos() {
 
   const familiesCount = activeFamilyData.length;
 
+  const TOP_N = 10;
+  const displayBirdData   = showAll ? activeBirdData   : activeBirdData.slice(0, TOP_N);
+  const displayFamilyData = showAll ? activeFamilyData : activeFamilyData.slice(0, TOP_N);
+  const hasMore = viewMode === 'bird'
+    ? activeBirdData.length   > TOP_N
+    : activeFamilyData.length > TOP_N;
+
   const totalWidth = viewMode === 'bird'
-    ? activeBirdData.length   * (COL_W_BIRD   + 4)
-    : activeFamilyData.length * (COL_W_FAMILY + 4);
+    ? displayBirdData.length   * (COL_W_BIRD   + 4)
+    : displayFamilyData.length * (COL_W_FAMILY + 4);
 
   return (
     <div className="min-h-screen bg-[#F9FBF9] flex flex-col">
@@ -338,11 +346,11 @@ export default function Avistamentos() {
             </div>
             <div className="flex items-center gap-0 rounded-lg border border-gray-200 overflow-hidden text-xs font-medium">
               <button
-                onClick={() => { setViewMode('bird'); setTooltip(null); setSelectedItem(null); }}
+                onClick={() => { setViewMode('bird'); setTooltip(null); setSelectedItem(null); setShowAll(false); }}
                 className={`px-3 py-1.5 transition-colors ${viewMode === 'bird' ? 'bg-[#4CAF50] text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
               >Por espécie</button>
               <button
-                onClick={() => { setViewMode('family'); setTooltip(null); setSelectedItem(null); }}
+                onClick={() => { setViewMode('family'); setTooltip(null); setSelectedItem(null); setShowAll(false); }}
                 className={`px-3 py-1.5 transition-colors border-l border-gray-200 ${viewMode === 'family' ? 'bg-[#8B5CF6] text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
               >Por família</button>
             </div>
@@ -360,7 +368,7 @@ export default function Avistamentos() {
                 style={{ minWidth: totalWidth, height: MAX_BAR_H + PHOTO_SIZE + 120 }}
               >
                 {/* ── BIRD MODE ── */}
-                {viewMode === 'bird' && activeBirdData.map((bird, idx) => {
+                {viewMode === 'bird' && displayBirdData.map((bird, idx) => {
                   const rank    = idx + 1;
                   const barH    = Math.max(6, Math.round((bird.count / maxBirdCount) * MAX_BAR_H));
                   const color   = barColor(rank);
@@ -435,7 +443,7 @@ export default function Avistamentos() {
                 })}
 
                 {/* ── FAMILY MODE ── */}
-                {viewMode === 'family' && activeFamilyData.map((fam, idx) => {
+                {viewMode === 'family' && displayFamilyData.map((fam, idx) => {
                   const rank     = idx + 1;
                   const barH     = Math.max(6, Math.round((fam.count / maxFamilyCount) * MAX_BAR_H));
                   const color    = barColor(rank);
@@ -521,9 +529,36 @@ export default function Avistamentos() {
               </div>
             </div>
 
-            <p className="text-xs text-center text-gray-300 mt-2">
-              Role para o lado para ver {viewMode === 'bird' ? 'todas as espécies' : 'todas as famílias'} · Clique em uma barra para ver o gráfico mensal
-            </p>
+            <div className="flex items-center justify-between mt-3 gap-3">
+              <p className="text-xs text-gray-300">
+                {showAll
+                  ? `Mostrando todas as ${viewMode === 'bird' ? activeBirdData.length + ' espécies' : activeFamilyData.length + ' famílias'}`
+                  : `Mostrando top ${Math.min(TOP_N, viewMode === 'bird' ? activeBirdData.length : activeFamilyData.length)} de ${viewMode === 'bird' ? activeBirdData.length + ' espécies' : activeFamilyData.length + ' famílias'}`
+                }
+              </p>
+              {hasMore && (
+                <button
+                  onClick={() => setShowAll(v => !v)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors border-gray-200 text-gray-500 hover:border-gray-300 hover:bg-gray-50 flex-shrink-0"
+                >
+                  {showAll ? (
+                    <>
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+                      </svg>
+                      Ver menos
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                      Ver todas ({viewMode === 'bird' ? activeBirdData.length : activeFamilyData.length})
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
           </div>
           </>
         )}
