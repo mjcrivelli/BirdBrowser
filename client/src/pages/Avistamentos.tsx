@@ -136,9 +136,6 @@ function TopBirds({ rows, allBirds }: TopBirdsProps) {
         const imageUrl = bird ? (bird.customImageUrl || bird.imageUrl) : null;
         return (
           <div key={name} className={`bg-white rounded-xl shadow-sm border ${medal.border} p-4 flex flex-col items-center text-center gap-3`}>
-            <div className={`w-10 h-10 rounded-full ${medal.bg} flex items-center justify-center text-lg`}>
-              {medal.icon}
-            </div>
             {imageUrl ? (
               <img
                 src={imageUrl}
