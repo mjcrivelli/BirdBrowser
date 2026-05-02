@@ -34,6 +34,8 @@ export interface IStorage {
   addSightingRecord(record: InsertSightingRecord): Promise<SightingRecord>;
   getSightingRecords(): Promise<SightingRecord[]>;
   getSightingsByMonth(filters?: { season?: string; geoOnly?: boolean }): Promise<{ monthKey: string; birdName: string; count: number }[]>;
+  getSightingsByBird(filters?: { year?: number; period?: string }): Promise<{ birdId: number; birdName: string; count: number }[]>;
+  getAvailableYears(): Promise<number[]>;
   seedBirdsToDatabase(): Promise<number>;
   updateBirdCustomImage(birdId: number, customImageUrl: string): Promise<Bird | undefined>;
   updateBirdInfo(birdId: number, data: Partial<InsertBird>): Promise<Bird | undefined>;
@@ -403,6 +405,64 @@ export class MemStorage implements IStorage {
       });
     } catch (error) {
       console.error('Error fetching sightings by month:', error);
+      return [];
+    }
+  }
+
+  async getSightingsByBird(filters?: { year?: number; period?: string }): Promise<{ birdId: number; birdName: string; count: number }[]> {
+    try {
+      const useViz = process.env.USE_VIZ_TABLE === 'true';
+      const records = useViz
+        ? await db.select().from(vizTestSightings)
+        : await db.select().from(sightingRecords);
+
+      const now = new Date();
+      let startDate: Date | null = null;
+
+      if (filters?.period && filters.period !== 'alltime') {
+        const referenceDate = filters.year
+          ? new Date(filters.year, 11, 31, 23, 59, 59)
+          : now;
+        const periodDays: Record<string, number> = {
+          last1month: 30,
+          last3months: 90,
+          last6months: 180,
+          last1year: 365,
+        };
+        const days = periodDays[filters.period];
+        if (days) startDate = new Date(referenceDate.getTime() - days * 24 * 60 * 60 * 1000);
+      }
+
+      const counts: Record<string, { birdId: number; count: number }> = {};
+      for (const r of records) {
+        if (r.birdId === 0) continue;
+        const ts = new Date(r.timestamp);
+        if (filters?.year && ts.getFullYear() !== filters.year) continue;
+        if (startDate && ts < startDate) continue;
+        if (!counts[r.birdName]) counts[r.birdName] = { birdId: r.birdId, count: 0 };
+        counts[r.birdName].count++;
+      }
+
+      return Object.entries(counts)
+        .map(([birdName, { birdId, count }]) => ({ birdId, birdName, count }))
+        .sort((a, b) => b.count - a.count);
+    } catch (error) {
+      console.error('Error fetching sightings by bird:', error);
+      return [];
+    }
+  }
+
+  async getAvailableYears(): Promise<number[]> {
+    try {
+      const useViz = process.env.USE_VIZ_TABLE === 'true';
+      const records = useViz
+        ? await db.select().from(vizTestSightings)
+        : await db.select().from(sightingRecords);
+      const years = new Set<number>();
+      for (const r of records) years.add(new Date(r.timestamp).getFullYear());
+      return Array.from(years).sort((a, b) => b - a);
+    } catch (error) {
+      console.error('Error fetching available years:', error);
       return [];
     }
   }
