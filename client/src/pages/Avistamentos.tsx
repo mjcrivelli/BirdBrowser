@@ -224,7 +224,7 @@ export default function Avistamentos() {
                 ? 'bg-[#1565c0] text-white border-[#1565c0] shadow-sm'
                 : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
             }`}
-            title="Exibe apenas avistamentos registrados com localização próxima à Cachoeira da Toca (30 km)"
+            title="Exibe apenas avistamentos registrados com localização próxima à Cachoeira da Toca (10 km)"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -235,7 +235,7 @@ export default function Avistamentos() {
 
           {geoOnly && (
             <p className="text-xs text-gray-400 italic w-full -mt-1">
-              Mostrando somente avistamentos com localização registrada dentro de 30 km da Cachoeira da Toca.
+              Mostrando somente avistamentos com localização registrada dentro de 10 km da Cachoeira da Toca.
             </p>
           )}
         </div>

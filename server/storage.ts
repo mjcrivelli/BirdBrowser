@@ -363,7 +363,7 @@ export class MemStorage implements IStorage {
     // Cachoeira da Toca – Ilhabela, SP, Brazil
     const TOCA_LAT = -23.78;
     const TOCA_LON = -45.36;
-    const GEO_RADIUS_KM = 30;
+    const GEO_RADIUS_KM = 10;
 
     function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
       const R = 6371;
