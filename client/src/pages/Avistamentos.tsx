@@ -44,9 +44,19 @@ function rankLabel(rank: number): string {
   return `#${rank}`;
 }
 
+interface TooltipInfo {
+  birdName: string;
+  scientificName: string;
+  count: number;
+  imgUrl: string | null;
+  x: number;
+  y: number;
+}
+
 export default function Avistamentos() {
   const [year, setYear]     = useState<string>('all');
   const [period, setPeriod] = useState<string>('alltime');
+  const [tooltip, setTooltip] = useState<TooltipInfo | null>(null);
 
   const { data: years = [] } = useQuery<number[]>({
     queryKey: ['/api/sightings/years'],
@@ -172,9 +182,20 @@ export default function Avistamentos() {
                   return (
                     <div
                       key={bird.birdName}
-                      className="flex flex-col items-center flex-shrink-0"
+                      className="flex flex-col items-center flex-shrink-0 cursor-pointer"
                       style={{ width: COL_W }}
-                      title={`${bird.birdName}: ${bird.count} avistamento${bird.count !== 1 ? 's' : ''}`}
+                      onMouseEnter={(e) => {
+                        const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+                        setTooltip({
+                          birdName: bird.birdName,
+                          scientificName: bInfo?.scientificName ?? '',
+                          count: bird.count,
+                          imgUrl,
+                          x: rect.left + rect.width / 2,
+                          y: rect.top,
+                        });
+                      }}
+                      onMouseLeave={() => setTooltip(null)}
                     >
                       {/* Rank */}
                       <span className="text-xs font-semibold text-gray-400 mb-0.5 leading-none">
@@ -237,13 +258,63 @@ export default function Avistamentos() {
             </div>
 
             <p className="text-xs text-center text-gray-300 mt-2">
-              Role para o lado para ver todas as espécies · Passe o mouse sobre a barra para ver o total
+              Role para o lado para ver todas as espécies · Passe o mouse sobre a barra para ver detalhes
             </p>
           </div>
         )}
       </main>
 
       <Footer />
+
+      {/* Rich hover tooltip */}
+      {tooltip && (
+        <div
+          className="fixed z-50 pointer-events-none"
+          style={{
+            left: tooltip.x,
+            top: tooltip.y - 8,
+            transform: 'translate(-50%, -100%)',
+          }}
+        >
+          <div className="bg-white rounded-xl shadow-xl border border-gray-100 p-3 flex items-center gap-3 min-w-[200px] max-w-[260px]">
+            {tooltip.imgUrl ? (
+              <img
+                src={tooltip.imgUrl}
+                alt={tooltip.birdName}
+                className="rounded-lg object-cover flex-shrink-0 border border-gray-100"
+                style={{ width: 52, height: 52 }}
+              />
+            ) : (
+              <div
+                className="rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0"
+                style={{ width: 52, height: 52 }}
+              >
+                <svg className="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            )}
+            <div className="flex flex-col gap-0.5 min-w-0">
+              <span className="text-sm font-semibold text-gray-800 leading-tight truncate">
+                {tooltip.birdName}
+              </span>
+              {tooltip.scientificName && (
+                <span className="text-xs italic text-gray-400 leading-tight truncate">
+                  {tooltip.scientificName}
+                </span>
+              )}
+              <span className="text-xs font-bold text-[#22C55E] mt-1">
+                {tooltip.count} avistamento{tooltip.count !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
+          {/* Arrow */}
+          <div className="flex justify-center -mt-px">
+            <div className="w-3 h-3 bg-white border-r border-b border-gray-100 rotate-45 -translate-y-1.5 shadow-sm" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
