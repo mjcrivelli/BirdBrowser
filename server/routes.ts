@@ -109,7 +109,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Sightings by month endpoint for the Avistamentos chart
   app.get("/api/sightings/by-month", async (req, res) => {
     try {
-      const rows = await storage.getSightingsByMonth();
+      const season = req.query.season as string | undefined;
+      const geoOnly = req.query.geoOnly === 'true';
+      const rows = await storage.getSightingsByMonth({
+        season: season || undefined,
+        geoOnly,
+      });
       res.json(rows);
     } catch (error) {
       console.error("Error fetching sightings by month:", error);

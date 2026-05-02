@@ -33,7 +33,7 @@ export interface IStorage {
   getBirdSightings(userId: number): Promise<BirdSighting[]>;
   addSightingRecord(record: InsertSightingRecord): Promise<SightingRecord>;
   getSightingRecords(): Promise<SightingRecord[]>;
-  getSightingsByMonth(): Promise<{ monthKey: string; birdName: string; count: number }[]>;
+  getSightingsByMonth(filters?: { season?: string; geoOnly?: boolean }): Promise<{ monthKey: string; birdName: string; count: number }[]>;
   seedBirdsToDatabase(): Promise<number>;
   updateBirdCustomImage(birdId: number, customImageUrl: string): Promise<Bird | undefined>;
   updateBirdInfo(birdId: number, data: Partial<InsertBird>): Promise<Bird | undefined>;
@@ -359,13 +359,35 @@ export class MemStorage implements IStorage {
     }
   }
 
-  async getSightingsByMonth(): Promise<{ monthKey: string; birdName: string; count: number }[]> {
+  async getSightingsByMonth(filters?: { season?: string; geoOnly?: boolean }): Promise<{ monthKey: string; birdName: string; count: number }[]> {
+    // Cachoeira da Toca – Ilhabela, SP, Brazil
+    const TOCA_LAT = -23.78;
+    const TOCA_LON = -45.36;
+    const GEO_RADIUS_KM = 30;
+
+    function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
     try {
       const records = await db.select().from(sightingRecords);
       const counts: Record<string, number> = {};
 
       for (const r of records) {
         if (r.birdId === 0) continue;
+
+        if (filters?.geoOnly) {
+          if (r.latitude == null || r.longitude == null) continue;
+          if (haversineKm(r.latitude, r.longitude, TOCA_LAT, TOCA_LON) > GEO_RADIUS_KM) continue;
+        }
+
+        if (filters?.season && r.season !== filters.season) continue;
+
         const d = new Date(r.timestamp);
         const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
         const key = `${monthKey}||${r.birdName}`;
