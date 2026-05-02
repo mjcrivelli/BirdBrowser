@@ -36,6 +36,7 @@ export interface IStorage {
   getSightingsByMonth(filters?: { season?: string; geoOnly?: boolean }): Promise<{ monthKey: string; birdName: string; count: number }[]>;
   getSightingsByBird(filters?: { year?: number; period?: string; season?: string; geoOnly?: boolean }): Promise<{ birdId: number; birdName: string; count: number }[]>;
   getSightingsByFamily(filters?: { year?: number; period?: string; season?: string; geoOnly?: boolean }): Promise<{ family: string; count: number; birds: { birdId: number; birdName: string; count: number; scientificName: string; imageUrl: string | null }[] }[]>;
+  getMonthlyForSelection(opts: { birdId?: number; family?: string; year?: number; season?: string; geoOnly?: boolean }): Promise<{ month: number; count: number }[]>;
   getAvailableYears(): Promise<number[]>;
   seedBirdsToDatabase(): Promise<number>;
   updateBirdCustomImage(birdId: number, customImageUrl: string): Promise<Bird | undefined>;
@@ -559,6 +560,51 @@ export class MemStorage implements IStorage {
     } catch (error) {
       console.error('Error fetching sightings by family:', error);
       return [];
+    }
+  }
+
+  async getMonthlyForSelection(opts: { birdId?: number; family?: string; year?: number; season?: string; geoOnly?: boolean }): Promise<{ month: number; count: number }[]> {
+    const TOCA_LAT = -23.78;
+    const TOCA_LON = -45.36;
+    const GEO_RADIUS_KM = 10;
+    function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+    try {
+      let familyBirdIds: Set<number> | null = null;
+      if (opts.family) {
+        const allBirds = await db.select().from(birds);
+        familyBirdIds = new Set(allBirds.filter(b => b.family === opts.family).map(b => b.id));
+      }
+      const useViz = process.env.USE_VIZ_TABLE === 'true';
+      const records = useViz
+        ? await db.select().from(vizTestSightings)
+        : await db.select().from(sightingRecords);
+
+      const monthlyCounts: Record<number, number> = {};
+      for (let m = 1; m <= 12; m++) monthlyCounts[m] = 0;
+
+      for (const r of records) {
+        if (r.birdId === 0) continue;
+        if (opts.birdId !== undefined && r.birdId !== opts.birdId) continue;
+        if (familyBirdIds && !familyBirdIds.has(r.birdId)) continue;
+        const ts = new Date(r.timestamp);
+        if (opts.year && ts.getFullYear() !== opts.year) continue;
+        if (opts.season && r.season !== opts.season) continue;
+        if (opts.geoOnly) {
+          if (r.latitude == null || r.longitude == null) continue;
+          if (haversineKm(r.latitude, r.longitude, TOCA_LAT, TOCA_LON) > GEO_RADIUS_KM) continue;
+        }
+        monthlyCounts[ts.getMonth() + 1]++;
+      }
+      return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, count: monthlyCounts[i + 1] }));
+    } catch (error) {
+      console.error('Error fetching monthly sightings:', error);
+      return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, count: 0 }));
     }
   }
 

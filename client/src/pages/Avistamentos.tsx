@@ -87,13 +87,29 @@ interface FamilyTooltipInfo {
 
 type TooltipInfo = BirdTooltipInfo | FamilyTooltipInfo;
 
+interface SelectedBird {
+  kind: 'bird';
+  birdId: number;
+  birdName: string;
+  scientificName: string;
+  imgUrl: string | null;
+}
+interface SelectedFamily {
+  kind: 'family';
+  family: string;
+}
+type SelectedItem = SelectedBird | SelectedFamily;
+
+const MONTHS_PT = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
 export default function Avistamentos() {
   const [year, setYear]         = useState<string>('all');
   const [period, setPeriod]     = useState<string>('alltime');
   const [season, setSeason]     = useState<string>('');
   const [geoOnly, setGeoOnly]   = useState<boolean>(false);
-  const [viewMode, setViewMode] = useState<'bird' | 'family'>('bird');
-  const [tooltip, setTooltip]   = useState<TooltipInfo | null>(null);
+  const [viewMode, setViewMode]       = useState<'bird' | 'family'>('bird');
+  const [tooltip, setTooltip]         = useState<TooltipInfo | null>(null);
+  const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
 
   const { data: years = [] } = useQuery<number[]>({
     queryKey: ['/api/sightings/years'],
@@ -130,6 +146,23 @@ export default function Avistamentos() {
     const url = b.customImageUrl || b.imageUrl;
     if (url) birdImgById.set(b.id, url);
   }
+
+  // Monthly query for the selected bird/family
+  const monthlyQs = new URLSearchParams();
+  if (selectedItem) {
+    if (selectedItem.kind === 'bird') monthlyQs.set('birdId', String(selectedItem.birdId));
+    else monthlyQs.set('family', selectedItem.family);
+  }
+  if (year !== 'all') monthlyQs.set('year', year);
+  if (season) monthlyQs.set('season', season);
+  if (geoOnly) monthlyQs.set('geoOnly', 'true');
+  const monthlyQueryUrl = `/api/sightings/monthly?${monthlyQs.toString()}`;
+  const { data: monthlyData = [], isLoading: monthlyLoading } = useQuery<{ month: number; count: number }[]>({
+    queryKey: [monthlyQueryUrl],
+    enabled: !!selectedItem,
+  });
+  const monthlyTotal = monthlyData.reduce((s, d) => s + d.count, 0);
+  const monthlyMax   = Math.max(...monthlyData.map(d => d.count), 1);
 
   const isLoading = viewMode === 'bird' ? birdLoading : familyLoading;
   const isError   = viewMode === 'bird' ? birdError   : familyError;
@@ -306,7 +339,7 @@ export default function Avistamentos() {
               {/* View-mode toggle */}
               <div className="flex items-center gap-0 rounded-lg border border-gray-200 overflow-hidden text-xs font-medium">
                 <button
-                  onClick={() => { setViewMode('bird'); setTooltip(null); }}
+                  onClick={() => { setViewMode('bird'); setTooltip(null); setSelectedItem(null); }}
                   className={`px-3 py-1.5 transition-colors ${
                     viewMode === 'bird'
                       ? 'bg-[#4CAF50] text-white'
@@ -316,7 +349,7 @@ export default function Avistamentos() {
                   Por espécie
                 </button>
                 <button
-                  onClick={() => { setViewMode('family'); setTooltip(null); }}
+                  onClick={() => { setViewMode('family'); setTooltip(null); setSelectedItem(null); }}
                   className={`px-3 py-1.5 transition-colors border-l border-gray-200 ${
                     viewMode === 'family'
                       ? 'bg-[#8B5CF6] text-white'
@@ -336,17 +369,25 @@ export default function Avistamentos() {
               >
                 {/* ── BIRD MODE ── */}
                 {viewMode === 'bird' && activeBirdData.map((bird, idx) => {
-                  const rank   = idx + 1;
-                  const barH   = Math.max(6, Math.round((bird.count / maxBirdCount) * MAX_BAR_H));
-                  const color  = barColor(rank);
-                  const bInfo  = allBirds.find((b: any) => b.name === bird.birdName);
-                  const imgUrl = bInfo ? (bInfo.customImageUrl || bInfo.imageUrl) : null;
+                  const rank    = idx + 1;
+                  const barH    = Math.max(6, Math.round((bird.count / maxBirdCount) * MAX_BAR_H));
+                  const color   = barColor(rank);
+                  const bInfo   = allBirds.find((b: any) => b.name === bird.birdName);
+                  const imgUrl  = bInfo ? (bInfo.customImageUrl || bInfo.imageUrl) : null;
+                  const isSel   = selectedItem?.kind === 'bird' && selectedItem.birdId === bird.birdId;
+                  const isDimmed = !!selectedItem && !isSel;
 
                   return (
                     <div
                       key={bird.birdName}
-                      className="flex flex-col items-center flex-shrink-0 cursor-pointer"
+                      className={`flex flex-col items-center flex-shrink-0 cursor-pointer rounded-lg transition-all duration-150 py-1 px-0.5 ${
+                        isSel ? 'ring-2 ring-[#4CAF50] ring-offset-1 bg-green-50' : ''
+                      } ${isDimmed ? 'opacity-40' : 'opacity-100'}`}
                       style={{ width: COL_W_BIRD }}
+                      onClick={() => {
+                        const item: SelectedBird = { kind: 'bird', birdId: bird.birdId, birdName: bird.birdName, scientificName: bInfo?.scientificName ?? '', imgUrl };
+                        setSelectedItem(prev => prev?.kind === 'bird' && prev.birdId === bird.birdId ? null : item);
+                      }}
                       onMouseEnter={(e) => {
                         const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
                         setTooltip({
@@ -367,12 +408,12 @@ export default function Avistamentos() {
                       <div className="mt-2">
                         {imgUrl ? (
                           <img src={imgUrl} alt={bird.birdName}
-                            className="rounded-full object-cover border-2 border-white shadow-sm"
+                            className={`rounded-full object-cover shadow-sm transition-all ${isSel ? 'border-2 border-[#4CAF50]' : 'border-2 border-white'}`}
                             style={{ width: PHOTO_SIZE, height: PHOTO_SIZE }}
                             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                           />
                         ) : (
-                          <div className="rounded-full bg-gray-100 border-2 border-white shadow-sm flex items-center justify-center"
+                          <div className={`rounded-full bg-gray-100 shadow-sm flex items-center justify-center ${isSel ? 'border-2 border-[#4CAF50]' : 'border-2 border-white'}`}
                             style={{ width: PHOTO_SIZE, height: PHOTO_SIZE }}>
                             <svg className="w-5 h-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -381,7 +422,7 @@ export default function Avistamentos() {
                           </div>
                         )}
                       </div>
-                      <p className="text-center text-[9px] leading-tight text-gray-500 mt-1"
+                      <p className={`text-center text-[9px] leading-tight mt-1 ${isSel ? 'text-[#4CAF50] font-semibold' : 'text-gray-500'}`}
                         style={{ width: COL_W_BIRD - 6, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' } as React.CSSProperties}>
                         {bird.birdName}
                       </p>
@@ -391,16 +432,23 @@ export default function Avistamentos() {
 
                 {/* ── FAMILY MODE ── */}
                 {viewMode === 'family' && activeFamilyData.map((fam, idx) => {
-                  const rank  = idx + 1;
-                  const barH  = Math.max(6, Math.round((fam.count / maxFamilyCount) * MAX_BAR_H));
-                  const color = barColor(rank);
-                  const topBird = fam.birds[0];
+                  const rank     = idx + 1;
+                  const barH     = Math.max(6, Math.round((fam.count / maxFamilyCount) * MAX_BAR_H));
+                  const color    = barColor(rank);
+                  const isSel    = selectedItem?.kind === 'family' && selectedItem.family === fam.family;
+                  const isDimmed = !!selectedItem && !isSel;
 
                   return (
                     <div
                       key={fam.family}
-                      className="flex flex-col items-center flex-shrink-0 cursor-pointer"
+                      className={`flex flex-col items-center flex-shrink-0 cursor-pointer rounded-lg transition-all duration-150 py-1 px-0.5 ${
+                        isSel ? 'ring-2 ring-[#8B5CF6] ring-offset-1 bg-purple-50' : ''
+                      } ${isDimmed ? 'opacity-40' : 'opacity-100'}`}
                       style={{ width: COL_W_FAMILY }}
+                      onClick={() => {
+                        const item: SelectedFamily = { kind: 'family', family: fam.family };
+                        setSelectedItem(prev => prev?.kind === 'family' && prev.family === fam.family ? null : item);
+                      }}
                       onMouseEnter={(e) => {
                         const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
                         setTooltip({
@@ -458,8 +506,129 @@ export default function Avistamentos() {
             </div>
 
             <p className="text-xs text-center text-gray-300 mt-2">
-              Role para o lado para ver {viewMode === 'bird' ? 'todas as espécies' : 'todas as famílias'} · Passe o mouse sobre a barra para ver detalhes
+              Role para o lado para ver {viewMode === 'bird' ? 'todas as espécies' : 'todas as famílias'} · Clique em uma barra para ver o gráfico mensal
             </p>
+          </div>
+        )}
+
+        {/* ── MONTHLY LINE CHART ── */}
+        {selectedItem && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mt-4">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-4">
+              {selectedItem.kind === 'bird' && selectedItem.imgUrl && (
+                <img src={selectedItem.imgUrl} alt={selectedItem.birdName}
+                  className="rounded-full object-cover border-2 border-[#4CAF50] shadow-sm flex-shrink-0"
+                  style={{ width: 48, height: 48 }}
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              )}
+              {selectedItem.kind === 'family' && (
+                <div className="rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0"
+                  style={{ width: 48, height: 48 }}>
+                  <svg className="w-6 h-6 text-[#8B5CF6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <h2 className={`font-bold text-base leading-tight truncate ${selectedItem.kind === 'family' ? 'text-[#8B5CF6] italic' : 'text-gray-800'}`}>
+                  {selectedItem.kind === 'bird' ? selectedItem.birdName : selectedItem.family}
+                </h2>
+                {selectedItem.kind === 'bird' && selectedItem.scientificName && (
+                  <p className="text-xs italic text-gray-400 leading-tight truncate">{selectedItem.scientificName}</p>
+                )}
+                {selectedItem.kind === 'family' && (
+                  <p className="text-xs text-gray-400 leading-tight">Família</p>
+                )}
+              </div>
+              <div className="text-right flex-shrink-0">
+                {monthlyLoading ? (
+                  <div className="w-5 h-5 border-2 border-[#4CAF50] border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <p className={`text-lg font-bold ${selectedItem.kind === 'family' ? 'text-[#8B5CF6]' : 'text-[#22C55E]'}`}>
+                      {monthlyTotal}
+                    </p>
+                    <p className="text-[10px] text-gray-400">avistamento{monthlyTotal !== 1 ? 's' : ''}</p>
+                    <p className="text-[10px] text-gray-300">{year === 'all' ? 'todos os anos' : year}</p>
+                  </>
+                )}
+              </div>
+              <button
+                onClick={() => setSelectedItem(null)}
+                className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors ml-2"
+                title="Fechar"
+              >
+                <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* SVG Line Chart */}
+            {!monthlyLoading && monthlyData.length === 12 && (() => {
+              const PAD = { l: 42, r: 16, t: 16, b: 36 };
+              const VW = 660, VH = 190;
+              const pw = VW - PAD.l - PAD.r;
+              const ph = VH - PAD.t - PAD.b;
+              const lineColor = selectedItem.kind === 'family' ? '#8B5CF6' : '#22C55E';
+              const pts = monthlyData.map((d, i) => ({
+                x: PAD.l + (i / 11) * pw,
+                y: PAD.t + ph * (1 - d.count / monthlyMax),
+                count: d.count,
+              }));
+              const linePath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+              const areaPath = `${linePath} L${pts[11].x.toFixed(1)},${(PAD.t + ph).toFixed(1)} L${PAD.l.toFixed(1)},${(PAD.t + ph).toFixed(1)} Z`;
+              const gridYCount = 4;
+              return (
+                <svg viewBox={`0 0 ${VW} ${VH}`} className="w-full" style={{ height: 190 }} overflow="visible">
+                  <defs>
+                    <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={lineColor} stopOpacity="0.18" />
+                      <stop offset="100%" stopColor={lineColor} stopOpacity="0.01" />
+                    </linearGradient>
+                  </defs>
+                  {/* Grid lines */}
+                  {Array.from({ length: gridYCount + 1 }, (_, i) => {
+                    const y = PAD.t + (i / gridYCount) * ph;
+                    const val = Math.round(monthlyMax * (1 - i / gridYCount));
+                    return (
+                      <g key={i}>
+                        <line x1={PAD.l} y1={y} x2={PAD.l + pw} y2={y} stroke="#F3F4F6" strokeWidth="1" />
+                        {val > 0 && (
+                          <text x={PAD.l - 5} y={y + 4} textAnchor="end" fill="#D1D5DB" fontSize="9">{val}</text>
+                        )}
+                      </g>
+                    );
+                  })}
+                  {/* Area fill */}
+                  <path d={areaPath} fill="url(#areaGrad)" />
+                  {/* Line */}
+                  <path d={linePath} fill="none" stroke={lineColor} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+                  {/* Dots + count labels */}
+                  {pts.map((p, i) => (
+                    <g key={i}>
+                      {p.count > 0 && (
+                        <>
+                          <circle cx={p.x} cy={p.y} r="4" fill="white" stroke={lineColor} strokeWidth="2" />
+                          <text x={p.x} y={p.y - 8} textAnchor="middle" fill={lineColor} fontSize="9" fontWeight="600">{p.count}</text>
+                        </>
+                      )}
+                      {p.count === 0 && (
+                        <circle cx={p.x} cy={p.y} r="2.5" fill="#E5E7EB" />
+                      )}
+                    </g>
+                  ))}
+                  {/* Baseline */}
+                  <line x1={PAD.l} y1={PAD.t + ph} x2={PAD.l + pw} y2={PAD.t + ph} stroke="#E5E7EB" strokeWidth="1" />
+                  {/* Month labels */}
+                  {MONTHS_PT.map((m, i) => (
+                    <text key={i} x={PAD.l + (i / 11) * pw} y={VH - 6} textAnchor="middle" fill="#9CA3AF" fontSize="10">{m}</text>
+                  ))}
+                </svg>
+              );
+            })()}
           </div>
         )}
       </main>

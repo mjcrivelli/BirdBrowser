@@ -152,6 +152,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Monthly sightings for a selected bird or family (line chart)
+  app.get("/api/sightings/monthly", async (req, res) => {
+    try {
+      const birdId = req.query.birdId ? parseInt(req.query.birdId as string) : undefined;
+      const family = req.query.family as string | undefined;
+      const year = req.query.year ? parseInt(req.query.year as string) : undefined;
+      const season = req.query.season as string | undefined;
+      const geoOnly = req.query.geoOnly === 'true';
+      const results = await storage.getMonthlyForSelection({ birdId, family, year, season: season || undefined, geoOnly });
+      res.json(results);
+    } catch (error) {
+      console.error("Error fetching monthly sightings:", error);
+      res.status(500).json({ message: "Failed to fetch monthly sightings" });
+    }
+  });
+
   // Available years for the year filter dropdown
   app.get("/api/sightings/years", async (req, res) => {
     try {
