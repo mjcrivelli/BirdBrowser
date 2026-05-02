@@ -203,7 +203,7 @@ export default function Avistamentos() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-wrap gap-5 items-end">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-wrap gap-x-5 gap-y-3 items-start">
           {/* Year dropdown */}
           <div className="flex flex-col gap-1">
             <label className="text-xs text-gray-400 font-medium uppercase tracking-wide">Ano</label>
@@ -236,12 +236,12 @@ export default function Avistamentos() {
           </div>
 
           {/* Divider */}
-          <div className="h-9 w-px bg-gray-100 hidden sm:block self-end" />
+          <div className="hidden sm:block w-px bg-gray-100 mt-[22px] h-9" />
 
           {/* Season tabs */}
           <div className="flex flex-col gap-1">
             <label className="text-xs text-gray-400 font-medium uppercase tracking-wide">Estação</label>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-1.5 h-9 items-center">
               {SEASONS.map(s => (
                 <button
                   key={s.value}
@@ -259,7 +259,7 @@ export default function Avistamentos() {
           </div>
 
           {/* Divider */}
-          <div className="h-9 w-px bg-gray-100 hidden sm:block self-end" />
+          <div className="hidden sm:block w-px bg-gray-100 mt-[22px] h-9" />
 
           {/* Geo toggle */}
           <div className="flex flex-col gap-1">
@@ -423,7 +423,7 @@ export default function Avistamentos() {
                         )}
                       </div>
                       <p className={`text-center text-[9px] leading-tight mt-1 ${isSel ? 'text-[#4CAF50] font-semibold' : 'text-gray-500'}`}
-                        style={{ width: COL_W_BIRD - 6, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' } as React.CSSProperties}>
+                        style={{ width: COL_W_BIRD - 6, height: 28, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' } as React.CSSProperties}>
                         {bird.birdName}
                       </p>
                     </div>
