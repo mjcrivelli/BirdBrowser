@@ -72,6 +72,17 @@ export const sightingRecords = pgTable("sighting_records", {
   season: text("season").notNull(),
 });
 
+// Visualization test table — same structure as sighting_records, used for UI testing
+export const vizTestSightings = pgTable("viz_test_sightings", {
+  id: serial("id").primaryKey(),
+  birdId: integer("bird_id").notNull(),
+  birdName: text("bird_name").notNull(),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  latitude: real("latitude"),
+  longitude: real("longitude"),
+  season: text("season").notNull(),
+});
+
 export const insertSightingRecordSchema = createInsertSchema(sightingRecords).omit({
   id: true,
   timestamp: true,

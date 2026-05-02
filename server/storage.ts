@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { Bird, BirdSighting, BirdWithSeenStatus, InsertBird, InsertBirdSighting, InsertUser, User, InsertSightingRecord, SightingRecord, birds, sightingRecords, birdSightings, users, CatalogAbout, InsertCatalogAbout, catalogAbout } from '@shared/schema';
+import { Bird, BirdSighting, BirdWithSeenStatus, InsertBird, InsertBirdSighting, InsertUser, User, InsertSightingRecord, SightingRecord, birds, sightingRecords, vizTestSightings, birdSightings, users, CatalogAbout, InsertCatalogAbout, catalogAbout } from '@shared/schema';
 import { db } from './db';
 import { eq, and } from 'drizzle-orm';
 
@@ -375,7 +375,10 @@ export class MemStorage implements IStorage {
     }
 
     try {
-      const records = await db.select().from(sightingRecords);
+      const useViz = process.env.USE_VIZ_TABLE === 'true';
+      const records = useViz
+        ? await db.select().from(vizTestSightings)
+        : await db.select().from(sightingRecords);
       const counts: Record<string, number> = {};
 
       for (const r of records) {
