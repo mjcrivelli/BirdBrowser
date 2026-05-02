@@ -357,7 +357,7 @@ export default function Avistamentos() {
             <div className="overflow-x-auto">
               <div
                 className="flex items-end gap-1 pb-2 pt-2"
-                style={{ minWidth: totalWidth, height: MAX_BAR_H + PHOTO_SIZE + 100 }}
+                style={{ minWidth: totalWidth, height: MAX_BAR_H + PHOTO_SIZE + 120 }}
               >
                 {/* ── BIRD MODE ── */}
                 {viewMode === 'bird' && activeBirdData.map((bird, idx) => {
