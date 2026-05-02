@@ -11,6 +11,7 @@ export const birds = pgTable("birds", {
   diet: text("diet").notNull(),
   imageUrl: text("image_url").notNull(),
   customImageUrl: text("custom_image_url"),
+  family: text("family"),
   wikipediaUrl: text("wikipedia_url").notNull(),
 });
 
@@ -21,6 +22,7 @@ export const insertBirdSchema = createInsertSchema(birds).pick({
   habitat: true,
   diet: true,
   imageUrl: true,
+  family: true,
   wikipediaUrl: true,
 });
 

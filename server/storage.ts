@@ -505,6 +505,7 @@ export class MemStorage implements IStorage {
           habitat: bird.habitat,
           diet: bird.diet,
           imageUrl: bird.imageUrl,
+          family: (bird as any).family ?? null,
           wikipediaUrl: bird.wikipediaUrl,
         });
       }

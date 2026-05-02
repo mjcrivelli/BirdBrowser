@@ -7,7 +7,8 @@
     "habitat": "",
     "diet": "Frutos, insetos e do néctar de flores",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Chlorophanes_spiza",
-    "imageUrl": "/birds/bird-1.jpg"
+    "imageUrl": "/birds/bird-1.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 2,
@@ -17,7 +18,8 @@
     "habitat": "",
     "diet": "Frutos, insetos e do néctar de flores",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Dacnis_cayana",
-    "imageUrl": "/birds/bird-2.jpg"
+    "imageUrl": "/birds/bird-2.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 3,
@@ -27,7 +29,8 @@
     "habitat": " O macho adulto apresenta plumagem complexa e brilhante. Cabeça, nuca e \nqueixo são de coloração turquesa. Uma banda larga verde-amarelo pálido \natravessa a nuca e o manto superior, e estende-se em torno dos lados do \npescoço para até a garganta. Os ombros são negros e as coberteiras \nprimárias azul violeta. O uropígio é amarelo-alaranjado e a parte superior \nda cauda azul-turquesa. A cauda é preta com bordas verde-claras na base, \nficando azul turquesa distalmente. As penas de voo são pretas com bordas \nlargas verdes pálidos. Nas partes inferiores, parte inferior da garganta e \no peito superior são negros, a parte central do peito é azul-turquesa. O \nventre é verde. O bico é preto e sua base apresenta plumagem preta. Os \nolhos são escuros com uma região ao redor dos olhos com plumagem preta. Os \ntarsos e pés são pretos.",
     "diet": "Frutos e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sa%C3%ADra-sete-cores",
-    "imageUrl": "/birds/bird-3.jpg"
+    "imageUrl": "/birds/bird-3.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 4,
@@ -37,7 +40,8 @@
     "habitat": " Pássaro ferrugíneo uniforme, com cabeça cinzenta e garganta estriada de \nbranco. Grandes olhos escuros, tarsos e pés de coloração cinza. Bico longo, \nchato e rosado. ",
     "diet": "Frutos, insetos e anfíbios",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Capit%C3%A3o-de-sa%C3%ADra",
-    "imageUrl": "/birds/bird-4.jpg"
+    "imageUrl": "/birds/bird-4.jpg",
+    "family": "Tyrannidae"
   },
   {
     "id": 5,
@@ -47,7 +51,8 @@
     "habitat": " Apresenta a evidente faixa vermelho vivo ao redor do pescoço e coroa azul \nmetálico no alto da cabeça. Nas fêmeas a faixa vermelha é mais apagada, \ntendendo à tonalidade canela. Corpo em tonalidade verde uniforme, com dorso \nnegro e faixa amarela sobre as penas verdes das asas. As aves das \npopulações do Sul do Brasil, tendem a apresentar tamanho corporal acima da \nmédia de 11 centímetros de comprimento. Por sua vez, as saíras-militares do \nNordeste são menores, com tamanho abaixo da média padrão. ",
     "diet": "Frutos, insetos e do néctar de flores",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Tangara_cyanocephala",
-    "imageUrl": "/birds/bird-5.jpg"
+    "imageUrl": "/birds/bird-5.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 6,
@@ -57,7 +62,8 @@
     "habitat": " Os três sanhaços, ",
     "diet": "Frutos, insetos e do néctar de flores",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sanha%C3%A7u-verde",
-    "imageUrl": "/birds/bird-6.jpg"
+    "imageUrl": "/birds/bird-6.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 7,
@@ -67,7 +73,8 @@
     "habitat": "",
     "diet": "Frutos, insetos e do néctar de flores",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sanha%C3%A7o-rei",
-    "imageUrl": "/birds/bird-7.jpg"
+    "imageUrl": "/birds/bird-7.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 8,
@@ -77,7 +84,8 @@
     "habitat": "",
     "diet": "Frutas, sementes, insetos, larvas e aranhas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sanha%C3%A7u-de-encontro-azul",
-    "imageUrl": "/birds/bird-8.jpg"
+    "imageUrl": "/birds/bird-8.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 9,
@@ -87,7 +95,8 @@
     "habitat": " O adulto de ",
     "diet": "Frutas e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sanha%C3%A7o-cinzento",
-    "imageUrl": "/birds/bird-9.jpg"
+    "imageUrl": "/birds/bird-9.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 10,
@@ -97,7 +106,8 @@
     "habitat": "",
     "diet": "Frutas e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Ferro-velho_(p%C3%A1ssaro)",
-    "imageUrl": "/birds/bird-10.jpg"
+    "imageUrl": "/birds/bird-10.jpg",
+    "family": "Fringillidae"
   },
   {
     "id": 11,
@@ -107,7 +117,8 @@
     "habitat": " A plumagem do macho é de um vermelho-vivo, que deu origem ao nome. Parte \ndas asas e da cauda são pretas. A espécie apresenta ",
     "diet": "Frutas e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Ti%C3%AA-sangue",
-    "imageUrl": "/birds/bird-11.jpg"
+    "imageUrl": "/birds/bird-11.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 12,
@@ -117,7 +128,8 @@
     "habitat": "",
     "diet": "Frutas e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Ti%C3%AA-preto",
-    "imageUrl": "/birds/bird-12.jpg"
+    "imageUrl": "/birds/bird-12.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 13,
@@ -127,7 +139,8 @@
     "habitat": " O macho é vermelho-amarronzado com o alto da cabeça vermelho e a fêmea é \nmarrom-olivácea com uma pequena faixa amarela no alto da cabeça. ",
     "diet": "Frutas, insetos e aranhas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Ti%C3%AA-de-bando",
-    "imageUrl": "/birds/bird-13.jpg"
+    "imageUrl": "/birds/bird-13.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 14,
@@ -137,7 +150,8 @@
     "habitat": " amarelado contrastando com a face negra. O dorso é cinzento, com asas e \ncauda negras. A fêmea apresenta-se sem o negro na face e com pouco amarelo \nno ",
     "diet": "Frutas e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Ti%C3%AA-de-topete",
-    "imageUrl": "/birds/bird-14.jpg"
+    "imageUrl": "/birds/bird-14.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 15,
@@ -147,7 +161,8 @@
     "habitat": "",
     "diet": "Frutas e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Catirumbava",
-    "imageUrl": "/birds/bird-15.jpg"
+    "imageUrl": "/birds/bird-15.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 16,
@@ -157,7 +172,8 @@
     "habitat": " pesando em média de 68-80 gramas. Tem ",
     "diet": "Frutas, insetos e minhocas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sabi%C3%A1-laranjeira",
-    "imageUrl": "/birds/bird-16.jpg"
+    "imageUrl": "/birds/bird-16.jpg",
+    "family": "Turdidae"
   },
   {
     "id": 17,
@@ -167,7 +183,8 @@
     "habitat": " O macho é preto com as costas e barriga de coloração cinza; a fêmea é \nmarrom-oliváceo nas partes superiores e marrom-amarelado nas partes \ninferiores, com a garganta estriada de marrom-escuro.",
     "diet": "Frutas, insetos e minhocas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Turdus_flavipes",
-    "imageUrl": "/birds/bird-17.jpg"
+    "imageUrl": "/birds/bird-17.jpg",
+    "family": "Turdidae"
   },
   {
     "id": 18,
@@ -177,7 +194,8 @@
     "habitat": "",
     "diet": "Frutas e formigas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sabi%C3%A1-coleira",
-    "imageUrl": "/birds/bird-18.jpg"
+    "imageUrl": "/birds/bird-18.jpg",
+    "family": "Turdidae"
   },
   {
     "id": 19,
@@ -187,7 +205,8 @@
     "habitat": " escura, parecendo ser negra em alguns exemplares, entre o olho e o bico. \nAlém disso, a cabeça é mais achatada, parecendo que o bico está no mesmo \nplano da testa. O papo branco e os riscos variam conforme o indivíduo. \nAlgumas aves parecem ter uma gola branca separando os riscos do peito. Logo \nque saem dos ninhos, os juvenis apresentam o peito e barriga todo \npontilhado de bolas marrom-oliváceas, bem como as costas e asas pontilhadas \nde marrom claro. As penas das asas mantém essas características por mais \ntempo, provavelmente até o segundo ano de vida. Apresenta tamanho médio em \ntorno de 21 centímetros de comprimento, olhos grandes com uma marca escura \nno loro, região que fica entre o bico e o olho dando a ele um ar de bravo, \nbico longo, forte e pouco curvo, pernas cor-de-avelã. Em agosto inicia-se a \nreprodução. Nessa época, aparecem as aves com o bico amarelo vivo, uma \ncaracterística ligada à reprodução. Aves juvenis ou adultos fora do período \nreprodutivo têm o bico escuro ou com diferentes proporções de amarelo. ",
     "diet": "Frutas e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sabi%C3%A1-poca",
-    "imageUrl": "/birds/bird-19.jpg"
+    "imageUrl": "/birds/bird-19.jpg",
+    "family": "Turdidae"
   },
   {
     "id": 20,
@@ -197,7 +216,8 @@
     "habitat": " O juvenil tem o dorso pintalgado de bolas amarronzadas, sem a garganta \nbranca bem delimitada. Pontos marrons no peito e barriga. ",
     "diet": "Frutas, minhocas e artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Sabi%C3%A1-barranco",
-    "imageUrl": "/birds/bird-20.jpg"
+    "imageUrl": "/birds/bird-20.jpg",
+    "family": "Turdidae"
   },
   {
     "id": 21,
@@ -207,7 +227,8 @@
     "habitat": "",
     "diet": "Frutas e artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Tangar%C3%A1_(ave)",
-    "imageUrl": "/birds/bird-21.jpg"
+    "imageUrl": "/birds/bird-21.jpg",
+    "family": "Pipridae"
   },
   {
     "id": 22,
@@ -217,7 +238,8 @@
     "habitat": "",
     "diet": "Frutas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Gaturamo-rei",
-    "imageUrl": "/birds/bird-22.jpg"
+    "imageUrl": "/birds/bird-22.jpg",
+    "family": "Fringillidae"
   },
   {
     "id": 23,
@@ -227,7 +249,8 @@
     "habitat": " claras, ",
     "diet": "Lagartas, ovos, pererecas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Alma-de-gato",
-    "imageUrl": "/birds/bird-23.jpg"
+    "imageUrl": "/birds/bird-23.jpg",
+    "family": "Cuculidae"
   },
   {
     "id": 24,
@@ -237,7 +260,8 @@
     "habitat": " A variedade nominal ",
     "diet": "Frutas, insetos e moluscos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Surucu%C3%A1-variado",
-    "imageUrl": "/birds/bird-24.jpg"
+    "imageUrl": "/birds/bird-24.jpg",
+    "family": "Trogonidae"
   },
   {
     "id": 25,
@@ -247,7 +271,8 @@
     "habitat": ". O macho tem o bico cinza azulado. Os olhos são escuros de coloração \nmarrom e apresentam um claro anel periocular de coloração azul. As regiões \nauriculares são pretas. A garganta e a porção superior do peito são pretos \ne as partes laterais do peito apresentam uma coloração azul escuro \nultramarino que contrasta fortemente com o ventre que é amarelo. A nuca, \nmanto e as costas são verde esmeralda com reflexos azul arroxeado, ou \nverde. As rêmiges são pretas com marcações brancas. As coberteiras são azul \nesverdeadas. A cauda longa e escura apresenta três pares de penas com a \nface inferior na cor branca com a extremidade preta. As bordas externas das \nretrizes são pretas. A parte dorsal da cauda é da mesma coloração do manto, \nentretanto apresenta esta coloração menos intensa. A fêmea, menos \nexuberante que o macho da espécie, apresenta a cabeça cinza. Sua mandíbula \nsuperior apresenta a coloração cinza azulada e a mandíbula inferior é \ncinza. A região loral é preta. Os olhos da fêmea são semelhantes aos olhos \ndo indivíduo do sexo masculino. O peito é cinza e o ventre amarelo. A nuca, \nmanto e dorso também são de coloração cinza. A cauda apresenta as retrizes \ncom barrado branco na porção lateral, terminando com uma barra branca na \nsua extremidade distal. A face dorsal das penas retrizes apresenta em sua \nextremidade distal uma barra subterminal preta. As fêmeas dessa espécie são \nmuito parecidas com as fêmeas de surucuá-violáceo (",
     "diet": "Frutas, insetos e outros artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Trogon_viridis",
-    "imageUrl": "/birds/bird-25.jpg"
+    "imageUrl": "/birds/bird-25.jpg",
+    "family": "Trogonidae"
   },
   {
     "id": 26,
@@ -257,7 +282,8 @@
     "habitat": " É verde, inclusive nas bochechas, com a zona auricular pardacenta. Fronte, ",
     "diet": "Frutas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Tiriba-de-testa-vermelha",
-    "imageUrl": "/birds/bird-26.jpg"
+    "imageUrl": "/birds/bird-26.jpg",
+    "family": "Psittacidae"
   },
   {
     "id": 27,
@@ -267,7 +293,8 @@
     "habitat": ", peito e abdômen são de um verde com tons amarelados. A parte traseira da \ncabeça, a nuca, é de um verde levemente azulado. A base das asas é de um \nmarrom oliváceo. A ",
     "diet": "Frutas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Periquito-verde",
-    "imageUrl": "/birds/bird-27.jpg"
+    "imageUrl": "/birds/bird-27.jpg",
+    "family": "Psittacidae"
   },
   {
     "id": 28,
@@ -277,7 +304,8 @@
     "habitat": " do gênero, medindo cerca de 40 cm de comprimento. Possui plumagem verde, \ncoberta por um pó branco muito fino (",
     "diet": "Frutas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Papagaio-moleiro",
-    "imageUrl": "/birds/bird-28.jpg"
+    "imageUrl": "/birds/bird-28.jpg",
+    "family": "Psittacidae"
   },
   {
     "id": 29,
@@ -287,7 +315,8 @@
     "habitat": "",
     "diet": "Sementes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Can%C3%A1rio-da-terra-verdadeiro",
-    "imageUrl": "/birds/bird-29.jpg"
+    "imageUrl": "/birds/bird-29.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 30,
@@ -297,7 +326,8 @@
     "habitat": " Ambos os sexos são parecidos, possuindo ",
     "diet": "Sementes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Bico-de-lacre-comum",
-    "imageUrl": "/birds/bird-30.jpg"
+    "imageUrl": "/birds/bird-30.jpg",
+    "family": "Estrildidae"
   },
   {
     "id": 31,
@@ -307,7 +337,8 @@
     "habitat": " O seu canto trissilábico característico lembra as sílabas bem-te-vi, que \ndão o nome à espécie. Portanto, seu nome popular possui origem onomatopeica.",
     "diet": "Insetos, frutos, filhote de aves e de pequenos mamíferos.",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Bem-te-vi",
-    "imageUrl": "/birds/bird-31.jpg"
+    "imageUrl": "/birds/bird-31.jpg",
+    "family": "Tyrannidae"
   },
   {
     "id": 32,
@@ -317,7 +348,8 @@
     "habitat": " Apresenta a testa e a coroa esbranquiçadas, o píleo amarelo nem sempre \nvisível, ampla faixa transocular escura. Estria malar escura. O ventre é \nesbranquiçado com estrias acinzentadas, podendo apresentar coloração \namarela suave nos flancos. Crisso estriado. Porção superior do corpo \nacinzentada. Manto cinzento uniforme. Rêmiges cinzentas com a borda \nesbranquiçada. Retrizes cinzentas.",
     "diet": "Frutas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Legatus_leucophaius",
-    "imageUrl": "/birds/bird-32.jpg"
+    "imageUrl": "/birds/bird-32.jpg",
+    "family": "Tyrannidae"
   },
   {
     "id": 33,
@@ -327,7 +359,8 @@
     "habitat": " Ave com a aparência geral desbotada. Apresenta o píleo marrom escuro \nfuliginoso com uma grande mancha central quase sempre oculta, de coloração \nvermelho vibrante. Uma larga faixa superciliar branca com os dois lados \nopostos confluentes na testa e não confluentes na nuca. As regiões lorais e \norbitais apresentam máscara escura de coloração uniformemente marrom escuro \nfuliginoso e as regiões auriculares e as laterais do pescoço são de \ncoloração cinzenta que causam perceptível contraste com a máscara \nfuliginosa escura. A região posterior do pescoço, o dorso, os escapulários, \ne uropígio são de coloração marrom-oliveáceo. As rêmiges primárias, \nsecundárias e coberteiras maiores das asas são marrons marginados de \ncoloração pardo-olivácea. As rêmiges primárias proximais e rêmiges \nsecundárias são marginadas com coloração acastanhada pálida. As rêmiges \nprimárias distais apresentam marginações de coloração castanha ou canela. \nAs penas supracaudais e as retrizes apresentam coloração geral \nmarrom-acinzentada com estreitas bordas acastanhadas. Queixo e garganta são \nbrancos. A região peitoral superior apresenta um semi-colar verde oliváceo, \nde intensidade variável, sobre fundo amarelo-pálido. As demais partes \ninferiores, incluindo axilares e coberteiras inferiores das asas, são de \ncoloração amarelo-pálido ou apresentam uniforme coloração amarelo-limão.",
     "diet": "Frutas e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Bentevizinho-de-penacho-vermelho",
-    "imageUrl": "/birds/bird-33.jpg"
+    "imageUrl": "/birds/bird-33.jpg",
+    "family": "Tyrannidae"
   },
   {
     "id": 34,
@@ -337,7 +370,8 @@
     "habitat": ") possui a cabeça predominantemente cinza, com a garganta mais clara, \ntendendo ao branco, e uma faixa difusa mais escura na região ocular e \nauricular. O píleo é de coloração laranja — uma característica visível \nquando eriça o topete em suas disputas territoriais. O peito possui \ncoloração verde-oliva, destacando-se da coloração amarela da barriga. Mede \nentre 18 e 24,5 centímetros de comprimento e pesa entre 32 e 43 gramas \n(Mobley, 2016). Os imaturos são similares aos adultos, mas as bordas das \ncoberteiras são acastanhadas. ",
     "diet": "Frutos e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Suiriri",
-    "imageUrl": "/birds/bird-34.jpg"
+    "imageUrl": "/birds/bird-34.jpg",
+    "family": "Tyrannidae"
   },
   {
     "id": 35,
@@ -347,7 +381,8 @@
     "habitat": "",
     "diet": "Néctar, frutas e artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Cambacica",
-    "imageUrl": "/birds/bird-35.jpg"
+    "imageUrl": "/birds/bird-35.jpg",
+    "family": "Thraupidae"
   },
   {
     "id": 36,
@@ -357,7 +392,8 @@
     "habitat": "",
     "diet": "Pequenos artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Maria-viuvinha",
-    "imageUrl": "/birds/bird-36.jpg"
+    "imageUrl": "/birds/bird-36.jpg",
+    "family": "Tyrannidae"
   },
   {
     "id": 37,
@@ -367,7 +403,8 @@
     "habitat": " As faces são de cor cinza, com duas tiras negras de cada lado que vão até \na região do pescoço, uma partindo do canto posterior do olho e outra do \ncanto do bico. Pescoço com uma faixa cintada de cor vermelho-ferrugínea que \ndesce até os lados do peito alto, onde se encontra com uma mancha negra.",
     "diet": "Sementes, frutas e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Tico-tico",
-    "imageUrl": "/birds/bird-37.jpg"
+    "imageUrl": "/birds/bird-37.jpg",
+    "family": "Passerellidae"
   },
   {
     "id": 38,
@@ -377,7 +414,8 @@
     "habitat": ", das quais se distingue pelo ventre amarelo, comum a ambos os sexos, ou \nentão a certos ",
     "diet": "Frutas e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Chorozinho-de-asa-vermelha",
-    "imageUrl": "/birds/bird-38.jpg"
+    "imageUrl": "/birds/bird-38.jpg",
+    "family": "Thamnophilidae"
   },
   {
     "id": 39,
@@ -387,7 +425,8 @@
     "habitat": " possui um canto territorial, diversos tipos de chamados e uma música \ninstrumental, o “tamborilar”. Ela é executada através de repetidos golpes \ndo bico sobre a superfície de troncos secos ou ocos, substrato escolhido de \nmaneira a proporcionar boa ampliação da sonoridade e alcance do ruído. ",
     "diet": "Insetos, larvas, frutos e sementes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Pica-pau-rei",
-    "imageUrl": "/birds/bird-39.jpg"
+    "imageUrl": "/birds/bird-39.jpg",
+    "family": "Picidae"
   },
   {
     "id": 40,
@@ -397,7 +436,8 @@
     "habitat": " Cabeça e face amarelos, com proeminente topete da mesma cor; macho com \nfaixa malar vermelha. Partes superiores pretas, barradas de branco e partes \ninferiores uniformemente pretas. Muito semelhante ao ",
     "diet": "Insetos e frutas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Pica-pau-de-cabe%C3%A7a-amarela",
-    "imageUrl": "/birds/bird-40.jpg"
+    "imageUrl": "/birds/bird-40.jpg",
+    "family": "Picidae"
   },
   {
     "id": 41,
@@ -407,7 +447,8 @@
     "habitat": " brancos; peito superior pardacento; peito inferior e ventre vermelhos; \nflancos barrados de preto e branco. É barulhento. Entre os vários sons que \nproduz, tem um grito forte, ríspido e rápido, ",
     "diet": "Frutas e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Benedito-de-testa-amarela",
-    "imageUrl": "/birds/bird-41.jpg"
+    "imageUrl": "/birds/bird-41.jpg",
+    "family": "Picidae"
   },
   {
     "id": 42,
@@ -417,7 +458,8 @@
     "habitat": " Bico pequeno e reto, pouco notável e diferente dos demais ",
     "diet": "Insetos e larvas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Arapa%C3%A7u-verde",
-    "imageUrl": "/birds/bird-42.jpg"
+    "imageUrl": "/birds/bird-42.jpg",
+    "family": "Dendrocolaptidae"
   },
   {
     "id": 43,
@@ -427,7 +469,8 @@
     "habitat": "",
     "diet": "Peixes e crustáceos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Martim-pescador-grande",
-    "imageUrl": "/birds/bird-43.jpg"
+    "imageUrl": "/birds/bird-43.jpg",
+    "family": "Alcedinidae"
   },
   {
     "id": 44,
@@ -437,7 +480,8 @@
     "habitat": "",
     "diet": "Sementes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Macuco",
-    "imageUrl": "/birds/bird-44.jpg"
+    "imageUrl": "/birds/bird-44.jpg",
+    "family": "Tinamidae"
   },
   {
     "id": 45,
@@ -447,7 +491,8 @@
     "habitat": " (Aburria cumanensis), que também possui mancha branca na asa, mas, como o \nnome sugere, possui garganta azul ao invés de vermelha, e a cara também é \ntoda branca. ",
     "diet": "Frutas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Jacutinga",
-    "imageUrl": "/birds/bird-45.jpg"
+    "imageUrl": "/birds/bird-45.jpg",
+    "family": "Cracidae"
   },
   {
     "id": 46,
@@ -457,7 +502,8 @@
     "habitat": " A plumagem adulta é idêntica para ambos os sexos e é adquirida aos dois \nanos de idade, caracterizando-se pelo pescoço castanho com uma faixa branca \nvertical na frente e manto pardo-acinzentado, manchado de acanelado; possui \num bico bastante longo. A plumagem do socó-boi jovem é amarelo-clara com \nfaixas transversais negras, garganta e ventre brancos e o bico é \nrelativamente curto. ",
     "diet": "Anfíbios, répteis e insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Soc%C3%B3-boi",
-    "imageUrl": "/birds/bird-46.jpg"
+    "imageUrl": "/birds/bird-46.jpg",
+    "family": "Ardeidae"
   },
   {
     "id": 47,
@@ -467,7 +513,8 @@
     "habitat": " O ",
     "diet": "Sementes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Rolinha",
-    "imageUrl": "/birds/bird-47.jpg"
+    "imageUrl": "/birds/bird-47.jpg",
+    "family": "Columbidae"
   },
   {
     "id": 48,
@@ -477,7 +524,8 @@
     "habitat": " claro, cabeça cinzenta com alguns reflexos metálicos na nuca e alto dorso. \nQuando em voo é possivel notar uma coloraçâo vermelho-ferrugem embaixo das \nasas. Possui, ainda, uma coloração azulada ao redor dos olhos. ",
     "diet": "Sementes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Leptotila",
-    "imageUrl": "/birds/bird-48.jpg"
+    "imageUrl": "/birds/bird-48.jpg",
+    "family": "Columbidae"
   },
   {
     "id": 49,
@@ -487,7 +535,8 @@
     "habitat": " de coloração metálica, dando-lhe uma aparência ",
     "diet": "Frutas e sementes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Pomba-trocal",
-    "imageUrl": "/birds/bird-49.jpg"
+    "imageUrl": "/birds/bird-49.jpg",
+    "family": "Columbidae"
   },
   {
     "id": 50,
@@ -497,7 +546,8 @@
     "habitat": " Seu tamanho é avantajado e a ",
     "diet": "Frutas e sementes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Pomba-amargosa",
-    "imageUrl": "/birds/bird-50.jpg"
+    "imageUrl": "/birds/bird-50.jpg",
+    "family": "Columbidae"
   },
   {
     "id": 51,
@@ -507,7 +557,8 @@
     "habitat": " alargada e ampla, e o bico é curto. Os machos adultos são inteiramente \nbrancos, exceto os lados da cabeça e garganta, que são nus, de cor \nverde-jade onde se implantam raras cerdas pretas; bico preto e pés pardos, \ntamanho médio de 27 centímetros. A fêmea adulta tem a parte superior \nverde-oliva, com a cabeça cinza e a parte inferior amarela com estrias \namarelo-esverdeadas e cinzentas; a garganta é cinzenta onde entremeiam-se \nestrias negras; possui tamanho menor do que o macho. ",
     "diet": "Frutas de palmeiras",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Araponga_(ave)",
-    "imageUrl": "/birds/bird-51.jpg"
+    "imageUrl": "/birds/bird-51.jpg",
+    "family": "Cotingidae"
   },
   {
     "id": 52,
@@ -517,7 +568,8 @@
     "habitat": ", simples e repetitivo mas melodioso. Quase nunca deixa a folhagem das \nárvores, e não é muito frequente vê-la, já que, por ser pequena, de \ncolorido apagado e de comportamento discreto, não costuma chamar a atenção. \nNa Amazônia pode ser confundida com seus primos migratórios (Vireo \naltiloquus, Vireo flavoviridis e Vireo olivaceus), que migram para a região \nentre outubro e março, fugindo do inverno do hemisfério norte, diferindo-se \ndestes principalmente por não ter o olho tão vermelho. Os cantos são \nparecidos e às vezes as espécies podem ser encontradas juntas.",
     "diet": "Insetos, fruta da embaúba",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Juruviara-sul-americana",
-    "imageUrl": "/birds/bird-52.jpg"
+    "imageUrl": "/birds/bird-52.jpg",
+    "family": "Vireonidae"
   },
   {
     "id": 53,
@@ -527,7 +579,8 @@
     "habitat": "",
     "diet": "Insetos e larvas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Cyclarhis_gujanensis",
-    "imageUrl": "/birds/bird-53.jpg"
+    "imageUrl": "/birds/bird-53.jpg",
+    "family": "Vireonidae"
   },
   {
     "id": 54,
@@ -537,7 +590,8 @@
     "habitat": " e seu ",
     "diet": "Insetos e larvas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Curru%C3%ADra",
-    "imageUrl": "/birds/bird-54.jpg"
+    "imageUrl": "/birds/bird-54.jpg",
+    "family": "Troglodytidae"
   },
   {
     "id": 55,
@@ -547,7 +601,8 @@
     "habitat": " esbranquiçada, realçada por uma faixa anegrada por baixo e por cima, faixa \nmedial no ",
     "diet": "Insetos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Basileuterus_culicivorus",
-    "imageUrl": "/birds/bird-55.jpg"
+    "imageUrl": "/birds/bird-55.jpg",
+    "family": "Parulidae"
   },
   {
     "id": 56,
@@ -557,7 +612,8 @@
     "habitat": ", o peso do macho é de 834 g; a fêmea pesa 953 g e mede cerca de 123 \ncentímetros de envergadura; o carcará é facilmente reconhecível quando \npousado, pelo fato de possuir uma espécie de solidéu preto sobre a cabeça, \nassim como um bico adunco e alto, que assemelha-se à lâmina de um cutelo; a \nface é vermelha. É recoberto de preto na parte superior e possui o peito de \numa combinação de marrom claro com riscas pretas, de tipo “carijó”; patas \ncompridas e de cor amarela; em voo, assemelha-se a um urubu, mas é \nreconhecível por duas manchas de cor clara na extremidade das asas. Deve \nseu nome à ",
     "diet": "Onívoro",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Carcar%C3%A1",
-    "imageUrl": "/birds/bird-56.jpg"
+    "imageUrl": "/birds/bird-56.jpg",
+    "family": "Falconidae"
   },
   {
     "id": 57,
@@ -567,7 +623,8 @@
     "habitat": " Há grande diferença entre os adultos e os imaturos, sendo que os últimos ",
     "diet": "Aves, répteis e pequenos mamíferos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Gavi%C3%A3o-carij%C3%B3",
-    "imageUrl": "/birds/bird-57.jpg"
+    "imageUrl": "/birds/bird-57.jpg",
+    "family": "Accipitridae"
   },
   {
     "id": 58,
@@ -577,7 +634,8 @@
     "habitat": " norte-americanas são maiores que as do Brasil, e além disso os indivíduos \nbrasileiros possuem uma ",
     "diet": "Pequenos vertebrados",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Gavi%C3%A3o-asa-de-telha",
-    "imageUrl": "/birds/bird-58.jpg"
+    "imageUrl": "/birds/bird-58.jpg",
+    "family": "Accipitridae"
   },
   {
     "id": 59,
@@ -587,7 +645,8 @@
     "habitat": " Menq, 2016). O adulto apresenta plumagem cinza na parte ventral e \ncinza-escuro no dorso, com calções de cor ferrugem, cera e tarsos \namarelados, e íris que varia do castanho ao marrom-avermelhado. Além disso, \napresenta a garganta clara com uma listra vertical escura, característica \nque serve para diferenciá-lo do ",
     "diet": "Insetos e pássaros pequenos",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Gavi%C3%A3o-bombachinha-grande",
-    "imageUrl": "/birds/bird-59.jpg"
+    "imageUrl": "/birds/bird-59.jpg",
+    "family": "Accipitridae"
   },
   {
     "id": 60,
@@ -597,7 +656,8 @@
     "habitat": " e um dos maiores do mundo. Partes superiores marrom esverdeadas; ",
     "diet": "Néctar e pequenos artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Beija-flor-rajado",
-    "imageUrl": "/birds/bird-60.jpg"
+    "imageUrl": "/birds/bird-60.jpg",
+    "family": "Trochilidae"
   },
   {
     "id": 61,
@@ -607,7 +667,8 @@
     "habitat": " de 3 centímetros. É robusto, de bico longo e curvo, com mandíbula \namarelo-claro e maxila negra. Partes superiores verde-bronzeadas; ",
     "diet": "Néctar e pequenos artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Glaucis_hirsutus",
-    "imageUrl": "/birds/bird-61.jpg"
+    "imageUrl": "/birds/bird-61.jpg",
+    "family": "Trochilidae"
   },
   {
     "id": 62,
@@ -617,7 +678,8 @@
     "habitat": " azul-violeta, tufos do ",
     "diet": "Néctar e pequenos artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Beija-flor-de-fronte-violeta",
-    "imageUrl": "/birds/bird-62.jpg"
+    "imageUrl": "/birds/bird-62.jpg",
+    "family": "Trochilidae"
   },
   {
     "id": 63,
@@ -627,7 +689,8 @@
     "habitat": " Apresenta acentuado ",
     "diet": "Néctar e pequenos artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Heliodoxa_rubricauda",
-    "imageUrl": "/birds/bird-63.jpg"
+    "imageUrl": "/birds/bird-63.jpg",
+    "family": "Trochilidae"
   },
   {
     "id": 64,
@@ -637,7 +700,8 @@
     "habitat": " cinza-esverdeado. Cabeça e partes superiores verde-acobreadas; face \ncinza-esverdeada com uma pequena mancha pós-ocular branca; bico preto \nligeiramente curvado para baixo. Partes inferiores cinza-escuras com tons \nde verde no pescoço e uma mácula uropigiana e tufos no crisso brancos. \nCauda grande e asas largas de cor cinza-escura quase preta. Tamanho 12 cm. \nA fêmea e o macho têm a mesma aparência, no entanto ela é um pouco menor. ",
     "diet": "Néctar e pequenos artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Beija-flor-cinza",
-    "imageUrl": "/birds/bird-64.jpg"
+    "imageUrl": "/birds/bird-64.jpg",
+    "family": "Trochilidae"
   },
   {
     "id": 65,
@@ -647,7 +711,8 @@
     "habitat": " é exibido quando o pássaro expande a cauda em um leque branco cortado em \nduas metades pelas centrais negras ou quando abre e fecha rápido as \ncaudais. O branco da cauda continua até os flancos e forma uma faixa sobre \no crisso.",
     "diet": "Néctar e pequenos artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Beija-flor-preto",
-    "imageUrl": "/birds/bird-65.jpg"
+    "imageUrl": "/birds/bird-65.jpg",
+    "family": "Trochilidae"
   },
   {
     "id": 66,
@@ -657,7 +722,8 @@
     "habitat": ", pescoço e parte superior do tórax de um profundo azul violeta; restante \nda plumagem verde-escuro iridescente. Pequena mancha branca atrás dos \nolhos; ",
     "diet": "Néctar e pequenos artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Beija-flor-tesoura",
-    "imageUrl": "/birds/bird-66.jpg"
+    "imageUrl": "/birds/bird-66.jpg",
+    "family": "Trochilidae"
   },
   {
     "id": 67,
@@ -667,7 +733,8 @@
     "habitat": "). ",
     "diet": "Néctar e pequenos artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Beija-flor_de-veste-preta",
-    "imageUrl": "/birds/bird-67.jpg"
+    "imageUrl": "/birds/bird-67.jpg",
+    "family": "Trochilidae"
   },
   {
     "id": 68,
@@ -677,7 +744,8 @@
     "habitat": "",
     "diet": "Néctar e pequenos artrópodes",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Topetinho-verde",
-    "imageUrl": "/birds/bird-68.jpg"
+    "imageUrl": "/birds/bird-68.jpg",
+    "family": "Trochilidae"
   },
   {
     "id": 69,
@@ -687,7 +755,8 @@
     "habitat": " pretos, os quais são marrons na fêmea. Tem de três a cinco riscos \ntransversais no bico, que variam de formato de indivíduo para indivíduo. \nTem um tufo de penas pós-oculares de cor amarelo-ouro. Possui uma grande \nmancha escura na íris, anterior e posterior à pupila, comum ao gênero \nSelenidera. ",
     "diet": "Frutas",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Selenidera_maculirostris",
-    "imageUrl": "/birds/bird-69.jpg"
+    "imageUrl": "/birds/bird-69.jpg",
+    "family": "Ramphastidae"
   },
   {
     "id": 70,
@@ -697,6 +766,7 @@
     "habitat": ". Pesa em torno de 265 g a 400 g. Apresenta papo amarelo e bico verde. O \nserrilhado do bico é bem desenvolvido e realçados pela cor vermelha \nsangüínea. É o único ",
     "diet": "Frutas, ovos e filhotes no ninho",
     "wikipediaUrl": "https://pt.wikipedia.org/wiki/Tucano-de-bico-verde",
-    "imageUrl": "/birds/bird-70.jpg"
+    "imageUrl": "/birds/bird-70.jpg",
+    "family": "Ramphastidae"
   }
 ]
