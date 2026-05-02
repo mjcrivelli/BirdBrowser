@@ -119,10 +119,17 @@ export default function Avistamentos() {
     enabled: viewMode === 'family',
   });
 
-  // For bird-mode photo lookup
+  // For photo lookup — always use allBirds (in-memory, local /birds/ paths)
   const { data: allBirds = [] } = useQuery<any[]>({
     queryKey: ['/api/birds'],
   });
+
+  // Map birdId → resolved image URL (customImageUrl preferred)
+  const birdImgById = new Map<number, string>();
+  for (const b of allBirds) {
+    const url = b.customImageUrl || b.imageUrl;
+    if (url) birdImgById.set(b.id, url);
+  }
 
   const isLoading = viewMode === 'bird' ? birdLoading : familyLoading;
   const isError   = viewMode === 'bird' ? birdError   : familyError;
@@ -387,9 +394,7 @@ export default function Avistamentos() {
                   const rank  = idx + 1;
                   const barH  = Math.max(6, Math.round((fam.count / maxFamilyCount) * MAX_BAR_H));
                   const color = barColor(rank);
-                  // Use top-bird's photo as the family thumbnail
-                  const topBird  = fam.birds[0];
-                  const imgUrl   = topBird?.imageUrl ?? null;
+                  const topBird = fam.birds[0];
 
                   return (
                     <div
@@ -414,9 +419,10 @@ export default function Avistamentos() {
                       <div className="w-14 rounded-t-lg transition-all duration-300" style={{ height: barH, backgroundColor: color }} />
                       {/* Row of up to 3 bird thumbnails */}
                       <div className="mt-2 flex gap-0.5 justify-center">
-                        {fam.birds.slice(0, 3).map((b, i) => (
-                          b.imageUrl ? (
-                            <img key={i} src={b.imageUrl} alt={b.birdName}
+                        {fam.birds.slice(0, 3).map((b, i) => {
+                          const img = birdImgById.get(b.birdId) ?? null;
+                          return img ? (
+                            <img key={i} src={img} alt={b.birdName}
                               className="rounded-full object-cover border-2 border-white shadow-sm"
                               style={{ width: 28, height: 28 }}
                               onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
@@ -429,8 +435,8 @@ export default function Avistamentos() {
                                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                               </svg>
                             </div>
-                          )
-                        ))}
+                          );
+                        })}
                         {fam.birds.length > 3 && (
                           <div className="rounded-full bg-gray-200 border-2 border-white shadow-sm flex items-center justify-center"
                             style={{ width: 28, height: 28 }}>
@@ -511,10 +517,12 @@ export default function Avistamentos() {
             </div>
             {/* Bird list */}
             <div className="flex flex-col gap-1.5">
-              {tooltip.birds.slice(0, 8).map((b, i) => (
+              {tooltip.birds.slice(0, 8).map((b, i) => {
+                const img = birdImgById.get(b.birdId) ?? null;
+                return (
                 <div key={i} className="flex items-center gap-2">
-                  {b.imageUrl ? (
-                    <img src={b.imageUrl} alt={b.birdName}
+                  {img ? (
+                    <img src={img} alt={b.birdName}
                       className="rounded-full object-cover flex-shrink-0 border border-gray-100"
                       style={{ width: 28, height: 28 }}
                       onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
@@ -536,7 +544,7 @@ export default function Avistamentos() {
                   </div>
                   <span className="text-xs font-bold text-[#22C55E] flex-shrink-0">{b.count}</span>
                 </div>
-              ))}
+              ); })}
               {tooltip.birds.length > 8 && (
                 <p className="text-[10px] text-gray-400 text-center mt-0.5">
                   +{tooltip.birds.length - 8} mais espécie{tooltip.birds.length - 8 !== 1 ? 's' : ''}
