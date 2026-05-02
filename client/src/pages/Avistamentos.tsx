@@ -108,55 +108,59 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   );
 }
 
-interface TopBirdCardProps {
+const MEDALS = [
+  { label: '1º', bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-500', icon: '🥇' },
+  { label: '2º', bg: 'bg-gray-50',   border: 'border-gray-200',  text: 'text-gray-400',  icon: '🥈' },
+  { label: '3º', bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-400', icon: '🥉' },
+];
+
+interface TopBirdsProps {
   rows: RawRow[];
   allBirds: BirdWithSeenStatus[];
 }
 
-function TopBirdCard({ rows, allBirds }: TopBirdCardProps) {
-  const totals = useMemo(() => {
+function TopBirds({ rows, allBirds }: TopBirdsProps) {
+  const sorted = useMemo(() => {
     const acc: Record<string, number> = {};
     for (const r of rows) acc[r.birdName] = (acc[r.birdName] || 0) + r.count;
-    return acc;
+    return Object.entries(acc).sort((a, b) => b[1] - a[1]).slice(0, 3);
   }, [rows]);
 
-  const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]);
   if (sorted.length === 0) return null;
 
-  const [topName, topCount] = sorted[0];
-  const bird = allBirds.find((b) => b.name === topName);
-  const imageUrl = bird ? (bird.customImageUrl || bird.imageUrl) : null;
-
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-amber-100 p-4 mb-6 flex items-center gap-4">
-      <div className="flex-shrink-0 flex flex-col items-center justify-center w-12 h-12 bg-amber-50 rounded-full">
-        <svg className="w-6 h-6 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      </div>
-      {imageUrl && (
-        <img
-          src={imageUrl}
-          alt={topName}
-          className="w-16 h-16 rounded-lg object-cover flex-shrink-0 shadow-sm border border-gray-100"
-          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-        />
-      )}
-      <div className="min-w-0">
-        <p className="text-xs text-amber-500 font-semibold uppercase tracking-wide mb-0.5">Ave mais avistada</p>
-        <p className="text-lg font-bold text-gray-800 truncate">{topName}</p>
-        <p className="text-sm text-gray-400">{topCount} avistamento{topCount !== 1 ? 's' : ''}</p>
-      </div>
-      {sorted.length > 1 && (
-        <div className="ml-auto hidden sm:flex flex-col gap-1 text-xs text-gray-400 text-right">
-          {sorted.slice(1, 4).map(([name, count]) => (
-            <div key={name} className="flex items-center gap-2 justify-end">
-              <span className="truncate max-w-32">{name}</span>
-              <span className="font-medium text-gray-600 tabular-nums">{count}</span>
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      {sorted.map(([name, count], i) => {
+        const medal = MEDALS[i];
+        const bird = allBirds.find((b) => b.name === name);
+        const imageUrl = bird ? (bird.customImageUrl || bird.imageUrl) : null;
+        return (
+          <div key={name} className={`bg-white rounded-xl shadow-sm border ${medal.border} p-4 flex flex-col items-center text-center gap-3`}>
+            <div className={`w-10 h-10 rounded-full ${medal.bg} flex items-center justify-center text-lg`}>
+              {medal.icon}
             </div>
-          ))}
-        </div>
-      )}
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={name}
+                className="w-24 h-24 rounded-xl object-cover shadow-sm border border-gray-100"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              />
+            ) : (
+              <div className="w-24 h-24 rounded-xl bg-gray-100 flex items-center justify-center">
+                <svg className="w-10 h-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            )}
+            <div className="min-w-0 w-full">
+              <p className={`text-xs font-semibold uppercase tracking-wide mb-0.5 ${medal.text}`}>{medal.label} lugar</p>
+              <p className="text-sm font-bold text-gray-800 leading-tight">{name}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{count} avistamento{count !== 1 ? 's' : ''}</p>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -268,7 +272,7 @@ export default function Avistamentos() {
         {!isLoading && !isError && data.length > 0 && (
           <>
             {/* Top bird card */}
-            <TopBirdCard rows={rows} allBirds={allBirds} />
+            <TopBirds rows={rows} allBirds={allBirds} />
 
             {/* Stats + chart */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-4">
