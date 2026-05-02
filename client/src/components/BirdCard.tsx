@@ -271,6 +271,9 @@ const BirdCard: React.FC<BirdCardProps> = ({
       <div className="text-center mt-2 sm:mt-3 flex flex-col items-center w-full px-1">
         <h3 className="font-montserrat font-semibold text-base sm:text-lg w-full break-words">{bird.name}</h3>
         <p className="text-xs sm:text-sm text-gray-600 italic w-full break-words">{bird.scientificName}</p>
+        {bird.family && (
+          <p className="text-[10px] sm:text-xs text-gray-400 w-full break-words mt-0.5">{bird.family}</p>
+        )}
         <span id={descriptionId} className="visually-hidden">
           Nome científico {bird.scientificName}. {bird.seen ? 'Marcada como vista.' : 'Ainda não vista.'} Pressione Enter ou Espaço para abrir os detalhes.
         </span>
