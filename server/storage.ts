@@ -34,7 +34,7 @@ export interface IStorage {
   addSightingRecord(record: InsertSightingRecord): Promise<SightingRecord>;
   getSightingRecords(): Promise<SightingRecord[]>;
   getSightingsByMonth(filters?: { season?: string; geoOnly?: boolean }): Promise<{ monthKey: string; birdName: string; count: number }[]>;
-  getSightingsByBird(filters?: { year?: number; period?: string }): Promise<{ birdId: number; birdName: string; count: number }[]>;
+  getSightingsByBird(filters?: { year?: number; period?: string; season?: string; geoOnly?: boolean }): Promise<{ birdId: number; birdName: string; count: number }[]>;
   getAvailableYears(): Promise<number[]>;
   seedBirdsToDatabase(): Promise<number>;
   updateBirdCustomImage(birdId: number, customImageUrl: string): Promise<Bird | undefined>;
@@ -409,7 +409,20 @@ export class MemStorage implements IStorage {
     }
   }
 
-  async getSightingsByBird(filters?: { year?: number; period?: string }): Promise<{ birdId: number; birdName: string; count: number }[]> {
+  async getSightingsByBird(filters?: { year?: number; period?: string; season?: string; geoOnly?: boolean }): Promise<{ birdId: number; birdName: string; count: number }[]> {
+    const TOCA_LAT = -23.78;
+    const TOCA_LON = -45.36;
+    const GEO_RADIUS_KM = 10;
+
+    function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
     try {
       const useViz = process.env.USE_VIZ_TABLE === 'true';
       const records = useViz
@@ -439,6 +452,11 @@ export class MemStorage implements IStorage {
         const ts = new Date(r.timestamp);
         if (filters?.year && ts.getFullYear() !== filters.year) continue;
         if (startDate && ts < startDate) continue;
+        if (filters?.season && r.season !== filters.season) continue;
+        if (filters?.geoOnly) {
+          if (r.latitude == null || r.longitude == null) continue;
+          if (haversineKm(r.latitude, r.longitude, TOCA_LAT, TOCA_LON) > GEO_RADIUS_KM) continue;
+        }
         if (!counts[r.birdName]) counts[r.birdName] = { birdId: r.birdId, count: 0 };
         counts[r.birdName].count++;
       }

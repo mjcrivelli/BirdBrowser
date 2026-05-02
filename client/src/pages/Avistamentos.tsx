@@ -19,6 +19,14 @@ const PERIODS = [
   { value: 'last1year',   label: 'Último ano' },
 ];
 
+const SEASONS = [
+  { value: '',        label: 'Todas' },
+  { value: 'summer',  label: 'Verão' },
+  { value: 'autumn',  label: 'Outono' },
+  { value: 'winter',  label: 'Inverno' },
+  { value: 'spring',  label: 'Primavera' },
+];
+
 interface BirdCount {
   birdId: number;
   birdName: string;
@@ -54,8 +62,10 @@ interface TooltipInfo {
 }
 
 export default function Avistamentos() {
-  const [year, setYear]     = useState<string>('all');
-  const [period, setPeriod] = useState<string>('alltime');
+  const [year, setYear]       = useState<string>('all');
+  const [period, setPeriod]   = useState<string>('alltime');
+  const [season, setSeason]   = useState<string>('');
+  const [geoOnly, setGeoOnly] = useState<boolean>(false);
   const [tooltip, setTooltip] = useState<TooltipInfo | null>(null);
 
   const { data: years = [] } = useQuery<number[]>({
@@ -65,6 +75,8 @@ export default function Avistamentos() {
   const params = new URLSearchParams();
   if (year !== 'all') params.set('year', year);
   if (period !== 'alltime') params.set('period', period);
+  if (season) params.set('season', season);
+  if (geoOnly) params.set('geoOnly', 'true');
   const queryUrl = `/api/sightings/by-bird${params.toString() ? '?' + params.toString() : ''}`;
 
   const { data: birdData = [], isLoading, isError } = useQuery<BirdCount[]>({
@@ -96,6 +108,7 @@ export default function Avistamentos() {
 
         {/* Filters */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-wrap gap-5 items-end">
+          {/* Year dropdown */}
           <div className="flex flex-col gap-1">
             <label className="text-xs text-gray-400 font-medium uppercase tracking-wide">Ano</label>
             <Select value={year} onValueChange={setYear}>
@@ -111,6 +124,7 @@ export default function Avistamentos() {
             </Select>
           </div>
 
+          {/* Period dropdown */}
           <div className="flex flex-col gap-1">
             <label className="text-xs text-gray-400 font-medium uppercase tracking-wide">Período</label>
             <Select value={period} onValueChange={setPeriod}>
@@ -124,7 +138,59 @@ export default function Avistamentos() {
               </SelectContent>
             </Select>
           </div>
+
+          {/* Divider */}
+          <div className="h-9 w-px bg-gray-100 hidden sm:block self-end" />
+
+          {/* Season tabs */}
+          <div className="flex flex-col gap-1">
+            <label className="text-xs text-gray-400 font-medium uppercase tracking-wide">Estação</label>
+            <div className="flex flex-wrap gap-1.5">
+              {SEASONS.map(s => (
+                <button
+                  key={s.value}
+                  onClick={() => setSeason(s.value)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                    season === s.value
+                      ? 'bg-[#4CAF50] text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="h-9 w-px bg-gray-100 hidden sm:block self-end" />
+
+          {/* Geo toggle */}
+          <div className="flex flex-col gap-1">
+            <label className="text-xs text-gray-400 font-medium uppercase tracking-wide">Localização</label>
+            <button
+              onClick={() => setGeoOnly(v => !v)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border ${
+                geoOnly
+                  ? 'bg-[#1565c0] text-white border-[#1565c0] shadow-sm'
+                  : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+              }`}
+              title="Exibe apenas avistamentos registrados com localização próxima à Cachoeira da Toca (10 km)"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Apenas da Toca
+            </button>
+          </div>
         </div>
+
+        {geoOnly && (
+          <p className="text-xs text-gray-400 italic -mt-4 mb-4 px-1">
+            Mostrando somente avistamentos com localização registrada dentro de 10 km da Cachoeira da Toca.
+          </p>
+        )}
 
         {/* Loading */}
         {isLoading && (
