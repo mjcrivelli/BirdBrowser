@@ -6,12 +6,12 @@ export const birds = pgTable("birds", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   scientificName: text("scientific_name").notNull(),
+  family: text("family"),
   description: text("description").notNull(),
   habitat: text("habitat").notNull(),
   diet: text("diet").notNull(),
   imageUrl: text("image_url").notNull(),
   customImageUrl: text("custom_image_url"),
-  family: text("family"),
   wikipediaUrl: text("wikipedia_url").notNull(),
 });
 
