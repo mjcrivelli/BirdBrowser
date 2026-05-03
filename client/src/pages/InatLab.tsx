@@ -266,10 +266,9 @@ export default function InatLab() {
           </div>
           <div className="flex gap-2 flex-wrap mb-3">
             <button onClick={() => setSeason('all')}
+              style={season === 'all' ? { backgroundColor: '#62c1ed', color: '#0c2d4a', borderColor: '#62c1ed' } : {}}
               className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-                season === 'all'
-                  ? 'bg-gray-800 text-white border-gray-800'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
+                season === 'all' ? '' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
               }`}>
               Ano todo
             </button>
@@ -338,7 +337,8 @@ export default function InatLab() {
           <>
             {/* Summary cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-              <div className="rounded-xl border p-4 bg-green-50 border-green-200 text-green-700">
+              {/* iNaturalist — light green from iNat brand */}
+              <div className="rounded-xl border p-4" style={{ backgroundColor: '#f3f9e8', borderColor: '#74ac00', color: '#3d5c00' }}>
                 <div className="text-lg font-bold">iNaturalist</div>
                 {inatLoading
                   ? <div className="text-xs mt-1 opacity-60 animate-pulse">Carregando…</div>
@@ -347,7 +347,8 @@ export default function InatLab() {
                       {isFiltered && inatData && <span className="opacity-60"> / {inatData.total_results} total</span>}
                     </div>}
               </div>
-              <div className="rounded-xl border p-4 bg-blue-50 border-blue-200 text-blue-700">
+              {/* eBird / GBIF — palette blue */}
+              <div className="rounded-xl border p-4" style={{ backgroundColor: '#e0f7ff', borderColor: '#62c1ed', color: '#0c4a6e' }}>
                 <div className="text-lg font-bold">eBird / GBIF</div>
                 {gbifLoading
                   ? <div className="text-xs mt-1 opacity-60 animate-pulse">Carregando…</div>
@@ -356,11 +357,13 @@ export default function InatLab() {
                       {isFiltered && gbifData && <span className="opacity-60"> / {gbifData.results.length} amostra</span>}
                     </div>}
               </div>
-              <div className="rounded-xl border p-4 bg-[#159d51]/10 border-[#159d51]/20 text-[#159d51]">
+              {/* Catálogo Toca — reinforced with solid green */}
+              <div className="rounded-xl border-2 p-4" style={{ backgroundColor: '#159d51', borderColor: '#0d7a3e', color: '#ffffff' }}>
                 <div className="text-lg font-bold">Catálogo Toca</div>
-                <div className="text-xs mt-1 opacity-80">{catalogBirds.length} espécies</div>
+                <div className="text-xs mt-1" style={{ opacity: 0.85 }}>{catalogBirds.length} espécies</div>
               </div>
-              <div className="rounded-xl border p-4 bg-purple-50 border-purple-200 text-purple-700">
+              {/* Nas 3 fontes — Avistamentos purple */}
+              <div className="rounded-xl border p-4" style={{ backgroundColor: '#ede9fe', borderColor: '#5042E0', color: '#3730a3' }}>
                 <div className="text-lg font-bold">Nas 3 fontes</div>
                 {(inatLoading || gbifLoading)
                   ? <div className="text-xs mt-1 opacity-60 animate-pulse">Calculando…</div>
