@@ -381,7 +381,7 @@ export default function Avistamentos() {
                     <div
                       key={bird.birdName}
                       className={`flex flex-col items-center flex-shrink-0 cursor-pointer rounded-lg transition-all duration-150 py-1 px-0.5 ${
-                        isSel ? 'ring-2 ring-[#159d51] ring-offset-1 bg-green-50' : ''
+                        isSel ? 'outline outline-2 outline-[#159d51] outline-offset-1 bg-green-50' : ''
                       } ${isDimmed ? 'opacity-40' : 'opacity-100'}`}
                       style={{ width: COL_W_BIRD }}
                       onClick={() => {
@@ -454,7 +454,7 @@ export default function Avistamentos() {
                     <div
                       key={fam.family}
                       className={`flex flex-col items-center flex-shrink-0 cursor-pointer rounded-lg transition-all duration-150 py-1 px-0.5 ${
-                        isSel ? 'ring-2 ring-[#5042E0] ring-offset-1 bg-[#5042E0]/10' : ''
+                        isSel ? 'outline outline-2 outline-[#5042E0] outline-offset-1 bg-[#5042E0]/10' : ''
                       } ${isDimmed ? 'opacity-40' : 'opacity-100'}`}
                       style={{ width: COL_W_FAMILY }}
                       onClick={() => {
