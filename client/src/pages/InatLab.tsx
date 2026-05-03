@@ -48,11 +48,15 @@ type MergedSpecies = {
 // Southern Hemisphere seasons
 type SeasonKey = 'all' | 'verao' | 'outono' | 'inverno' | 'primavera' | number;
 
-const SEASONS: { key: SeasonKey; label: string; emoji: string; months: number[] }[] = [
-  { key: 'verao',     label: 'Verão',     emoji: '☀️',  months: [12, 1, 2]  },
-  { key: 'outono',    label: 'Outono',    emoji: '🍂',  months: [3, 4, 5]   },
-  { key: 'inverno',   label: 'Inverno',   emoji: '🌧️', months: [6, 7, 8]   },
-  { key: 'primavera', label: 'Primavera', emoji: '🌸',  months: [9, 10, 11] },
+const SEASONS: {
+  key: SeasonKey; label: string; months: number[];
+  color: string; onColor: string;
+  lightBg: string; lightText: string; lightBorder: string;
+}[] = [
+  { key: 'verao',     label: 'Verão',     months: [12, 1, 2],  color: '#fef200', onColor: '#78350f', lightBg: '#fefce8', lightText: '#713f12', lightBorder: '#fef08a' },
+  { key: 'outono',    label: 'Outono',    months: [3, 4, 5],   color: '#5042E0', onColor: '#ffffff', lightBg: '#ede9fe', lightText: '#4c1d95', lightBorder: '#c4b5fd' },
+  { key: 'inverno',   label: 'Inverno',   months: [6, 7, 8],   color: '#62c1ed', onColor: '#0c2d4a', lightBg: '#e0f7ff', lightText: '#0c4a6e', lightBorder: '#bae6fd' },
+  { key: 'primavera', label: 'Primavera', months: [9, 10, 11], color: '#159d51', onColor: '#ffffff', lightBg: '#dcfce7', lightText: '#14532d', lightBorder: '#86efac' },
 ];
 
 const MONTHS = [
@@ -269,44 +273,56 @@ export default function InatLab() {
               }`}>
               Ano todo
             </button>
-            {SEASONS.map(s => (
-              <button key={s.key as string} onClick={() => setSeason(s.key)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-                  season === s.key
-                    ? 'bg-amber-500 text-white border-amber-500'
-                    : 'bg-white text-gray-600 border-gray-200 hover:border-amber-400'
-                }`}>
-                {s.emoji} {s.label}
-              </button>
-            ))}
-          </div>
-          <div className="flex gap-1.5 flex-wrap">
-            {MONTHS.map(m => {
-              const inCurrentSeason = typeof season !== 'number' && season !== 'all'
-                ? SEASONS.find(s => s.key === season)?.months.includes(m.n)
-                : false;
+            {SEASONS.map(s => {
+              const active = season === s.key;
               return (
-                <button key={m.n} onClick={() => setSeason(season === m.n ? 'all' : m.n)}
-                  className={`w-10 py-1 rounded text-xs font-medium border transition-colors ${
-                    season === m.n
-                      ? 'bg-[#159d51] text-white border-[#159d51]'
-                      : inCurrentSeason
-                        ? 'bg-amber-50 text-amber-700 border-amber-200'
-                        : 'bg-white text-gray-500 border-gray-200 hover:border-[#159d51]'
+                <button key={s.key as string} onClick={() => setSeason(s.key)}
+                  style={active ? { backgroundColor: s.color, color: s.onColor, borderColor: s.color } : {}}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                    active ? '' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
                   }`}>
-                  {m.label}
+                  {s.label}
                 </button>
               );
             })}
           </div>
-          {isFiltered && (
-            <p className="text-xs text-amber-700 mt-2">
-              Mostrando avistamentos de <strong>{seasonLabel}</strong> — iNat: {filteredInat.length} obs, eBird: {filteredGbif.length} registros (amostra).
-              {filterMonths && gbifData && filteredGbif.length < 10 && (
-                <span className="ml-1 text-gray-400">(amostra de 300 registros pode ter poucos dados para este período)</span>
-              )}
-            </p>
-          )}
+          <div className="flex gap-1.5 flex-wrap">
+            {(() => {
+              const activeSeason = typeof season !== 'number' && season !== 'all'
+                ? SEASONS.find(s => s.key === season) : undefined;
+              return MONTHS.map(m => {
+                const isActive = season === m.n;
+                const inSeason = activeSeason?.months.includes(m.n) ?? false;
+                return (
+                  <button key={m.n} onClick={() => setSeason(season === m.n ? 'all' : m.n)}
+                    style={
+                      isActive
+                        ? { backgroundColor: '#159d51', color: '#ffffff', borderColor: '#159d51' }
+                        : inSeason && activeSeason
+                          ? { backgroundColor: activeSeason.lightBg, color: activeSeason.lightText, borderColor: activeSeason.lightBorder }
+                          : {}
+                    }
+                    className={`w-10 py-1 rounded text-xs font-medium border transition-colors ${
+                      isActive || inSeason ? '' : 'bg-white text-gray-500 border-gray-200 hover:border-[#159d51]'
+                    }`}>
+                    {m.label}
+                  </button>
+                );
+              });
+            })()}
+          </div>
+          {isFiltered && (() => {
+            const activeSeason = typeof season !== 'number' && season !== 'all'
+              ? SEASONS.find(s => s.key === season) : undefined;
+            return (
+              <p className="text-xs mt-2" style={{ color: activeSeason?.lightText ?? '#374151' }}>
+                Mostrando avistamentos de <strong>{seasonLabel}</strong> — iNat: {filteredInat.length} obs, eBird: {filteredGbif.length} registros (amostra).
+                {filterMonths && gbifData && filteredGbif.length < 10 && (
+                  <span className="ml-1 text-gray-400">(amostra de 300 registros pode ter poucos dados para este período)</span>
+                )}
+              </p>
+            );
+          })()}
         </div>
 
         {catalogLoading && <div className="text-center py-16 text-gray-400">Carregando catálogo…</div>}
