@@ -407,16 +407,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Lab: proxy for iNaturalist observations around Cachoeira da Toca
+  // Lab: individual observations (for map coordinates + season filtering)
   app.get("/api/lab/inat", async (_req, res) => {
     try {
       const url = 'https://api.inaturalist.org/v1/observations' +
-        '?taxon_name=Aves&lat=-23.862969&lng=-45.321893&radius=17' +
-        '&quality_grade=research&per_page=200';
+        '?taxon_name=Aves&lat=-23.862969&lng=-45.321893&radius=17&per_page=200';
       const r = await fetch(url);
       const data = await r.json();
       res.json(data);
     } catch (e) {
       res.status(502).json({ message: "Failed to fetch iNaturalist data" });
+    }
+  });
+
+  // Lab: full unique-species list via species_counts (matches iNat website species tab)
+  app.get("/api/lab/inat-species", async (_req, res) => {
+    try {
+      const url = 'https://api.inaturalist.org/v1/observations/species_counts' +
+        '?iconic_taxa[]=Aves&lat=-23.862969&lng=-45.321893&radius=17&per_page=500';
+      const r = await fetch(url, { cache: 'no-store' });
+      const data = await r.json();
+      res.json(data);
+    } catch (e) {
+      res.status(502).json({ message: "Failed to fetch iNaturalist species" });
     }
   });
 

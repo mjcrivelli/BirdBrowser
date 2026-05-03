@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import type { Bird } from '@shared/schema';
 
 const INAT_URL = '/api/lab/inat';
+const INAT_SPECIES_URL = '/api/lab/inat-species';
 const GBIF_URL = '/api/lab/gbif';
 const WIKIAVES_URL = 'https://www.wikiaves.com.br/especies.php?t=c&c=3520400&o=1&ef=0';
 
@@ -23,6 +24,13 @@ type InatObs = {
   location?: string | null;   // "lat,lng" string from iNat API
 };
 type InatResponse = { results: InatObs[]; total_results: number };
+
+// species_counts endpoint — one entry per unique taxon, full coverage
+type InatSpeciesItem = {
+  count: number;
+  taxon: { id: number; name: string; preferred_common_name?: string; default_photo?: { square_url: string } };
+};
+type InatSpeciesResponse = { total_results: number; results: InatSpeciesItem[] };
 
 type GbifResult = {
   species?: string;
@@ -101,6 +109,13 @@ export default function InatLab() {
     staleTime: 1000 * 60 * 10,
   });
 
+  // Full unique-species list — matches what the iNat website species tab shows
+  const { data: inatSpeciesData } = useQuery<InatSpeciesResponse>({
+    queryKey: ['inat-species-ilhabela'],
+    queryFn: () => fetch(INAT_SPECIES_URL).then(r => r.json()),
+    staleTime: 1000 * 60 * 10,
+  });
+
   const { data: gbifData, isLoading: gbifLoading, isError: gbifError } = useQuery<GbifResponse>({
     queryKey: ['gbif-ebird-ilhabela'],
     queryFn: () => fetch(GBIF_URL).then(r => r.json()),
@@ -122,18 +137,33 @@ export default function InatLab() {
   });
 
   // Build iNat species map
-  const inatSpecies = new Map<string, SourceInfo & { obs: InatObs[] }>();
-  for (const obs of filteredInat) {
-    const key = normSci(obs.taxon?.name ?? '');
-    if (!key) continue;
-    const ex = inatSpecies.get(key);
-    if (ex) { ex.count++; ex.obs.push(obs); }
-    else inatSpecies.set(key, {
-      count: 1,
-      vernacular: obs.taxon?.preferred_common_name,
-      photo: obs.taxon?.default_photo?.square_url,
-      obs: [obs],
-    });
+  // When no season/month filter: use the authoritative species_counts endpoint (full coverage,
+  // matches what the iNat website species tab shows). When filtered: fall back to observations.
+  const inatSpecies = new Map<string, SourceInfo & { taxonName?: string }>();
+  if (!filterMonths && inatSpeciesData?.results) {
+    for (const item of inatSpeciesData.results) {
+      const key = normSci(item.taxon.name);
+      if (!key) continue;
+      inatSpecies.set(key, {
+        count: item.count,
+        vernacular: item.taxon.preferred_common_name,
+        photo: item.taxon.default_photo?.square_url,
+        taxonName: item.taxon.name,
+      });
+    }
+  } else {
+    for (const obs of filteredInat) {
+      const key = normSci(obs.taxon?.name ?? '');
+      if (!key) continue;
+      const ex = inatSpecies.get(key);
+      if (ex) ex.count++;
+      else inatSpecies.set(key, {
+        count: 1,
+        vernacular: obs.taxon?.preferred_common_name,
+        photo: obs.taxon?.default_photo?.square_url,
+        taxonName: obs.taxon?.name,
+      });
+    }
   }
 
   // Build eBird/GBIF species map
@@ -159,7 +189,7 @@ export default function InatLab() {
     const photo = inatInfo?.photo
       ?? (catBird ? (catBird.customImageUrl || catBird.imageUrl || undefined) : undefined);
     merged.push({
-      scientificName: catBird?.scientificName ?? inatInfo?.obs[0]?.taxon?.name ?? key,
+      scientificName: catBird?.scientificName ?? inatInfo?.taxonName ?? key,
       localName: catBird?.name,
       photo,
       inat: inatInfo,
@@ -377,8 +407,11 @@ export default function InatLab() {
                 {inatLoading
                   ? <div className="text-xs mt-1 opacity-60 animate-pulse">Carregando…</div>
                   : <div className="text-xs mt-1 opacity-80">
-                      {filteredInat.length} obs. · {inatSpecies.size} sp.
-                      {isFiltered && inatData && <span className="opacity-60"> / {inatData.total_results} total</span>}
+                      {inatSpecies.size} sp.
+                      {isFiltered
+                        ? <span className="opacity-60"> / {inatSpeciesData?.total_results ?? '…'} total · {filteredInat.length} obs.</span>
+                        : <span className="opacity-60"> · {inatData?.total_results ?? filteredInat.length} obs.</span>
+                      }
                     </div>}
               </div>
               {/* eBird / GBIF — palette blue */}
