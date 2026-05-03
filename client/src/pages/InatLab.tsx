@@ -432,14 +432,14 @@ export default function InatLab() {
               <div>
                 <div className="flex items-center gap-4 mb-3 text-xs">
                   <span className="flex items-center gap-1.5">
-                    <span className="inline-block w-3 h-3 rounded-full bg-green-500 border border-green-700"></span>
-                    iNaturalist ({inatPoints.length} obs{inatPoints.length < filteredInat.length ? `, ${filteredInat.length - inatPoints.length} sem coord.` : ''})
+                    <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: '#74ac00', borderColor: '#3d5c00', borderWidth: 1 }}></span>
+                    <span style={{ color: '#3d5c00' }}>iNaturalist ({inatPoints.length} obs{inatPoints.length < filteredInat.length ? `, ${filteredInat.length - inatPoints.length} sem coord.` : ''})</span>
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <span className="inline-block w-3 h-3 rounded-full bg-blue-500 border border-blue-700"></span>
-                    eBird / GBIF ({gbifPoints.length} registros{gbifPoints.length < filteredGbif.length ? `, ${filteredGbif.length - gbifPoints.length} sem coord.` : ''})
+                    <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: '#62c1ed', borderColor: '#0c4a6e', borderWidth: 1 }}></span>
+                    <span style={{ color: '#0c4a6e' }}>eBird / GBIF ({gbifPoints.length} registros{gbifPoints.length < filteredGbif.length ? `, ${filteredGbif.length - gbifPoints.length} sem coord.` : ''})</span>
                   </span>
-                  {isFiltered && <span className="text-amber-600 font-medium">· Filtrado: {seasonLabel}</span>}
+                  {isFiltered && <span className="text-gray-500 font-medium">· Filtrado: {seasonLabel}</span>}
                 </div>
                 {(inatLoading || gbifLoading) && (
                   <div className="text-center py-6 text-gray-400 text-sm animate-pulse">Carregando coordenadas…</div>
@@ -453,7 +453,7 @@ export default function InatLab() {
                       />
                       {inatPoints.map((p, i) => (
                         <CircleMarker key={`inat-${i}`} center={[p.lat, p.lng]}
-                          radius={7} pathOptions={{ color: '#15803d', fillColor: '#22c55e', fillOpacity: 0.8, weight: 1.5 }}>
+                          radius={7} pathOptions={{ color: '#3d5c00', fillColor: '#74ac00', fillOpacity: 0.85, weight: 1.5 }}>
                           <Popup>
                             <div className="text-sm min-w-[160px]">
                               {p.photo && <img src={p.photo} alt="" className="w-full h-20 object-cover rounded mb-2" />}
@@ -467,14 +467,14 @@ export default function InatLab() {
                                   @{p.user}
                                 </a>
                               )}
-                              <div className="mt-1 text-xs font-medium text-green-700">iNaturalist</div>
+                              <div className="mt-1 text-xs font-medium" style={{ color: '#3d5c00' }}>iNaturalist</div>
                             </div>
                           </Popup>
                         </CircleMarker>
                       ))}
                       {gbifPoints.map((p, i) => (
                         <CircleMarker key={`gbif-${i}`} center={[p.lat, p.lng]}
-                          radius={6} pathOptions={{ color: '#1d4ed8', fillColor: '#3b82f6', fillOpacity: 0.7, weight: 1.5 }}>
+                          radius={6} pathOptions={{ color: '#0c4a6e', fillColor: '#62c1ed', fillOpacity: 0.8, weight: 1.5 }}>
                           <Popup>
                             <div className="text-sm min-w-[140px]">
                               <div className="font-semibold">{p.name}</div>
@@ -484,7 +484,7 @@ export default function InatLab() {
                                   {p.month ? `${String(p.month).padStart(2, '0')}/` : ''}{p.year}
                                 </div>
                               )}
-                              <div className="mt-1 text-xs font-medium text-blue-700">eBird / GBIF</div>
+                              <div className="mt-1 text-xs font-medium" style={{ color: '#0c4a6e' }}>eBird / GBIF</div>
                             </div>
                           </Popup>
                         </CircleMarker>
