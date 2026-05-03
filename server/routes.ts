@@ -406,6 +406,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Lab: proxy for iNaturalist observations around Cachoeira da Toca
+  app.get("/api/lab/inat", async (_req, res) => {
+    try {
+      const url = 'https://api.inaturalist.org/v1/observations' +
+        '?taxon_name=Aves&lat=-23.862969&lng=-45.321893&radius=17' +
+        '&quality_grade=research&per_page=200';
+      const r = await fetch(url);
+      const data = await r.json();
+      res.json(data);
+    } catch (e) {
+      res.status(502).json({ message: "Failed to fetch iNaturalist data" });
+    }
+  });
+
+  // Lab: proxy for eBird/GBIF occurrences around Ilhabela
+  app.get("/api/lab/gbif", async (_req, res) => {
+    try {
+      const url = 'https://api.gbif.org/v1/occurrence/search' +
+        '?datasetKey=4fa7b334-ce0d-4e88-aaae-2e0c138d049e' +
+        '&decimalLatitude=-24.2,-23.5&decimalLongitude=-45.6,-45.0&limit=300';
+      const r = await fetch(url);
+      const data = await r.json();
+      res.json(data);
+    } catch (e) {
+      res.status(502).json({ message: "Failed to fetch GBIF data" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
