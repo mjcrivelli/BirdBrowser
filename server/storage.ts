@@ -80,7 +80,7 @@ export class MemStorage implements IStorage {
       title: "Sobre o Catálogo",
       content: `Bem-vindo ao catálogo de aves da Cachoeira da Toca. Este é um lugar especial para observação e registro de espécies locais.
 
-O catálogo é resultado de 2 semestres da disciplina "Projeto Integrador" da Univesp (Universidade Virtual do Estado de São Paulo). Estamos na etapa de implementação para análise da experiência dos usuários e coleta de melhorias futuras.
+O catálogo é resultado de 3 semestres da disciplina "Projeto Integrador" da Univesp (Universidade Virtual do Estado de São Paulo). Estamos na etapa de implementação para análise da experiência dos usuários e coleta de melhorias futuras.
 
 O projeto surgiu como uma demanda latente tanto do destino quanto de nosso atrativo. Contou com análise da jornada dos visitantes na Cachoeira, interesse potencial, participação em feiras como a Avistar e em avistamentos na Amazônia, Pantanal, Caatinga, Cerrado e Mata Atlântica.
 
