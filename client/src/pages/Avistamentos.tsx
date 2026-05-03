@@ -52,11 +52,11 @@ const COL_W_FAMILY = 110;
 const PHOTO_SIZE   = 44;
 
 function barColor(rank: number): string {
-  if (rank === 1) return '#F59E0B';
+  if (rank === 1) return '#fef200';
   if (rank === 2) return '#94A3B8';
   if (rank === 3) return '#B87333';
-  if (rank <= 10) return '#22C55E';
-  return '#86EFAC';
+  if (rank <= 10) return '#159d51';
+  return '#7AC898';
 }
 
 function rankLabel(rank: number): string {
@@ -259,7 +259,7 @@ export default function Avistamentos() {
                     onClick={() => setSeason(s.value)}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                       season === s.value
-                        ? 'bg-[#4CAF50] text-white shadow-sm'
+                        ? 'bg-[#159d51] text-white shadow-sm'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                   >
@@ -280,7 +280,7 @@ export default function Avistamentos() {
                   onClick={() => setGeoOnly(v => !v)}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border ${
                     geoOnly
-                      ? 'bg-[#1565c0] text-white border-[#1565c0] shadow-sm'
+                      ? 'bg-[#62c1ed] text-gray-800 border-[#62c1ed] shadow-sm'
                       : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
                   }`}
                   title="Exibe apenas avistamentos registrados com localização próxima à Cachoeira da Toca (10 km)"
@@ -327,18 +327,18 @@ export default function Avistamentos() {
             <div className="flex flex-wrap gap-4 text-sm text-gray-500">
               {viewMode === 'family' && !isLoading && (
                 <span className="flex items-center gap-1.5">
-                  <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#8B5CF6]" />
+                  <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#5042E0]" />
                   {familiesCount} famíli{familiesCount !== 1 ? 'as' : 'a'}
                 </span>
               )}
               {!isLoading && (
                 <>
                   <span className="flex items-center gap-1.5">
-                    <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#22C55E]" />
+                    <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#159d51]" />
                     {speciesCount} espécie{speciesCount !== 1 ? 's' : ''}
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#1565c0]" />
+                    <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#62c1ed]" />
                     {totalSightings} avistamento{totalSightings !== 1 ? 's' : ''} no total
                   </span>
                 </>
@@ -347,11 +347,11 @@ export default function Avistamentos() {
             <div className="flex items-center gap-0 rounded-lg border border-gray-200 overflow-hidden text-xs font-medium">
               <button
                 onClick={() => { setViewMode('bird'); setTooltip(null); setSelectedItem(null); setShowAll(false); }}
-                className={`px-3 py-1.5 transition-colors ${viewMode === 'bird' ? 'bg-[#4CAF50] text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                className={`px-3 py-1.5 transition-colors ${viewMode === 'bird' ? 'bg-[#159d51] text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
               >Por espécie</button>
               <button
                 onClick={() => { setViewMode('family'); setTooltip(null); setSelectedItem(null); setShowAll(false); }}
-                className={`px-3 py-1.5 transition-colors border-l border-gray-200 ${viewMode === 'family' ? 'bg-[#8B5CF6] text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                className={`px-3 py-1.5 transition-colors border-l border-gray-200 ${viewMode === 'family' ? 'bg-[#5042E0] text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
               >Por família</button>
             </div>
           </div>
@@ -381,7 +381,7 @@ export default function Avistamentos() {
                     <div
                       key={bird.birdName}
                       className={`flex flex-col items-center flex-shrink-0 cursor-pointer rounded-lg transition-all duration-150 py-1 px-0.5 ${
-                        isSel ? 'ring-2 ring-[#4CAF50] ring-offset-1 bg-green-50' : ''
+                        isSel ? 'ring-2 ring-[#159d51] ring-offset-1 bg-green-50' : ''
                       } ${isDimmed ? 'opacity-40' : 'opacity-100'}`}
                       style={{ width: COL_W_BIRD }}
                       onClick={() => {
@@ -405,9 +405,9 @@ export default function Avistamentos() {
                       {rank <= 3 ? (
                         <div className="mb-1 flex items-center justify-center">
                           <div className="flex flex-col items-center justify-center rounded-lg shadow-sm"
-                            style={{ width: COL_W_BIRD - 10, height: rank === 1 ? 54 : 44, border: `2px solid ${color}`, background: `${color}18` }}>
+                            style={{ width: COL_W_BIRD - 10, height: rank === 1 ? 54 : 44, border: `2px solid ${rank === 1 ? '#C8A800' : color}`, background: rank === 1 ? '#fef20018' : `${color}18` }}>
                             <span style={{ fontSize: rank === 1 ? 18 : 14 }} className="leading-none">{rankLabel(rank)}</span>
-                            <span className="font-bold mt-1" style={{ color, fontSize: rank === 1 ? 13 : 11 }}>{bird.count}</span>
+                            <span className="font-bold mt-1" style={{ color: rank === 1 ? '#7A6000' : color, fontSize: rank === 1 ? 13 : 11 }}>{bird.count}</span>
                           </div>
                         </div>
                       ) : (
@@ -420,12 +420,12 @@ export default function Avistamentos() {
                       <div className="mt-2">
                         {imgUrl ? (
                           <img src={imgUrl} alt={bird.birdName}
-                            className={`rounded-full object-cover shadow-sm transition-all ${isSel ? 'border-2 border-[#4CAF50]' : 'border-2 border-white'}`}
+                            className={`rounded-full object-cover shadow-sm transition-all ${isSel ? 'border-2 border-[#159d51]' : 'border-2 border-white'}`}
                             style={{ width: PHOTO_SIZE, height: PHOTO_SIZE }}
                             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                           />
                         ) : (
-                          <div className={`rounded-full bg-gray-100 shadow-sm flex items-center justify-center ${isSel ? 'border-2 border-[#4CAF50]' : 'border-2 border-white'}`}
+                          <div className={`rounded-full bg-gray-100 shadow-sm flex items-center justify-center ${isSel ? 'border-2 border-[#159d51]' : 'border-2 border-white'}`}
                             style={{ width: PHOTO_SIZE, height: PHOTO_SIZE }}>
                             <svg className="w-5 h-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -434,7 +434,7 @@ export default function Avistamentos() {
                           </div>
                         )}
                       </div>
-                      <p className={`text-center text-[9px] leading-tight mt-1 ${isSel ? 'text-[#4CAF50] font-semibold' : 'text-gray-500'}`}
+                      <p className={`text-center text-[9px] leading-tight mt-1 ${isSel ? 'text-[#159d51] font-semibold' : 'text-gray-500'}`}
                         style={{ width: COL_W_BIRD - 6, height: 28, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' } as React.CSSProperties}>
                         {bird.birdName}
                       </p>
@@ -454,7 +454,7 @@ export default function Avistamentos() {
                     <div
                       key={fam.family}
                       className={`flex flex-col items-center flex-shrink-0 cursor-pointer rounded-lg transition-all duration-150 py-1 px-0.5 ${
-                        isSel ? 'ring-2 ring-[#8B5CF6] ring-offset-1 bg-purple-50' : ''
+                        isSel ? 'ring-2 ring-[#5042E0] ring-offset-1 bg-[#5042E0]/10' : ''
                       } ${isDimmed ? 'opacity-40' : 'opacity-100'}`}
                       style={{ width: COL_W_FAMILY }}
                       onClick={() => {
@@ -477,9 +477,9 @@ export default function Avistamentos() {
                       {rank <= 3 ? (
                         <div className="mb-1 flex items-center justify-center">
                           <div className="flex flex-col items-center justify-center rounded-lg shadow-sm"
-                            style={{ width: COL_W_FAMILY - 10, height: rank === 1 ? 54 : 44, border: `2px solid ${color}`, background: `${color}18` }}>
+                            style={{ width: COL_W_FAMILY - 10, height: rank === 1 ? 54 : 44, border: `2px solid ${rank === 1 ? '#C8A800' : color}`, background: rank === 1 ? '#fef20018' : `${color}18` }}>
                             <span style={{ fontSize: rank === 1 ? 18 : 14 }} className="leading-none">{rankLabel(rank)}</span>
-                            <span className="font-bold mt-1" style={{ color, fontSize: rank === 1 ? 13 : 11 }}>{fam.count}</span>
+                            <span className="font-bold mt-1" style={{ color: rank === 1 ? '#7A6000' : color, fontSize: rank === 1 ? 13 : 11 }}>{fam.count}</span>
                           </div>
                         </div>
                       ) : (
@@ -516,7 +516,7 @@ export default function Avistamentos() {
                           </div>
                         )}
                       </div>
-                      <p className="text-center text-[9px] leading-tight text-[#8B5CF6] font-semibold mt-1.5"
+                      <p className="text-center text-[9px] leading-tight text-[#5042E0] font-semibold mt-1.5"
                         style={{ width: COL_W_FAMILY - 8, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' } as React.CSSProperties}>
                         {fam.family}
                       </p>
@@ -570,21 +570,21 @@ export default function Avistamentos() {
             <div className="flex items-center gap-3 mb-4">
               {selectedItem.kind === 'bird' && selectedItem.imgUrl && (
                 <img src={selectedItem.imgUrl} alt={selectedItem.birdName}
-                  className="rounded-full object-cover border-2 border-[#4CAF50] shadow-sm flex-shrink-0"
+                  className="rounded-full object-cover border-2 border-[#159d51] shadow-sm flex-shrink-0"
                   style={{ width: 48, height: 48 }}
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
               )}
               {selectedItem.kind === 'family' && (
-                <div className="rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0"
+                <div className="rounded-full bg-[#5042E0]/20 flex items-center justify-center flex-shrink-0"
                   style={{ width: 48, height: 48 }}>
-                  <svg className="w-6 h-6 text-[#8B5CF6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-6 h-6 text-[#5042E0]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <h2 className={`font-bold text-base leading-tight truncate ${selectedItem.kind === 'family' ? 'text-[#8B5CF6] italic' : 'text-gray-800'}`}>
+                <h2 className={`font-bold text-base leading-tight truncate ${selectedItem.kind === 'family' ? 'text-[#5042E0] italic' : 'text-gray-800'}`}>
                   {selectedItem.kind === 'bird' ? selectedItem.birdName : selectedItem.family}
                 </h2>
                 {selectedItem.kind === 'bird' && selectedItem.scientificName && (
@@ -596,10 +596,10 @@ export default function Avistamentos() {
               </div>
               <div className="text-right flex-shrink-0">
                 {monthlyLoading ? (
-                  <div className="w-5 h-5 border-2 border-[#4CAF50] border-t-transparent rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-[#159d51] border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
-                    <p className={`text-lg font-bold ${selectedItem.kind === 'family' ? 'text-[#8B5CF6]' : 'text-[#22C55E]'}`}>
+                    <p className={`text-lg font-bold ${selectedItem.kind === 'family' ? 'text-[#5042E0]' : 'text-[#159d51]'}`}>
                       {monthlyTotal}
                     </p>
                     <p className="text-[10px] text-gray-400">avistamento{monthlyTotal !== 1 ? 's' : ''}</p>
@@ -624,7 +624,7 @@ export default function Avistamentos() {
               const VW = 660, VH = 190;
               const pw = VW - PAD.l - PAD.r;
               const ph = VH - PAD.t - PAD.b;
-              const lineColor = selectedItem.kind === 'family' ? '#8B5CF6' : '#22C55E';
+              const lineColor = selectedItem.kind === 'family' ? '#5042E0' : '#159d51';
               const pts = monthlyData.map((d, i) => ({
                 x: PAD.l + (i / 11) * pw,
                 y: PAD.t + ph * (1 - d.count / monthlyMax),
@@ -711,7 +711,7 @@ export default function Avistamentos() {
               {tooltip.scientificName && (
                 <span className="text-xs italic text-gray-400 leading-tight truncate">{tooltip.scientificName}</span>
               )}
-              <span className="text-xs font-bold text-[#22C55E] mt-1">
+              <span className="text-xs font-bold text-[#159d51] mt-1">
                 {tooltip.count} avistamento{tooltip.count !== 1 ? 's' : ''}
               </span>
             </div>
@@ -731,7 +731,7 @@ export default function Avistamentos() {
           <div className="bg-white rounded-xl shadow-xl border border-gray-100 p-3 min-w-[240px] max-w-[300px]">
             {/* Header */}
             <div className="flex items-center justify-between mb-2 pb-2 border-b border-gray-100">
-              <span className="text-sm font-bold text-[#8B5CF6] italic">{tooltip.family}</span>
+              <span className="text-sm font-bold text-[#5042E0] italic">{tooltip.family}</span>
               <span className="text-xs font-bold text-gray-500 ml-2 whitespace-nowrap">
                 {tooltip.count} avistamento{tooltip.count !== 1 ? 's' : ''}
               </span>
@@ -763,7 +763,7 @@ export default function Avistamentos() {
                       <p className="text-[10px] italic text-gray-400 truncate leading-tight">{b.scientificName}</p>
                     )}
                   </div>
-                  <span className="text-xs font-bold text-[#22C55E] flex-shrink-0">{b.count}</span>
+                  <span className="text-xs font-bold text-[#159d51] flex-shrink-0">{b.count}</span>
                 </div>
               ); })}
               {tooltip.birds.length > 8 && (
