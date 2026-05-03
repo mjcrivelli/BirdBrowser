@@ -536,8 +536,10 @@ export default function InatLab() {
                   <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm" style={{ height: 460 }}>
                     <MapContainer center={MAP_CENTER} zoom={MAP_ZOOM} style={{ height: '100%', width: '100%' }}>
                       <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
+                        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                        subdomains="abcd"
+                        maxZoom={19}
                       />
                       {yearInatPoints.map((p, i) => (
                         <CircleMarker key={`inat-${mapYear}-${i}`} center={[p.lat, p.lng]}
