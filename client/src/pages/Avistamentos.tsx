@@ -362,7 +362,7 @@ export default function Avistamentos() {
           <>
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             {/* Scrollable bar chart */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto py-2 px-1">
               <div
                 className="flex items-end gap-1 pb-2 pt-2"
                 style={{ minWidth: totalWidth, height: MAX_BAR_H + PHOTO_SIZE + 120 }}
