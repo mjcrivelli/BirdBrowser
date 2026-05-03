@@ -1,0 +1,34 @@
+
+
+Can you refresh the Sobre o catálogo text description for the text bellow? 
+
+Bem-vindo ao catálogo de aves da Cachoeira da Toca. Este é um lugar especial para observação e registro de espécies locais.
+
+O catálogo é resultado de 2 semestres da disciplina “Projeto Integrador” da Univesp (Universidade Virtual do Estado de São Paulo). Estamos na etapa de implementação para análise da experiência dos usuários e coleta de melhorias futuras.
+
+O projeto surgiu como uma demanda latente tanto do destino quanto de nosso atrativo. Contou com análise da jornada dos visitantes na Cachoeira, interesse potencial, participação em feiras como a Avistar e em avistamentos na Amazônia, Pantanal, Caatinga, Cerrado e Mata Atlântica.
+
+A aba “Aves da Toca” conta com a possibilidade de gerar uma lista de aves avistadas: basta clicar no botão “Vi na Toca!” de todas as espécies avistadas e clicar no botão que computa quantas aves foram vistas. Ao final, será gerado um pdf com as informações de cada espécie avistada e a data. Assim, os visitantes podem ter uma recordação da experiência no nosso atrativo.
+
+Na aba “Jogo da memória” foi implementada uma atividade lúdica para as crianças. Em breve, teremos mais material educativo disponível!
+
+A aba “Avistamentos” conta com um painel interativo para mostrar os principais dados de avistamentos realizados. É possível fazer diferentes tipos de filtro com os dados: por períodos de observação, por estação e entre espécies ou famílias de aves. Caso o usuário queira saber mais informações sobre alguma das aves que aparecem no gráfico de avistamentos, basta clicar na espécie ou família desejada. Logo abaixo será apresentado um gráfico de linhas com dados de avistamento ao longo do ano. Assim, podem ficar mais evidentes os efeitos de sazonalidade que são esperados para determinadas espécies!
+
+Esperamos que aproveitem a experiência e aguardem por novidades!
+____________________________________
+
+Equipe de desenvolvimento:
+Bárbara Marie Van Sebroeck Martins 
+Diana Renata Gonçalves Gama 
+Ellen Eduarda Fernandes
+Gisele Milare 
+Iolanda Silva Bianchi
+Marcello José Crivelli 
+Mirela Caroline da Silva
+
+Responsável pelo projeto:
+Vitória Marie Van Sebroeck
+
+
+
+As imagens das espécies são do acervo da Cachoeira da Toca, da observadora de aves Gisele Milare e da wikipedia. As informações são da wikipedia ou wikiaves.

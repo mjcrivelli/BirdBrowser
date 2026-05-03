@@ -20,6 +20,7 @@ const Footer = () => {
               <ul className="text-sm space-y-2">
                 <li><Link href="/" className="text-gray-600 hover:text-[#4CAF50] transition-colors">Aves da Toca</Link></li>
                 <li><Link href="/memoria" className="text-gray-600 hover:text-[#4CAF50] transition-colors">Jogo da Memória</Link></li>
+                <li><Link href="/avistamentos" className="text-gray-600 hover:text-[#4CAF50] transition-colors">Avistamentos</Link></li>
               </ul>
             </nav>
           </div>
