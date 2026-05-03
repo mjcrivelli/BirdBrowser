@@ -10,6 +10,7 @@ const INAT_URL = '/api/lab/inat';
 const INAT_SPECIES_URL = '/api/lab/inat-species';
 const INAT_CATALOG_TAXA_URL = '/api/lab/inat-catalog-taxa';
 const GBIF_URL = '/api/lab/gbif';
+const TOCA_RECORDS_URL = '/api/sighting-records';
 const WIKIAVES_URL = 'https://www.wikiaves.com.br/especies.php?t=c&c=3520400&o=1&ef=0';
 
 // Centre and approximate bounds of Ilhabela
@@ -32,6 +33,17 @@ type InatSpeciesItem = {
   taxon: { id: number; name: string; preferred_common_name?: string; default_photo?: { square_url: string } };
 };
 type InatSpeciesResponse = { total_results: number; results: InatSpeciesItem[] };
+
+// Tocabirds own sighting records (from the app database)
+type TocaSighting = {
+  id: number;
+  birdId: number;
+  birdName: string;
+  timestamp: string;
+  latitude: number | null;
+  longitude: number | null;
+  season: string;
+};
 
 // Per-species scientific-name lookup — map of normSci(name) → taxon info
 type InatCatalogTaxon = {
@@ -140,6 +152,11 @@ export default function InatLab() {
     queryKey: ['gbif-ebird-ilhabela'],
     queryFn: () => fetch(GBIF_URL).then(r => r.json()),
     staleTime: 1000 * 60 * 10,
+  });
+
+  const { data: tocaRecords = [] } = useQuery<TocaSighting[]>({
+    queryKey: [TOCA_RECORDS_URL],
+    staleTime: 1000 * 60 * 5,
   });
 
   const filterMonths = activeMonths(season);
@@ -300,10 +317,23 @@ export default function InatLab() {
     year: r.year ?? null,
   }));
 
-  // Year range across both sources
+  // Tocabirds own sighting points (records with coordinates)
+  const tocaPoints = tocaRecords
+    .filter(r => r.latitude != null && r.longitude != null)
+    .map(r => ({
+      lat: r.latitude as number,
+      lng: r.longitude as number,
+      birdName: r.birdName,
+      timestamp: r.timestamp,
+      season: r.season,
+      year: new Date(r.timestamp).getFullYear(),
+    }));
+
+  // Year range across all three sources
   const allYears = [
     ...inatPoints.map(p => p.year).filter((y): y is number => y !== null),
     ...gbifPoints.map(p => p.year).filter((y): y is number => y !== null),
+    ...tocaPoints.map(p => p.year),
   ];
   const minYear = allYears.length ? Math.min(...allYears) : 2010;
   const maxYear = allYears.length ? Math.max(...allYears) : new Date().getFullYear();
@@ -328,6 +358,7 @@ export default function InatLab() {
   // Year-filtered points for the map slider
   const yearInatPoints = mapYear === null ? inatPoints : inatPoints.filter(p => p.year === mapYear);
   const yearGbifPoints = mapYear === null ? gbifPoints : gbifPoints.filter(p => p.year === mapYear);
+  const yearTocaPoints = mapYear === null ? tocaPoints : tocaPoints.filter(p => p.year === mapYear);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -596,7 +627,7 @@ export default function InatLab() {
             {view === 'mapa' && (
               <div>
                 {/* Legend */}
-                <div className="flex items-center gap-4 mb-3 text-xs">
+                <div className="flex flex-wrap items-center gap-4 mb-3 text-xs">
                   <span className="flex items-center gap-1.5">
                     <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: '#74ac00', borderColor: '#3d5c00', borderWidth: 1 }}></span>
                     <span style={{ color: '#3d5c00' }}>iNaturalist ({yearInatPoints.length} obs)</span>
@@ -604,6 +635,10 @@ export default function InatLab() {
                   <span className="flex items-center gap-1.5">
                     <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: '#62c1ed', borderColor: '#0c4a6e', borderWidth: 1 }}></span>
                     <span style={{ color: '#0c4a6e' }}>eBird / GBIF ({yearGbifPoints.length} registros)</span>
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: '#159d51', borderColor: '#0a5e30', borderWidth: 1 }}></span>
+                    <span style={{ color: '#0a5e30' }}>Toca — avistamentos ({yearTocaPoints.length})</span>
                   </span>
                   {isFiltered && <span className="text-gray-500 font-medium">· {seasonLabel}</span>}
                 </div>
@@ -710,10 +745,25 @@ export default function InatLab() {
                           </Popup>
                         </CircleMarker>
                       ))}
+                      {yearTocaPoints.map((p, i) => (
+                        <CircleMarker key={`toca-${mapYear}-${i}`} center={[p.lat, p.lng]}
+                          radius={7} pathOptions={{ color: '#0a5e30', fillColor: '#159d51', fillOpacity: 0.9, weight: 1.5 }}>
+                          <Popup>
+                            <div className="text-sm min-w-[150px]">
+                              <div className="font-semibold">{p.birdName}</div>
+                              <div className="text-gray-500 text-xs mt-1">
+                                {new Date(p.timestamp).toLocaleDateString('pt-BR')}
+                              </div>
+                              <div className="text-gray-400 text-xs capitalize">{p.season}</div>
+                              <div className="mt-1 text-xs font-medium" style={{ color: '#0a5e30' }}>🌿 Cachoeira da Toca</div>
+                            </div>
+                          </Popup>
+                        </CircleMarker>
+                      ))}
                     </MapContainer>
                   </div>
                 )}
-                {!inatLoading && !gbifLoading && yearInatPoints.length === 0 && yearGbifPoints.length === 0 && (
+                {!inatLoading && !gbifLoading && yearInatPoints.length === 0 && yearGbifPoints.length === 0 && yearTocaPoints.length === 0 && (
                   <p className="text-center text-gray-400 text-sm mt-4">
                     Nenhum ponto com coordenadas disponíveis{mapYear ? ` em ${mapYear}` : ''}
                     {isFiltered ? ` para ${seasonLabel}` : ''}.
