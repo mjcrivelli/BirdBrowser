@@ -103,7 +103,7 @@ function normSci(name: string) {
   return name?.toLowerCase().trim() ?? '';
 }
 
-type ViewKey = 'all' | 'inat-only' | 'ebird-only' | 'catalog-only' | 'multi' | 'raw-inat' | 'raw-ebird' | 'mapa';
+type ViewKey = 'all' | 'inat-only' | 'ebird-only' | 'catalog-only' | 'multi' | 'nas3' | 'raw-inat' | 'raw-ebird' | 'mapa';
 
 export default function InatLab() {
   const [view, setView] = useState<ViewKey>('all');
@@ -263,6 +263,7 @@ export default function InatLab() {
   const displayList: MergedSpecies[] =
     view === 'all'          ? merged :
     view === 'multi'        ? inMulti :
+    view === 'nas3'         ? inAll3 :
     view === 'inat-only'    ? inatOnly :
     view === 'ebird-only'   ? ebirdOnly :
     view === 'catalog-only' ? catOnly :
@@ -443,10 +444,9 @@ export default function InatLab() {
                 {inatLoading
                   ? <div className="text-xs mt-1 opacity-60 animate-pulse">Carregando…</div>
                   : <div className="text-xs mt-1 opacity-80">
-                      {inatSpecies.size} sp.
                       {isFiltered
-                        ? <span className="opacity-60"> / {inatSpeciesData?.total_results ?? '…'} total · {filteredInat.length} obs.</span>
-                        : <span className="opacity-60"> · {inatData?.total_results ?? filteredInat.length} obs.</span>
+                        ? <>{filteredInat.length} obs. · {inatSpecies.size} sp.<span className="opacity-60"> / {inatSpeciesData?.total_results ?? '…'} total</span></>
+                        : <>{inatData?.total_results ?? filteredInat.length} obs. · {inatSpecies.size} sp.</>
                       }
                     </div>}
               </div>
@@ -465,13 +465,24 @@ export default function InatLab() {
                 <div className="text-lg font-bold">Catálogo Toca</div>
                 <div className="text-xs mt-1" style={{ opacity: 0.85 }}>{catalogBirds.length} espécies</div>
               </div>
-              {/* Nas 3 fontes — Avistamentos purple */}
-              <div className="rounded-xl border p-4" style={{ backgroundColor: '#ede9fe', borderColor: '#5042E0', color: '#3730a3' }}>
+              {/* Nas 3 fontes — clickable, Avistamentos purple */}
+              <button
+                onClick={() => setView(view === 'nas3' ? 'all' : 'nas3')}
+                className="rounded-xl border p-4 text-left transition-all hover:brightness-95 active:scale-95"
+                style={{
+                  backgroundColor: view === 'nas3' ? '#5042E0' : '#ede9fe',
+                  borderColor: '#5042E0',
+                  color: view === 'nas3' ? '#ffffff' : '#3730a3',
+                  boxShadow: view === 'nas3' ? '0 0 0 3px #5042E033' : undefined,
+                }}>
                 <div className="text-lg font-bold">Nas 3 fontes</div>
                 {(inatLoading || gbifLoading)
                   ? <div className="text-xs mt-1 opacity-60 animate-pulse">Calculando…</div>
-                  : <div className="text-xs mt-1 opacity-80">{inAll3.length} espécies</div>}
-              </div>
+                  : <div className="text-xs mt-1" style={{ opacity: 0.85 }}>
+                      {inAll3.length} espécies
+                      {view !== 'nas3' && <span className="block text-xs opacity-60">clique para filtrar</span>}
+                    </div>}
+              </button>
             </div>
 
             {/* View tabs */}
