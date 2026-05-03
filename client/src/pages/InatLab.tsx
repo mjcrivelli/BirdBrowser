@@ -250,14 +250,11 @@ export default function InatLab() {
   const catOnly   = merged.filter(s => !s.inat && !s.ebird && s.catalog);
 
   const tabs: { key: ViewKey; label: string }[] = [
-    { key: 'all',          label: `Todas (${merged.length})` },
-    { key: 'multi',        label: `2+ fontes (${inMulti.length})` },
-    { key: 'inat-only',    label: `Só iNat (${inatOnly.length})` },
-    { key: 'ebird-only',   label: `Só eBird (${ebirdOnly.length})` },
-    { key: 'catalog-only', label: `Só catálogo (${catOnly.length})` },
-    { key: 'raw-inat',     label: 'Obs. brutas iNat' },
-    { key: 'raw-ebird',    label: 'Obs. brutas eBird' },
-    { key: 'mapa',         label: 'Mapa' },
+    { key: 'all',       label: `Todas (${merged.length})` },
+    { key: 'multi',     label: `2+ fontes (${inMulti.length})` },
+    { key: 'raw-inat',  label: 'Obs. brutas iNat' },
+    { key: 'raw-ebird', label: 'Obs. brutas eBird' },
+    { key: 'mapa',      label: 'Mapa' },
   ];
 
   const displayList: MergedSpecies[] =
@@ -438,33 +435,62 @@ export default function InatLab() {
           <>
             {/* Summary cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-              {/* iNaturalist — light green from iNat brand */}
-              <div className="rounded-xl border p-4" style={{ backgroundColor: '#f3f9e8', borderColor: '#74ac00', color: '#3d5c00' }}>
+              {/* iNaturalist — clickable, iNat brand green */}
+              <button
+                onClick={() => setView(view === 'inat-only' ? 'all' : 'inat-only')}
+                className="rounded-xl border p-4 text-left transition-all hover:brightness-95 active:scale-95"
+                style={{
+                  backgroundColor: view === 'inat-only' ? '#74ac00' : '#f3f9e8',
+                  borderColor: '#74ac00',
+                  color: view === 'inat-only' ? '#ffffff' : '#3d5c00',
+                  boxShadow: view === 'inat-only' ? '0 0 0 3px #74ac0033' : undefined,
+                }}>
                 <div className="text-lg font-bold">iNaturalist</div>
                 {inatLoading
                   ? <div className="text-xs mt-1 opacity-60 animate-pulse">Carregando…</div>
-                  : <div className="text-xs mt-1 opacity-80">
+                  : <div className="text-xs mt-1" style={{ opacity: 0.85 }}>
                       {isFiltered
                         ? <>{filteredInat.length} obs. · {inatSpecies.size} sp.<span className="opacity-60"> / {inatSpeciesData?.total_results ?? '…'} total</span></>
                         : <>{inatData?.total_results ?? filteredInat.length} obs. · {inatSpecies.size} sp.</>
                       }
+                      {view !== 'inat-only' && <span className="block text-xs opacity-60">só iNat</span>}
                     </div>}
-              </div>
-              {/* eBird / GBIF — palette blue */}
-              <div className="rounded-xl border p-4" style={{ backgroundColor: '#e0f7ff', borderColor: '#62c1ed', color: '#0c4a6e' }}>
+              </button>
+              {/* eBird / GBIF — clickable, palette blue */}
+              <button
+                onClick={() => setView(view === 'ebird-only' ? 'all' : 'ebird-only')}
+                className="rounded-xl border p-4 text-left transition-all hover:brightness-95 active:scale-95"
+                style={{
+                  backgroundColor: view === 'ebird-only' ? '#62c1ed' : '#e0f7ff',
+                  borderColor: '#62c1ed',
+                  color: view === 'ebird-only' ? '#0c2d4a' : '#0c4a6e',
+                  boxShadow: view === 'ebird-only' ? '0 0 0 3px #62c1ed33' : undefined,
+                }}>
                 <div className="text-lg font-bold">eBird / GBIF</div>
                 {gbifLoading
                   ? <div className="text-xs mt-1 opacity-60 animate-pulse">Carregando…</div>
-                  : <div className="text-xs mt-1 opacity-80">
+                  : <div className="text-xs mt-1" style={{ opacity: 0.85 }}>
                       {filteredGbif.length} registros · {ebirdSpecies.size} sp.
                       {isFiltered && gbifData && <span className="opacity-60"> / {gbifData.results.length} amostra</span>}
+                      {view !== 'ebird-only' && <span className="block text-xs opacity-60">só eBird</span>}
                     </div>}
-              </div>
-              {/* Catálogo Toca — reinforced with solid green */}
-              <div className="rounded-xl border-2 p-4" style={{ backgroundColor: '#159d51', borderColor: '#0d7a3e', color: '#ffffff' }}>
+              </button>
+              {/* Catálogo Toca — clickable, catalog green */}
+              <button
+                onClick={() => setView(view === 'catalog-only' ? 'all' : 'catalog-only')}
+                className="rounded-xl border-2 p-4 text-left transition-all hover:brightness-95 active:scale-95"
+                style={{
+                  backgroundColor: view === 'catalog-only' ? '#0d7a3e' : '#159d51',
+                  borderColor: '#0d7a3e',
+                  color: '#ffffff',
+                  boxShadow: view === 'catalog-only' ? '0 0 0 3px #0d7a3e33' : undefined,
+                }}>
                 <div className="text-lg font-bold">Catálogo Toca</div>
-                <div className="text-xs mt-1" style={{ opacity: 0.85 }}>{catalogBirds.length} espécies</div>
-              </div>
+                <div className="text-xs mt-1" style={{ opacity: 0.85 }}>
+                  {catalogBirds.length} espécies
+                  {view !== 'catalog-only' && <span className="block text-xs opacity-60">só catálogo</span>}
+                </div>
+              </button>
               {/* Nas 3 fontes — clickable, Avistamentos purple */}
               <button
                 onClick={() => setView(view === 'nas3' ? 'all' : 'nas3')}
