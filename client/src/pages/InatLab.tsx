@@ -161,6 +161,10 @@ export default function InatLab() {
     });
   }
   merged.sort((a, b) => {
+    // Catalog birds always first
+    if (a.catalog && !b.catalog) return -1;
+    if (!a.catalog && b.catalog) return 1;
+    // Within same group: more external sources → higher
     const sA = (a.inat ? 2 : 0) + (a.ebird ? 1 : 0);
     const sB = (b.inat ? 2 : 0) + (b.ebird ? 1 : 0);
     return sB - sA || (b.inat?.count ?? 0) - (a.inat?.count ?? 0);
@@ -319,7 +323,7 @@ export default function InatLab() {
             {/* Summary cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
               <div className="rounded-xl border p-4 bg-green-50 border-green-200 text-green-700">
-                <div className="text-lg font-bold">🟢 iNaturalist</div>
+                <div className="text-lg font-bold">iNaturalist</div>
                 {inatLoading
                   ? <div className="text-xs mt-1 opacity-60 animate-pulse">Carregando…</div>
                   : <div className="text-xs mt-1 opacity-80">
@@ -328,7 +332,7 @@ export default function InatLab() {
                     </div>}
               </div>
               <div className="rounded-xl border p-4 bg-blue-50 border-blue-200 text-blue-700">
-                <div className="text-lg font-bold">🔵 eBird / GBIF</div>
+                <div className="text-lg font-bold">eBird / GBIF</div>
                 {gbifLoading
                   ? <div className="text-xs mt-1 opacity-60 animate-pulse">Carregando…</div>
                   : <div className="text-xs mt-1 opacity-80">
@@ -337,11 +341,11 @@ export default function InatLab() {
                     </div>}
               </div>
               <div className="rounded-xl border p-4 bg-[#159d51]/10 border-[#159d51]/20 text-[#159d51]">
-                <div className="text-lg font-bold">🏕 Catálogo Toca</div>
+                <div className="text-lg font-bold">Catálogo Toca</div>
                 <div className="text-xs mt-1 opacity-80">{catalogBirds.length} espécies</div>
               </div>
               <div className="rounded-xl border p-4 bg-purple-50 border-purple-200 text-purple-700">
-                <div className="text-lg font-bold">⭐ Nas 3 fontes</div>
+                <div className="text-lg font-bold">Nas 3 fontes</div>
                 {(inatLoading || gbifLoading)
                   ? <div className="text-xs mt-1 opacity-60 animate-pulse">Calculando…</div>
                   : <div className="text-xs mt-1 opacity-80">{inAll3.length} espécies</div>}
