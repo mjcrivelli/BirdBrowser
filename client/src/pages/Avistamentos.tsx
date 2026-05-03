@@ -52,11 +52,11 @@ const COL_W_FAMILY = 110;
 const PHOTO_SIZE   = 44;
 
 function barColor(rank: number): string {
-  if (rank === 1) return '#fef200';
+  if (rank === 1) return '#F59E0B';
   if (rank === 2) return '#94A3B8';
   if (rank === 3) return '#B87333';
-  if (rank <= 10) return '#159d51';
-  return '#7AC898';
+  if (rank <= 10) return 'rgba(21, 157, 81, 0.6)';
+  return 'rgba(21, 157, 81, 0.35)';
 }
 
 function rankLabel(rank: number): string {
@@ -405,9 +405,9 @@ export default function Avistamentos() {
                       {rank <= 3 ? (
                         <div className="mb-1 flex items-center justify-center">
                           <div className="flex flex-col items-center justify-center rounded-lg shadow-sm"
-                            style={{ width: COL_W_BIRD - 10, height: rank === 1 ? 54 : 44, border: `2px solid ${rank === 1 ? '#C8A800' : color}`, background: rank === 1 ? '#fef20018' : `${color}18` }}>
-                            <span style={{ fontSize: rank === 1 ? 18 : 14 }} className="leading-none">{rankLabel(rank)}</span>
-                            <span className="font-bold mt-1" style={{ color: rank === 1 ? '#7A6000' : color, fontSize: rank === 1 ? 13 : 11 }}>{bird.count}</span>
+                            style={{ width: COL_W_BIRD - 10, height: 54, border: `2px solid ${color}`, background: `${color}18` }}>
+                            <span style={{ fontSize: 18 }} className="leading-none">{rankLabel(rank)}</span>
+                            <span className="font-bold mt-1" style={{ color, fontSize: 13 }}>{bird.count}</span>
                           </div>
                         </div>
                       ) : (
@@ -477,9 +477,9 @@ export default function Avistamentos() {
                       {rank <= 3 ? (
                         <div className="mb-1 flex items-center justify-center">
                           <div className="flex flex-col items-center justify-center rounded-lg shadow-sm"
-                            style={{ width: COL_W_FAMILY - 10, height: rank === 1 ? 54 : 44, border: `2px solid ${rank === 1 ? '#C8A800' : color}`, background: rank === 1 ? '#fef20018' : `${color}18` }}>
-                            <span style={{ fontSize: rank === 1 ? 18 : 14 }} className="leading-none">{rankLabel(rank)}</span>
-                            <span className="font-bold mt-1" style={{ color: rank === 1 ? '#7A6000' : color, fontSize: rank === 1 ? 13 : 11 }}>{fam.count}</span>
+                            style={{ width: COL_W_FAMILY - 10, height: 54, border: `2px solid ${color}`, background: `${color}18` }}>
+                            <span style={{ fontSize: 18 }} className="leading-none">{rankLabel(rank)}</span>
+                            <span className="font-bold mt-1" style={{ color, fontSize: 13 }}>{fam.count}</span>
                           </div>
                         </div>
                       ) : (
