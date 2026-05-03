@@ -8,6 +8,7 @@ import BirdGrid from "@/pages/BirdGrid";
 import Memoria from "@/pages/memoria";
 import SobreOCatalogo from "@/pages/SobreOCatalogo";
 import Avistamentos from "@/pages/Avistamentos";
+import InatLab from "@/pages/InatLab";
 
 function Router() {
   return (
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/memoria" component={Memoria} />
       <Route path="/avistamentos" component={Avistamentos} />
       <Route path="/sobre-o-catalogo" component={SobreOCatalogo} />
+      <Route path="/lab" component={InatLab} />
       <Route component={NotFound} />
     </Switch>
   );
