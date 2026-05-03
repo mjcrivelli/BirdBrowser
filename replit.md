@@ -93,6 +93,14 @@ Preferred communication style: Simple, everyday language.
 - **Wikipedia/Wikimedia Commons** - Reference links for each bird species
 - **WikiAves** - Alternative bird image source reference
 
+**InatLab `/lab` page — three iNat data sources:**
+1. `GET /api/lab/inat` — 145 individual observations (lat/lng/radius 17km) — for map coordinates + season filtering
+2. `GET /api/lab/inat-species` — `species_counts?iconic_taxa[]=Aves` (lat/lng/radius 17km) — authoritative species list (313 species); uses `cache: 'no-store'`
+3. `GET /api/lab/inat-catalog-taxa` — per-catalog-bird scientific name lookup via `taxa?q=<name>` in batches of 5 with 200ms delay; returns map of `normSci(name) → {id, photo, observations_count}`; handles taxonomy synonyms via `matched_term`; finds all 70 catalog birds; staleTime 30min on frontend
+- Scientific names in species cards are clickable iNat taxon links (when `inatId` is known)
+- Cards show global observation count (`inatGlobalObs`) from catalog-taxa lookup
+- Catalog birds not observed locally show "iNat: fora da área" instead of a count
+
 **Image Hosting:**
 - All 70 bird images stored locally in `client/public/birds/bird-N.jpg`
 - Images sourced from iNaturalist API (by scientific name) at build/setup time

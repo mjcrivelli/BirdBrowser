@@ -433,6 +433,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Lab: look up each catalog bird by scientific name on iNat taxa search
+  // Returns a map of lowercase(scientificName) → iNat taxon info
+  app.get("/api/lab/inat-catalog-taxa", async (_req, res) => {
+    try {
+      const birds = await storage.getBirds();
+      const names = [...new Set(birds.map(b => b.scientificName).filter(Boolean))];
+
+      const result: Record<string, {
+        id: number; name: string; preferred_common_name?: string;
+        default_photo?: { square_url: string }; observations_count?: number;
+      }> = {};
+
+      // Parallel in batches of 5 with a small delay to respect iNat rate limits
+      const BATCH = 5;
+      const delay = (ms: number) => new Promise(r => setTimeout(r, ms));
+      for (let i = 0; i < names.length; i += BATCH) {
+        if (i > 0) await delay(200);
+        await Promise.all(names.slice(i, i + BATCH).map(async name => {
+          try {
+            // No rank= filter so iNat can return the active name even if our name is a synonym
+            const url = `https://api.inaturalist.org/v1/taxa?q=${encodeURIComponent(name)}&per_page=5&is_active=true`;
+            const r = await fetch(url, { cache: 'no-store' });
+            const data = await r.json();
+            const nameLow = name.toLowerCase();
+            // 1st priority: exact active-name match
+            // 2nd priority: matched_term matches our name (synonym redirect by iNat)
+            const taxon = (data.results ?? []).find((t: any) =>
+              t.rank === 'species' && (
+                t.name.toLowerCase() === nameLow ||
+                (t.matched_term ?? '').toLowerCase() === nameLow
+              )
+            ) as any;
+            if (taxon) {
+              result[name.toLowerCase()] = {
+                id: taxon.id,
+                name: taxon.name,
+                preferred_common_name: taxon.preferred_common_name,
+                default_photo: taxon.default_photo,
+                observations_count: taxon.observations_count,
+              };
+            }
+          } catch { /* skip on individual failure */ }
+        }));
+      }
+      res.json(result);
+    } catch (e) {
+      res.status(502).json({ message: "Failed to fetch iNaturalist catalog taxa" });
+    }
+  });
+
   // Lab: proxy for eBird/GBIF occurrences around Ilhabela
   app.get("/api/lab/gbif", async (_req, res) => {
     try {

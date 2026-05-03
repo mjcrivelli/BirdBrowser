@@ -8,6 +8,7 @@ import type { Bird } from '@shared/schema';
 
 const INAT_URL = '/api/lab/inat';
 const INAT_SPECIES_URL = '/api/lab/inat-species';
+const INAT_CATALOG_TAXA_URL = '/api/lab/inat-catalog-taxa';
 const GBIF_URL = '/api/lab/gbif';
 const WIKIAVES_URL = 'https://www.wikiaves.com.br/especies.php?t=c&c=3520400&o=1&ef=0';
 
@@ -32,6 +33,16 @@ type InatSpeciesItem = {
 };
 type InatSpeciesResponse = { total_results: number; results: InatSpeciesItem[] };
 
+// Per-species scientific-name lookup — map of normSci(name) → taxon info
+type InatCatalogTaxon = {
+  id: number;
+  name: string;
+  preferred_common_name?: string;
+  default_photo?: { square_url: string };
+  observations_count?: number;
+};
+type InatCatalogTaxaMap = Record<string, InatCatalogTaxon>;
+
 type GbifResult = {
   species?: string;
   vernacularName?: string;
@@ -51,6 +62,8 @@ type MergedSpecies = {
   inat?: SourceInfo;
   ebird?: SourceInfo;
   catalog?: { count: number; family?: string | null };
+  inatId?: number;          // iNat taxon ID from catalog-taxa lookup
+  inatGlobalObs?: number;   // global observation count from iNat
 };
 
 // Southern Hemisphere seasons
@@ -114,6 +127,13 @@ export default function InatLab() {
     queryKey: ['inat-species-ilhabela'],
     queryFn: () => fetch(INAT_SPECIES_URL).then(r => r.json()),
     staleTime: 1000 * 60 * 10,
+  });
+
+  // Per-species lookup by scientific name — enriches catalog birds even if not found locally
+  const { data: inatCatalogTaxa = {} } = useQuery<InatCatalogTaxaMap>({
+    queryKey: ['inat-catalog-taxa'],
+    queryFn: () => fetch(INAT_CATALOG_TAXA_URL).then(r => r.json()),
+    staleTime: 1000 * 60 * 30,
   });
 
   const { data: gbifData, isLoading: gbifLoading, isError: gbifError } = useQuery<GbifResponse>({
@@ -180,21 +200,37 @@ export default function InatLab() {
   const catalogMap = new Map<string, Bird>();
   for (const b of catalogBirds) catalogMap.set(normSci(b.scientificName), b);
 
-  // Merge — pick best photo: iNat square > catalog customImage > catalog local image
+  // Merge — pick best photo: iNat square > catalog customImage > catalog local image > catalog-taxa photo
   const allKeys = new Set([...inatSpecies.keys(), ...ebirdSpecies.keys(), ...catalogMap.keys()]);
   const merged: MergedSpecies[] = [];
   for (const key of allKeys) {
     const catBird = catalogMap.get(key);
     const inatInfo = inatSpecies.get(key);
+    const catalogTaxon = inatCatalogTaxa[key];
     const photo = inatInfo?.photo
-      ?? (catBird ? (catBird.customImageUrl || catBird.imageUrl || undefined) : undefined);
+      ?? (catBird ? (catBird.customImageUrl || catBird.imageUrl || undefined) : undefined)
+      ?? catalogTaxon?.default_photo?.square_url;
+
+    // For catalog birds not matched locally, synthesise an inat entry from the name-based lookup
+    let inatEntry = inatInfo;
+    if (!inatEntry && catalogTaxon) {
+      inatEntry = {
+        count: 0,                                        // 0 = not found in the local radius
+        vernacular: catalogTaxon.preferred_common_name,
+        photo: catalogTaxon.default_photo?.square_url,
+        taxonName: catalogTaxon.name,
+      } as SourceInfo & { taxonName?: string };
+    }
+
     merged.push({
-      scientificName: catBird?.scientificName ?? inatInfo?.taxonName ?? key,
+      scientificName: catBird?.scientificName ?? inatInfo?.taxonName ?? catalogTaxon?.name ?? key,
       localName: catBird?.name,
       photo,
-      inat: inatInfo,
+      inat: inatEntry,
       ebird: ebirdSpecies.get(key),
       catalog: catBird ? { count: 0, family: catBird.family } : undefined,
+      inatId: catalogTaxon?.id ?? (inatSpeciesData?.results?.find(r => normSci(r.taxon.name) === key)?.taxon.id),
+      inatGlobalObs: catalogTaxon?.observations_count,
     });
   }
   merged.sort((a, b) => {
@@ -456,29 +492,54 @@ export default function InatLab() {
             {(view !== 'raw-inat' && view !== 'raw-ebird' && view !== 'mapa') && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {displayList.map(s => {
+                  const localCount = s.inat?.count ?? 0;
+                  const inatLabel = localCount > 0
+                    ? `iNat: ${localCount}`
+                    : s.inat /* exists but 0 = found by name, not locally */
+                      ? 'iNat: fora da área'
+                      : null;
+
                   const sources = [
-                    s.inat    && { label: `iNat: ${s.inat.count}`,  color: 'text-green-600' },
-                    s.ebird   && { label: `eBird: ${s.ebird.count}`, color: 'text-blue-600' },
-                    s.catalog && { label: 'Catálogo ✓',              color: 'text-[#159d51]' },
+                    inatLabel  && { label: inatLabel,               color: localCount > 0 ? 'text-[#74ac00]' : 'text-gray-400' },
+                    s.ebird    && { label: `eBird: ${s.ebird.count}`, color: 'text-blue-600' },
+                    s.catalog  && { label: 'Catálogo ✓',              color: 'text-[#159d51]' },
                   ].filter(Boolean) as { label: string; color: string }[];
+
+                  const inatLink = s.inatId
+                    ? `https://www.inaturalist.org/taxa/${s.inatId}`
+                    : null;
+
+                  const thumbnail = s.photo
+                    ? <img src={s.photo} alt={s.scientificName}
+                        className="w-12 h-12 rounded-lg object-cover flex-shrink-0 bg-gray-100" />
+                    : <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-xl flex-shrink-0">🐦</div>;
+
                   return (
                     <div key={s.scientificName}
                       className="flex items-center gap-3 bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
-                      {s.photo
-                        ? <img src={s.photo} alt={s.scientificName}
-                            className="w-12 h-12 rounded-lg object-cover flex-shrink-0 bg-gray-100" />
-                        : <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-xl flex-shrink-0">🐦</div>
-                      }
+                      {inatLink
+                        ? <a href={inatLink} target="_blank" rel="noopener noreferrer" className="flex-shrink-0 hover:opacity-80 transition-opacity">{thumbnail}</a>
+                        : thumbnail}
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-sm text-gray-800 truncate">
                           {s.localName ?? s.inat?.vernacular ?? s.ebird?.vernacular ?? '—'}
                         </div>
-                        <div className="text-xs text-gray-400 italic truncate">{s.scientificName}</div>
+                        <div className="text-xs italic truncate">
+                          {inatLink
+                            ? <a href={inatLink} target="_blank" rel="noopener noreferrer"
+                                className="text-[#74ac00] hover:underline">{s.scientificName}</a>
+                            : <span className="text-gray-400">{s.scientificName}</span>}
+                        </div>
                         {s.catalog?.family && <div className="text-xs text-gray-400">{s.catalog.family}</div>}
-                        <div className="flex gap-2 mt-1 flex-wrap">
+                        <div className="flex gap-2 mt-1 flex-wrap items-center">
                           {sources.map(src => (
                             <span key={src.label} className={`text-xs font-medium ${src.color}`}>{src.label}</span>
                           ))}
+                          {s.inatGlobalObs != null && s.inatGlobalObs > 0 && (
+                            <span className="text-xs text-gray-300 ml-auto">
+                              {s.inatGlobalObs.toLocaleString('pt-BR')} obs. global
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
