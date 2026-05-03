@@ -188,7 +188,7 @@ export default function InatLab() {
     { key: 'catalog-only', label: `Só catálogo (${catOnly.length})` },
     { key: 'raw-inat',     label: 'Obs. brutas iNat' },
     { key: 'raw-ebird',    label: 'Obs. brutas eBird' },
-    { key: 'mapa',         label: '🗺 Mapa' },
+    { key: 'mapa',         label: 'Mapa' },
   ];
 
   const displayList: MergedSpecies[] =
