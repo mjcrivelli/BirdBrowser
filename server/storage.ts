@@ -78,7 +78,34 @@ export class MemStorage implements IStorage {
     this.catalogAboutData = {
       id: 1,
       title: "Sobre o Catálogo",
-      content: "Bem-vindo ao catálogo de aves da Cachoeira da Toca. Este é um lugar especial para observação de pássaros e registro de espécies locais.",
+      content: `Bem-vindo ao catálogo de aves da Cachoeira da Toca. Este é um lugar especial para observação e registro de espécies locais.
+
+O catálogo é resultado de 3 semestres da disciplina "Projeto Integrador" da Univesp (Universidade Virtual do Estado de São Paulo). Estamos na etapa de implementação para análise da experiência dos usuários e coleta de melhorias futuras.
+
+O projeto surgiu como uma demanda latente tanto do destino quanto de nosso atrativo. Contou com análise da jornada dos visitantes na Cachoeira, interesse potencial, participação em feiras como a Avistar e em avistamentos na Amazônia, Pantanal, Caatinga, Cerrado e Mata Atlântica.
+
+A aba "Aves da Toca" conta com a possibilidade de gerar uma lista de aves avistadas: basta clicar no botão "Vi na Toca!" de todas as espécies avistadas e clicar no botão que computa quantas aves foram vistas. Ao final, será gerado um pdf com as informações de cada espécie avistada e a data. Assim, os visitantes podem ter uma recordação da experiência no nosso atrativo.
+
+Na aba "Jogo da memória" foi implementada uma atividade lúdica para as crianças. Em breve, teremos mais material educativo disponível!
+
+Esperamos que aproveitem a experiência e aguardem por novidades!
+____________________________________
+
+Equipe de desenvolvimento:
+Bárbara Marie Van Sebroeck Martins
+Diana Renata Gonçalves Gama
+Ellen Eduarda Fernandes
+Gisele Milare
+Iolanda Silva Bianchi
+Marcello José Crivelli
+Mirela Caroline da Silva
+
+Responsável pelo projeto:
+Vitória Marie Van Sebroeck
+
+
+
+As imagens das espécies são do acervo da Cachoeira da Toca, da observadora de aves Gisele Milare e da wikipedia. As informações são da wikipedia ou wikiaves.`,
     };
   }
 
@@ -729,6 +756,15 @@ export class MemStorage implements IStorage {
       if (dbData) {
         this.catalogAboutData = dbData;
         return dbData;
+      }
+      // No DB row yet — seed it with the current default so future admin edits persist
+      if (this.catalogAboutData) {
+        const [inserted] = await db
+          .insert(catalogAbout)
+          .values({ title: this.catalogAboutData.title, content: this.catalogAboutData.content })
+          .returning();
+        this.catalogAboutData = inserted;
+        return inserted;
       }
     } catch (error) {
       console.warn('Database read failed, using memory:', error);
