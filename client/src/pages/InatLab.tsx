@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import type { Bird } from '@shared/schema';
@@ -8,12 +10,17 @@ const INAT_URL = '/api/lab/inat';
 const GBIF_URL = '/api/lab/gbif';
 const WIKIAVES_URL = 'https://www.wikiaves.com.br/especies.php?t=c&c=3520400&o=1&ef=0';
 
+// Centre and approximate bounds of Ilhabela
+const MAP_CENTER: [number, number] = [-23.78, -45.36];
+const MAP_ZOOM = 10;
+
 type InatObs = {
   id: number;
   taxon?: { name: string; preferred_common_name?: string; default_photo?: { square_url: string } };
   observed_on: string;
   place_guess: string;
   user: { login: string };
+  location?: string | null;   // "lat,lng" string from iNat API
 };
 type InatResponse = { results: InatObs[]; total_results: number };
 
@@ -32,6 +39,7 @@ type SourceInfo = { count: number; vernacular?: string; photo?: string };
 type MergedSpecies = {
   scientificName: string;
   localName?: string;
+  photo?: string;           // best available photo (iNat or catalog)
   inat?: SourceInfo;
   ebird?: SourceInfo;
   catalog?: { count: number; family?: string | null };
@@ -41,16 +49,16 @@ type MergedSpecies = {
 type SeasonKey = 'all' | 'verao' | 'outono' | 'inverno' | 'primavera' | number;
 
 const SEASONS: { key: SeasonKey; label: string; emoji: string; months: number[] }[] = [
-  { key: 'verao',    label: 'Verão',     emoji: '☀️',  months: [12, 1, 2] },
-  { key: 'outono',   label: 'Outono',    emoji: '🍂',  months: [3, 4, 5] },
-  { key: 'inverno',  label: 'Inverno',   emoji: '🌧️', months: [6, 7, 8] },
-  { key: 'primavera',label: 'Primavera', emoji: '🌸',  months: [9, 10, 11] },
+  { key: 'verao',     label: 'Verão',     emoji: '☀️',  months: [12, 1, 2]  },
+  { key: 'outono',    label: 'Outono',    emoji: '🍂',  months: [3, 4, 5]   },
+  { key: 'inverno',   label: 'Inverno',   emoji: '🌧️', months: [6, 7, 8]   },
+  { key: 'primavera', label: 'Primavera', emoji: '🌸',  months: [9, 10, 11] },
 ];
 
 const MONTHS = [
-  { n: 1, label: 'Jan' }, { n: 2, label: 'Fev' }, { n: 3, label: 'Mar' },
-  { n: 4, label: 'Abr' }, { n: 5, label: 'Mai' }, { n: 6, label: 'Jun' },
-  { n: 7, label: 'Jul' }, { n: 8, label: 'Ago' }, { n: 9, label: 'Set' },
+  { n: 1, label: 'Jan' }, { n: 2,  label: 'Fev' }, { n: 3,  label: 'Mar' },
+  { n: 4, label: 'Abr' }, { n: 5,  label: 'Mai' }, { n: 6,  label: 'Jun' },
+  { n: 7, label: 'Jul' }, { n: 8,  label: 'Ago' }, { n: 9,  label: 'Set' },
   { n: 10, label: 'Out' }, { n: 11, label: 'Nov' }, { n: 12, label: 'Dez' },
 ];
 
@@ -70,7 +78,7 @@ function normSci(name: string) {
   return name?.toLowerCase().trim() ?? '';
 }
 
-type ViewKey = 'all' | 'inat-only' | 'ebird-only' | 'catalog-only' | 'multi' | 'raw-inat' | 'raw-ebird';
+type ViewKey = 'all' | 'inat-only' | 'ebird-only' | 'catalog-only' | 'multi' | 'raw-inat' | 'raw-ebird' | 'mapa';
 
 export default function InatLab() {
   const [view, setView] = useState<ViewKey>('all');
@@ -94,7 +102,7 @@ export default function InatLab() {
 
   const filterMonths = activeMonths(season);
 
-  // Apply season/month filter to raw data
+  // Apply season/month filter
   const filteredInat = (inatData?.results ?? []).filter(obs => {
     if (!filterMonths) return true;
     const m = inatMonth(obs);
@@ -113,7 +121,12 @@ export default function InatLab() {
     if (!key) continue;
     const ex = inatSpecies.get(key);
     if (ex) { ex.count++; ex.obs.push(obs); }
-    else inatSpecies.set(key, { count: 1, vernacular: obs.taxon?.preferred_common_name, photo: obs.taxon?.default_photo?.square_url, obs: [obs] });
+    else inatSpecies.set(key, {
+      count: 1,
+      vernacular: obs.taxon?.preferred_common_name,
+      photo: obs.taxon?.default_photo?.square_url,
+      obs: [obs],
+    });
   }
 
   // Build eBird/GBIF species map
@@ -128,27 +141,29 @@ export default function InatLab() {
 
   // Build catalog map
   const catalogMap = new Map<string, Bird>();
-  for (const b of catalogBirds) {
-    catalogMap.set(normSci(b.scientificName), b);
-  }
+  for (const b of catalogBirds) catalogMap.set(normSci(b.scientificName), b);
 
-  // Merge
+  // Merge — pick best photo: iNat square > catalog customImage > catalog local image
   const allKeys = new Set([...inatSpecies.keys(), ...ebirdSpecies.keys(), ...catalogMap.keys()]);
   const merged: MergedSpecies[] = [];
   for (const key of allKeys) {
     const catBird = catalogMap.get(key);
+    const inatInfo = inatSpecies.get(key);
+    const photo = inatInfo?.photo
+      ?? (catBird ? (catBird.customImageUrl || catBird.imageUrl || undefined) : undefined);
     merged.push({
-      scientificName: catBird?.scientificName ?? inatSpecies.get(key)?.obs[0]?.taxon?.name ?? key,
+      scientificName: catBird?.scientificName ?? inatInfo?.obs[0]?.taxon?.name ?? key,
       localName: catBird?.name,
-      inat: inatSpecies.get(key),
+      photo,
+      inat: inatInfo,
       ebird: ebirdSpecies.get(key),
       catalog: catBird ? { count: 0, family: catBird.family } : undefined,
     });
   }
   merged.sort((a, b) => {
-    const scoreA = (a.inat ? 2 : 0) + (a.ebird ? 1 : 0);
-    const scoreB = (b.inat ? 2 : 0) + (b.ebird ? 1 : 0);
-    return scoreB - scoreA || (b.inat?.count ?? 0) - (a.inat?.count ?? 0);
+    const sA = (a.inat ? 2 : 0) + (a.ebird ? 1 : 0);
+    const sB = (b.inat ? 2 : 0) + (b.ebird ? 1 : 0);
+    return sB - sA || (b.inat?.count ?? 0) - (a.inat?.count ?? 0);
   });
 
   const inAll3    = merged.filter(s => s.inat && s.ebird && s.catalog);
@@ -165,6 +180,7 @@ export default function InatLab() {
     { key: 'catalog-only', label: `Só catálogo (${catOnly.length})` },
     { key: 'raw-inat',     label: 'Obs. brutas iNat' },
     { key: 'raw-ebird',    label: 'Obs. brutas eBird' },
+    { key: 'mapa',         label: '🗺 Mapa' },
   ];
 
   const displayList: MergedSpecies[] =
@@ -180,12 +196,39 @@ export default function InatLab() {
     typeof season === 'number' ? MONTHS.find(m => m.n === season)?.label :
     SEASONS.find(s => s.key === season)?.label ?? '';
 
+  // Map point data — iNat uses "lat,lng" in the location field
+  const inatPoints = filteredInat.flatMap(o => {
+    if (!o.location) return [];
+    const parts = o.location.split(',');
+    if (parts.length !== 2) return [];
+    const lat = parseFloat(parts[0]);
+    const lng = parseFloat(parts[1]);
+    if (isNaN(lat) || isNaN(lng)) return [];
+    return [{
+      lat, lng,
+      name: o.taxon?.preferred_common_name ?? o.taxon?.name ?? '—',
+      sci: o.taxon?.name ?? '',
+      date: o.observed_on,
+      user: o.user?.login,
+      photo: o.taxon?.default_photo?.square_url,
+    }];
+  });
+
+  const gbifPoints = filteredGbif.filter(r => r.decimalLatitude && r.decimalLongitude).map(r => ({
+    lat: r.decimalLatitude!,
+    lng: r.decimalLongitude!,
+    name: r.vernacularName ?? r.species ?? '—',
+    sci: r.species ?? '',
+    month: r.month,
+    year: r.year,
+  }));
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       <main className="flex-1 container mx-auto px-4 py-8 max-w-5xl">
 
-        {/* Header */}
+        {/* Page header */}
         <div className="mb-6">
           <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full mb-3">
             🔬 Laboratório — não indexado
@@ -213,11 +256,8 @@ export default function InatLab() {
               </button>
             )}
           </div>
-
-          {/* Season row */}
           <div className="flex gap-2 flex-wrap mb-3">
-            <button
-              onClick={() => setSeason('all')}
+            <button onClick={() => setSeason('all')}
               className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                 season === 'all'
                   ? 'bg-gray-800 text-white border-gray-800'
@@ -226,8 +266,7 @@ export default function InatLab() {
               Ano todo
             </button>
             {SEASONS.map(s => (
-              <button key={s.key as string}
-                onClick={() => setSeason(s.key)}
+              <button key={s.key as string} onClick={() => setSeason(s.key)}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                   season === s.key
                     ? 'bg-amber-500 text-white border-amber-500'
@@ -237,16 +276,13 @@ export default function InatLab() {
               </button>
             ))}
           </div>
-
-          {/* Month row */}
           <div className="flex gap-1.5 flex-wrap">
             {MONTHS.map(m => {
               const inCurrentSeason = typeof season !== 'number' && season !== 'all'
                 ? SEASONS.find(s => s.key === season)?.months.includes(m.n)
                 : false;
               return (
-                <button key={m.n}
-                  onClick={() => setSeason(season === m.n ? 'all' : m.n)}
+                <button key={m.n} onClick={() => setSeason(season === m.n ? 'all' : m.n)}
                   className={`w-10 py-1 rounded text-xs font-medium border transition-colors ${
                     season === m.n
                       ? 'bg-[#159d51] text-white border-[#159d51]'
@@ -259,7 +295,6 @@ export default function InatLab() {
               );
             })}
           </div>
-
           {isFiltered && (
             <p className="text-xs text-amber-700 mt-2">
               Mostrando avistamentos de <strong>{seasonLabel}</strong> — iNat: {filteredInat.length} obs, eBird: {filteredGbif.length} registros (amostra).
@@ -289,9 +324,7 @@ export default function InatLab() {
                   ? <div className="text-xs mt-1 opacity-60 animate-pulse">Carregando…</div>
                   : <div className="text-xs mt-1 opacity-80">
                       {filteredInat.length} obs. · {inatSpecies.size} sp.
-                      {isFiltered && inatData && (
-                        <span className="opacity-60"> / {inatData.total_results} total</span>
-                      )}
+                      {isFiltered && inatData && <span className="opacity-60"> / {inatData.total_results} total</span>}
                     </div>}
               </div>
               <div className="rounded-xl border p-4 bg-blue-50 border-blue-200 text-blue-700">
@@ -300,9 +333,7 @@ export default function InatLab() {
                   ? <div className="text-xs mt-1 opacity-60 animate-pulse">Carregando…</div>
                   : <div className="text-xs mt-1 opacity-80">
                       {filteredGbif.length} registros · {ebirdSpecies.size} sp.
-                      {isFiltered && gbifData && (
-                        <span className="opacity-60"> / {gbifData.results.length} amostra</span>
-                      )}
+                      {isFiltered && gbifData && <span className="opacity-60"> / {gbifData.results.length} amostra</span>}
                     </div>}
               </div>
               <div className="rounded-xl border p-4 bg-[#159d51]/10 border-[#159d51]/20 text-[#159d51]">
@@ -332,20 +363,20 @@ export default function InatLab() {
             </div>
 
             {/* Species grid */}
-            {(view !== 'raw-inat' && view !== 'raw-ebird') && (
+            {(view !== 'raw-inat' && view !== 'raw-ebird' && view !== 'mapa') && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {displayList.map(s => {
-                  const photo = s.inat?.photo;
                   const sources = [
-                    s.inat   && { label: `iNat: ${s.inat.count}`, color: 'text-green-600' },
-                    s.ebird  && { label: `eBird: ${s.ebird.count}`, color: 'text-blue-600' },
-                    s.catalog && { label: 'Catálogo ✓', color: 'text-[#159d51]' },
+                    s.inat    && { label: `iNat: ${s.inat.count}`,  color: 'text-green-600' },
+                    s.ebird   && { label: `eBird: ${s.ebird.count}`, color: 'text-blue-600' },
+                    s.catalog && { label: 'Catálogo ✓',              color: 'text-[#159d51]' },
                   ].filter(Boolean) as { label: string; color: string }[];
                   return (
                     <div key={s.scientificName}
                       className="flex items-center gap-3 bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
-                      {photo
-                        ? <img src={photo} alt={s.scientificName} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
+                      {s.photo
+                        ? <img src={s.photo} alt={s.scientificName}
+                            className="w-12 h-12 rounded-lg object-cover flex-shrink-0 bg-gray-100" />
                         : <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-xl flex-shrink-0">🐦</div>
                       }
                       <div className="flex-1 min-w-0">
@@ -353,9 +384,7 @@ export default function InatLab() {
                           {s.localName ?? s.inat?.vernacular ?? s.ebird?.vernacular ?? '—'}
                         </div>
                         <div className="text-xs text-gray-400 italic truncate">{s.scientificName}</div>
-                        {s.catalog?.family && (
-                          <div className="text-xs text-gray-400">{s.catalog.family}</div>
-                        )}
+                        {s.catalog?.family && <div className="text-xs text-gray-400">{s.catalog.family}</div>}
                         <div className="flex gap-2 mt-1 flex-wrap">
                           {sources.map(src => (
                             <span key={src.label} className={`text-xs font-medium ${src.color}`}>{src.label}</span>
@@ -371,6 +400,79 @@ export default function InatLab() {
                       ? `Nenhuma espécie registrada em ${seasonLabel} nas fontes externas.`
                       : 'Nenhuma espécie nesta categoria.'}
                   </div>
+                )}
+              </div>
+            )}
+
+            {/* Map tab */}
+            {view === 'mapa' && (
+              <div>
+                <div className="flex items-center gap-4 mb-3 text-xs">
+                  <span className="flex items-center gap-1.5">
+                    <span className="inline-block w-3 h-3 rounded-full bg-green-500 border border-green-700"></span>
+                    iNaturalist ({inatPoints.length} obs{inatPoints.length < filteredInat.length ? `, ${filteredInat.length - inatPoints.length} sem coord.` : ''})
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="inline-block w-3 h-3 rounded-full bg-blue-500 border border-blue-700"></span>
+                    eBird / GBIF ({gbifPoints.length} registros{gbifPoints.length < filteredGbif.length ? `, ${filteredGbif.length - gbifPoints.length} sem coord.` : ''})
+                  </span>
+                  {isFiltered && <span className="text-amber-600 font-medium">· Filtrado: {seasonLabel}</span>}
+                </div>
+                {(inatLoading || gbifLoading) && (
+                  <div className="text-center py-6 text-gray-400 text-sm animate-pulse">Carregando coordenadas…</div>
+                )}
+                {!inatLoading && !gbifLoading && (
+                  <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm" style={{ height: 480 }}>
+                    <MapContainer center={MAP_CENTER} zoom={MAP_ZOOM} style={{ height: '100%', width: '100%' }}>
+                      <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                      {inatPoints.map((p, i) => (
+                        <CircleMarker key={`inat-${i}`} center={[p.lat, p.lng]}
+                          radius={7} pathOptions={{ color: '#15803d', fillColor: '#22c55e', fillOpacity: 0.8, weight: 1.5 }}>
+                          <Popup>
+                            <div className="text-sm min-w-[160px]">
+                              {p.photo && <img src={p.photo} alt="" className="w-full h-20 object-cover rounded mb-2" />}
+                              <div className="font-semibold">{p.name}</div>
+                              <div className="text-gray-500 italic text-xs">{p.sci}</div>
+                              <div className="text-gray-500 text-xs mt-1">{p.date}</div>
+                              {p.user && (
+                                <a href={`https://www.inaturalist.org/people/${p.user}`}
+                                  target="_blank" rel="noopener noreferrer"
+                                  className="text-blue-500 text-xs hover:underline">
+                                  @{p.user}
+                                </a>
+                              )}
+                              <div className="mt-1 text-xs font-medium text-green-700">iNaturalist</div>
+                            </div>
+                          </Popup>
+                        </CircleMarker>
+                      ))}
+                      {gbifPoints.map((p, i) => (
+                        <CircleMarker key={`gbif-${i}`} center={[p.lat, p.lng]}
+                          radius={6} pathOptions={{ color: '#1d4ed8', fillColor: '#3b82f6', fillOpacity: 0.7, weight: 1.5 }}>
+                          <Popup>
+                            <div className="text-sm min-w-[140px]">
+                              <div className="font-semibold">{p.name}</div>
+                              <div className="text-gray-500 italic text-xs">{p.sci}</div>
+                              {(p.month || p.year) && (
+                                <div className="text-gray-500 text-xs mt-1">
+                                  {p.month ? `${String(p.month).padStart(2, '0')}/` : ''}{p.year}
+                                </div>
+                              )}
+                              <div className="mt-1 text-xs font-medium text-blue-700">eBird / GBIF</div>
+                            </div>
+                          </Popup>
+                        </CircleMarker>
+                      ))}
+                    </MapContainer>
+                  </div>
+                )}
+                {!inatLoading && !gbifLoading && inatPoints.length === 0 && gbifPoints.length === 0 && (
+                  <p className="text-center text-gray-400 text-sm mt-4">
+                    Nenhum ponto com coordenadas disponíveis{isFiltered ? ` para ${seasonLabel}` : ''}.
+                  </p>
                 )}
               </div>
             )}
@@ -403,7 +505,8 @@ export default function InatLab() {
                         <td className="px-4 py-2 text-gray-600">{obs.observed_on}</td>
                         <td className="px-4 py-2 text-gray-500 text-xs max-w-[150px] truncate">{obs.place_guess}</td>
                         <td className="px-4 py-2">
-                          <a href={`https://www.inaturalist.org/people/${obs.user?.login}`} target="_blank" rel="noopener noreferrer"
+                          <a href={`https://www.inaturalist.org/people/${obs.user?.login}`}
+                            target="_blank" rel="noopener noreferrer"
                             className="text-blue-500 hover:underline text-xs">{obs.user?.login}</a>
                         </td>
                       </tr>
@@ -442,7 +545,7 @@ export default function InatLab() {
                           <td className="px-4 py-2 text-gray-800 italic text-xs">{r.species}</td>
                           <td className="px-4 py-2 text-gray-600 text-sm">{r.vernacularName ?? '—'}</td>
                           <td className="px-4 py-2 text-gray-500">
-                            {r.month ? `${String(r.month).padStart(2,'0')}/${r.year}` : r.year}
+                            {r.month ? `${String(r.month).padStart(2, '0')}/${r.year}` : r.year}
                           </td>
                           <td className="px-4 py-2 text-gray-400 text-xs">
                             {r.decimalLatitude?.toFixed(4)}, {r.decimalLongitude?.toFixed(4)}

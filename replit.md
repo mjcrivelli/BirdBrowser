@@ -31,7 +31,8 @@ Preferred communication style: Simple, everyday language.
 **Key Pages:**
 1. **BirdGrid** (`/`) - Main bird catalog with filtering (all/seen/unseen birds)
 2. **Memoria** (`/memoria`) - Memory matching game using bird images
-3. **Not Found** - 404 error page
+3. **InatLab** (`/lab`) - Hidden research page comparing catalog birds with iNaturalist and eBird/GBIF external sources. Features: season/month filter, species grid with photos, raw observation tables, and an interactive Leaflet map showing sighting coordinates from both external sources.
+4. **Not Found** - 404 error page
 
 **Accessibility Features:**
 - ARIA labels and live regions throughout
