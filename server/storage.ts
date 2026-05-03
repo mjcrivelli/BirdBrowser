@@ -516,8 +516,8 @@ As imagens das espécies são do acervo da Cachoeira da Toca, da observadora de 
     }
 
     try {
-      // Build bird lookup by BOTH id and name (name is the reliable key across environments)
-      const allBirds = await db.select().from(birds);
+      // Build bird lookup by BOTH id and name — use in-memory data (always populated from bird_data.json)
+      const allBirds = Array.from(this.birds.values());
       type BirdInfo = { id: number; family: string | null; scientificName: string; imageUrl: string; customImageUrl: string | null };
       const birdById = new Map<number, BirdInfo>();
       const birdByName = new Map<string, BirdInfo>();
@@ -611,7 +611,7 @@ As imagens das espécies são do acervo da Cachoeira da Toca, da observadora de 
       let familyBirdNames: Set<string> | null = null;
       let familyBirdIds: Set<number> | null = null;
       if (opts.family) {
-        const allBirds = await db.select().from(birds);
+        const allBirds = Array.from(this.birds.values());
         familyBirdNames = new Set(allBirds.filter(b => b.family === opts.family).map(b => b.name));
         familyBirdIds = new Set(allBirds.filter(b => b.family === opts.family).map(b => b.id));
       }
