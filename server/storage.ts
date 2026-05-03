@@ -516,13 +516,15 @@ As imagens das espécies são do acervo da Cachoeira da Toca, da observadora de 
     }
 
     try {
-      // Build bird lookup: birdId → { family, scientificName, imageUrl }
+      // Build bird lookup by BOTH id and name (name is the reliable key across environments)
       const allBirds = await db.select().from(birds);
-      const birdById = new Map<number, { family: string | null; scientificName: string; imageUrl: string; customImageUrl: string | null }>();
-      const birdNameToId = new Map<string, number>();
+      type BirdInfo = { id: number; family: string | null; scientificName: string; imageUrl: string; customImageUrl: string | null };
+      const birdById = new Map<number, BirdInfo>();
+      const birdByName = new Map<string, BirdInfo>();
       for (const b of allBirds) {
-        birdById.set(b.id, { family: b.family ?? null, scientificName: b.scientificName, imageUrl: b.imageUrl, customImageUrl: b.customImageUrl ?? null });
-        birdNameToId.set(b.name, b.id);
+        const info: BirdInfo = { id: b.id, family: b.family ?? null, scientificName: b.scientificName, imageUrl: b.imageUrl, customImageUrl: b.customImageUrl ?? null };
+        birdById.set(b.id, info);
+        birdByName.set(b.name, info);
       }
 
       const useViz = process.env.USE_VIZ_TABLE === 'true';
@@ -557,13 +559,15 @@ As imagens das espécies são do acervo da Cachoeira da Toca, da observadora de 
           if (haversineKm(r.latitude, r.longitude, TOCA_LAT, TOCA_LON) > GEO_RADIUS_KM) continue;
         }
 
-        const birdInfo = birdById.get(r.birdId);
+        // Use name-based lookup first (stable across environments), fall back to ID
+        const birdInfo = birdByName.get(r.birdName) ?? birdById.get(r.birdId);
+        const resolvedBirdId = birdInfo?.id ?? r.birdId;
         const family = birdInfo?.family ?? 'Outras';
 
         if (!familyCounts[family]) familyCounts[family] = { count: 0, birdCounts: {} };
         familyCounts[family].count++;
         if (!familyCounts[family].birdCounts[r.birdName]) {
-          familyCounts[family].birdCounts[r.birdName] = { birdId: r.birdId, count: 0 };
+          familyCounts[family].birdCounts[r.birdName] = { birdId: resolvedBirdId, count: 0 };
         }
         familyCounts[family].birdCounts[r.birdName].count++;
       }
@@ -574,7 +578,7 @@ As imagens das espécies são do acervo da Cachoeira da Toca, da observadora de 
           count,
           birds: Object.entries(birdCounts)
             .map(([birdName, { birdId, count: bc }]) => {
-              const info = birdById.get(birdId);
+              const info = birdByName.get(birdName) ?? birdById.get(birdId);
               return {
                 birdId,
                 birdName,
@@ -604,9 +608,11 @@ As imagens das espécies são do acervo da Cachoeira da Toca, da observadora de 
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
     try {
+      let familyBirdNames: Set<string> | null = null;
       let familyBirdIds: Set<number> | null = null;
       if (opts.family) {
         const allBirds = await db.select().from(birds);
+        familyBirdNames = new Set(allBirds.filter(b => b.family === opts.family).map(b => b.name));
         familyBirdIds = new Set(allBirds.filter(b => b.family === opts.family).map(b => b.id));
       }
       const useViz = process.env.USE_VIZ_TABLE === 'true';
@@ -620,7 +626,8 @@ As imagens das espécies são do acervo da Cachoeira da Toca, da observadora de 
       for (const r of records) {
         if (r.birdId === 0) continue;
         if (opts.birdId !== undefined && r.birdId !== opts.birdId) continue;
-        if (familyBirdIds && !familyBirdIds.has(r.birdId)) continue;
+        // Use name-based family filter first (stable across environments), fall back to ID
+        if (familyBirdNames && !familyBirdNames.has(r.birdName) && !familyBirdIds!.has(r.birdId)) continue;
         const ts = new Date(r.timestamp);
         if (opts.year && ts.getFullYear() !== opts.year) continue;
         if (opts.season && r.season !== opts.season) continue;
