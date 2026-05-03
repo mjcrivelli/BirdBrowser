@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -87,6 +87,9 @@ type ViewKey = 'all' | 'inat-only' | 'ebird-only' | 'catalog-only' | 'multi' | '
 export default function InatLab() {
   const [view, setView] = useState<ViewKey>('all');
   const [season, setSeason] = useState<SeasonKey>('all');
+  const [mapYear, setMapYear] = useState<number | null>(null);
+  const [mapPlaying, setMapPlaying] = useState(false);
+  const playRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { data: catalogBirds = [], isLoading: catalogLoading } = useQuery<Bird[]>({
     queryKey: ['/api/birds'],
@@ -212,11 +215,13 @@ export default function InatLab() {
     const lat = parseFloat(parts[0]);
     const lng = parseFloat(parts[1]);
     if (isNaN(lat) || isNaN(lng)) return [];
+    const year = o.observed_on ? parseInt(o.observed_on.slice(0, 4), 10) : null;
     return [{
       lat, lng,
       name: o.taxon?.preferred_common_name ?? o.taxon?.name ?? '—',
       sci: o.taxon?.name ?? '',
       date: o.observed_on,
+      year,
       user: o.user?.login,
       photo: o.taxon?.default_photo?.square_url,
     }];
@@ -228,8 +233,37 @@ export default function InatLab() {
     name: r.vernacularName ?? r.species ?? '—',
     sci: r.species ?? '',
     month: r.month,
-    year: r.year,
+    year: r.year ?? null,
   }));
+
+  // Year range across both sources
+  const allYears = [
+    ...inatPoints.map(p => p.year).filter((y): y is number => y !== null),
+    ...gbifPoints.map(p => p.year).filter((y): y is number => y !== null),
+  ];
+  const minYear = allYears.length ? Math.min(...allYears) : 2010;
+  const maxYear = allYears.length ? Math.max(...allYears) : new Date().getFullYear();
+
+  // Play-through-years interval — placed here so minYear/maxYear are already initialised
+  useEffect(() => {
+    if (!mapPlaying) {
+      if (playRef.current) { clearInterval(playRef.current); playRef.current = null; }
+      return;
+    }
+    playRef.current = setInterval(() => {
+      setMapYear(prev => {
+        if (prev === null) return minYear;
+        if (prev >= maxYear) { setMapPlaying(false); return prev; }
+        return prev + 1;
+      });
+    }, 900);
+    return () => { if (playRef.current) clearInterval(playRef.current); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapPlaying, minYear, maxYear]);
+
+  // Year-filtered points for the map slider
+  const yearInatPoints = mapYear === null ? inatPoints : inatPoints.filter(p => p.year === mapYear);
+  const yearGbifPoints = mapYear === null ? gbifPoints : gbifPoints.filter(p => p.year === mapYear);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -430,29 +464,83 @@ export default function InatLab() {
             {/* Map tab */}
             {view === 'mapa' && (
               <div>
+                {/* Legend */}
                 <div className="flex items-center gap-4 mb-3 text-xs">
                   <span className="flex items-center gap-1.5">
                     <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: '#74ac00', borderColor: '#3d5c00', borderWidth: 1 }}></span>
-                    <span style={{ color: '#3d5c00' }}>iNaturalist ({inatPoints.length} obs{inatPoints.length < filteredInat.length ? `, ${filteredInat.length - inatPoints.length} sem coord.` : ''})</span>
+                    <span style={{ color: '#3d5c00' }}>iNaturalist ({yearInatPoints.length} obs)</span>
                   </span>
                   <span className="flex items-center gap-1.5">
                     <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: '#62c1ed', borderColor: '#0c4a6e', borderWidth: 1 }}></span>
-                    <span style={{ color: '#0c4a6e' }}>eBird / GBIF ({gbifPoints.length} registros{gbifPoints.length < filteredGbif.length ? `, ${filteredGbif.length - gbifPoints.length} sem coord.` : ''})</span>
+                    <span style={{ color: '#0c4a6e' }}>eBird / GBIF ({yearGbifPoints.length} registros)</span>
                   </span>
-                  {isFiltered && <span className="text-gray-500 font-medium">· Filtrado: {seasonLabel}</span>}
+                  {isFiltered && <span className="text-gray-500 font-medium">· {seasonLabel}</span>}
                 </div>
+
+                {/* Year slider */}
+                {!inatLoading && !gbifLoading && allYears.length > 0 && (
+                  <div className="bg-white border border-gray-200 rounded-xl px-4 py-3 mb-3 flex flex-col gap-2">
+                    <div className="flex items-center gap-3">
+                      {/* Play / Pause */}
+                      <button
+                        onClick={() => {
+                          if (mapPlaying) {
+                            setMapPlaying(false);
+                          } else {
+                            if (mapYear === null || mapYear >= maxYear) setMapYear(minYear);
+                            setMapPlaying(true);
+                          }
+                        }}
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 transition-colors"
+                        style={{ backgroundColor: mapPlaying ? '#5042E0' : '#62c1ed' }}
+                        title={mapPlaying ? 'Pausar' : 'Reproduzir anos'}>
+                        {mapPlaying ? '⏸' : '▶'}
+                      </button>
+
+                      {/* Slider */}
+                      <div className="flex-1 flex flex-col gap-0.5">
+                        <input
+                          type="range"
+                          min={minYear}
+                          max={maxYear}
+                          value={mapYear ?? minYear}
+                          onChange={e => { setMapPlaying(false); setMapYear(Number(e.target.value)); }}
+                          className="w-full accent-[#62c1ed] cursor-pointer"
+                        />
+                        <div className="flex justify-between text-[10px] text-gray-400 px-0.5">
+                          <span>{minYear}</span>
+                          <span>{maxYear}</span>
+                        </div>
+                      </div>
+
+                      {/* Year badge + reset */}
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className="text-sm font-bold tabular-nums" style={{ color: '#0c4a6e', minWidth: 36 }}>
+                          {mapYear ?? '—'}
+                        </span>
+                        {mapYear !== null && (
+                          <button onClick={() => { setMapPlaying(false); setMapYear(null); }}
+                            className="text-[10px] text-gray-400 hover:text-gray-600 underline">
+                            todos
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {(inatLoading || gbifLoading) && (
                   <div className="text-center py-6 text-gray-400 text-sm animate-pulse">Carregando coordenadas…</div>
                 )}
                 {!inatLoading && !gbifLoading && (
-                  <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm" style={{ height: 480 }}>
+                  <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm" style={{ height: 460 }}>
                     <MapContainer center={MAP_CENTER} zoom={MAP_ZOOM} style={{ height: '100%', width: '100%' }}>
                       <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       />
-                      {inatPoints.map((p, i) => (
-                        <CircleMarker key={`inat-${i}`} center={[p.lat, p.lng]}
+                      {yearInatPoints.map((p, i) => (
+                        <CircleMarker key={`inat-${mapYear}-${i}`} center={[p.lat, p.lng]}
                           radius={7} pathOptions={{ color: '#3d5c00', fillColor: '#74ac00', fillOpacity: 0.85, weight: 1.5 }}>
                           <Popup>
                             <div className="text-sm min-w-[160px]">
@@ -472,8 +560,8 @@ export default function InatLab() {
                           </Popup>
                         </CircleMarker>
                       ))}
-                      {gbifPoints.map((p, i) => (
-                        <CircleMarker key={`gbif-${i}`} center={[p.lat, p.lng]}
+                      {yearGbifPoints.map((p, i) => (
+                        <CircleMarker key={`gbif-${mapYear}-${i}`} center={[p.lat, p.lng]}
                           radius={6} pathOptions={{ color: '#0c4a6e', fillColor: '#62c1ed', fillOpacity: 0.8, weight: 1.5 }}>
                           <Popup>
                             <div className="text-sm min-w-[140px]">
@@ -492,9 +580,10 @@ export default function InatLab() {
                     </MapContainer>
                   </div>
                 )}
-                {!inatLoading && !gbifLoading && inatPoints.length === 0 && gbifPoints.length === 0 && (
+                {!inatLoading && !gbifLoading && yearInatPoints.length === 0 && yearGbifPoints.length === 0 && (
                   <p className="text-center text-gray-400 text-sm mt-4">
-                    Nenhum ponto com coordenadas disponíveis{isFiltered ? ` para ${seasonLabel}` : ''}.
+                    Nenhum ponto com coordenadas disponíveis{mapYear ? ` em ${mapYear}` : ''}
+                    {isFiltered ? ` para ${seasonLabel}` : ''}.
                   </p>
                 )}
               </div>
