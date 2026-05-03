@@ -280,7 +280,7 @@ export default function InatLab() {
     view === 'nas3'         ? inAll3 :
     view === 'inat-only'    ? inatOnly :
     view === 'ebird-only'   ? ebirdOnly :
-    view === 'catalog-only' ? catOnly :
+    view === 'catalog-only' ? merged.filter(s => !!s.catalog) :
     [];
 
   const isFiltered = season !== 'all';
