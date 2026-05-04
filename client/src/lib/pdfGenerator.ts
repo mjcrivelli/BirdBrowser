@@ -207,10 +207,17 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
         color: GRAY_TEXT,
         fontFamily: 'Arial, sans-serif',
         lineHeight: '1.5',
-        margin: '6px 0 0',
+        margin: '6px 0 4px',
       });
       info.appendChild(desc);
     }
+
+    const s1 = section('Comportamento', bird.behavior);
+    const s2 = section('Habitat', bird.habitat);
+    const s3 = section('Dieta', bird.diet);
+    if (s1) info.appendChild(s1);
+    if (s2) info.appendChild(s2);
+    if (s3) info.appendChild(s3);
 
     card.appendChild(imgWrap);
     card.appendChild(info);
