@@ -36,9 +36,8 @@ const recordPdfGeneration = async (seenBirds: BirdWithSeenStatus[]) => {
   } catch {}
 };
 
-const badge = (text: string, bg: string, border: string, color: string) => {
+const badge = (emoji: string, text: string, bg: string, border: string, color: string) => {
   const el = document.createElement('span');
-  el.textContent = text;
   Object.assign(el.style, {
     display: 'inline-flex',
     alignItems: 'center',
@@ -46,26 +45,36 @@ const badge = (text: string, bg: string, border: string, color: string) => {
     background: bg,
     border: `1px solid ${border}`,
     color,
-    fontSize: '11px',
+    fontSize: '10px',
     fontWeight: '500',
-    padding: '2px 9px',
+    padding: '2px 8px',
     borderRadius: '999px',
     fontFamily: 'Arial, sans-serif',
     whiteSpace: 'nowrap',
+    lineHeight: '1.4',
+    verticalAlign: 'middle',
   });
+  const emojiSpan = document.createElement('span');
+  emojiSpan.textContent = emoji;
+  Object.assign(emojiSpan.style, { fontSize: '11px', lineHeight: '1', verticalAlign: 'middle' });
+  const textSpan = document.createElement('span');
+  textSpan.textContent = text;
+  Object.assign(textSpan.style, { verticalAlign: 'middle', lineHeight: '1.4' });
+  el.appendChild(emojiSpan);
+  el.appendChild(textSpan);
   return el;
 };
 
 const section = (label: string, value: string | null | undefined) => {
   if (!value) return null;
   const wrap = document.createElement('div');
-  wrap.style.marginBottom = '5px';
+  wrap.style.marginBottom = '4px';
   const lbl = document.createElement('span');
   lbl.textContent = label + ': ';
-  Object.assign(lbl.style, { fontWeight: 'bold', fontSize: '12px', color: GREEN, fontFamily: 'Arial, sans-serif' });
+  Object.assign(lbl.style, { fontWeight: 'bold', fontSize: '10px', color: GREEN, fontFamily: 'Arial, sans-serif' });
   const val = document.createElement('span');
   val.textContent = value;
-  Object.assign(val.style, { fontSize: '12px', color: GRAY_TEXT, fontFamily: 'Arial, sans-serif' });
+  Object.assign(val.style, { fontSize: '10px', color: GRAY_TEXT, fontFamily: 'Arial, sans-serif', lineHeight: '1.4' });
   wrap.appendChild(lbl);
   wrap.appendChild(val);
   return wrap;
@@ -196,10 +205,10 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
       marginBottom: '8px',
     });
 
-    if (bird.sizeLength) badgeRow.appendChild(badge(`📏 ${bird.sizeLength} cm`, GREEN_LIGHT, GREEN_BORDER, '#155e35'));
-    if (bird.weightG)   badgeRow.appendChild(badge(`⚖️ ${bird.weightG} g`,   GREEN_LIGHT, GREEN_BORDER, '#155e35'));
+    if (bird.sizeLength) badgeRow.appendChild(badge('📏', `${bird.sizeLength} cm`, GREEN_LIGHT, GREEN_BORDER, '#155e35'));
+    if (bird.weightG)   badgeRow.appendChild(badge('⚖️', `${bird.weightG} g`,   GREEN_LIGHT, GREEN_BORDER, '#155e35'));
     if (bird.sexualDimorphism) {
-      badgeRow.appendChild(badge(`♂♀ ${bird.sexualDimorphism}`, BLUE_LIGHT, BLUE_BORDER, '#1a4f6e'));
+      badgeRow.appendChild(badge('♂♀', `${bird.sexualDimorphism}`, BLUE_LIGHT, BLUE_BORDER, '#1a4f6e'));
     }
 
     info.appendChild(name);
