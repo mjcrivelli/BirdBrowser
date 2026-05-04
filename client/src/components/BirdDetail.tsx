@@ -208,8 +208,8 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
         </div>
 
         <div className="md:w-2/3">
-          {(bird.sizeLength || bird.weightG) && (
-            <div className="flex gap-2 mb-4 flex-wrap">
+          {(bird.sizeLength || bird.weightG || bird.sexualDimorphism) && (
+            <div className="flex gap-2 mb-4 flex-wrap items-center">
               {bird.sizeLength && (
                 <span className="inline-flex items-center gap-1 bg-green-50 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full border border-green-200">
                   📏 {bird.sizeLength} cm
@@ -220,25 +220,11 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
                   ⚖️ {bird.weightG} g
                 </span>
               )}
-            </div>
-          )}
-
-          <div className="mb-4">
-            <h3 className="font-montserrat font-semibold text-lg mb-2">Descrição</h3>
-            <p>{bird.description}</p>
-          </div>
-
-          {bird.identification && bird.identification !== bird.description && (
-            <div className="mb-4">
-              <h3 className="font-montserrat font-semibold text-lg mb-2">Identificação</h3>
-              <p>{bird.identification}</p>
-            </div>
-          )}
-
-          {bird.sexualDimorphism && (
-            <div className="mb-4">
-              <h3 className="font-montserrat font-semibold text-lg mb-2">Dimorfismo sexual</h3>
-              <p>{bird.sexualDimorphism}</p>
+              {bird.sexualDimorphism && (
+                <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">
+                  ♂♀ Dimorfismo sexual: {bird.sexualDimorphism}
+                </span>
+              )}
             </div>
           )}
 
