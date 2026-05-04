@@ -172,7 +172,7 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
           <img
             src={imageUrl}
             alt={`Foto da ave ${bird.name}`}
-            className={`w-full h-auto max-h-[15.625rem] rounded-lg object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+            className={`w-full h-auto max-h-[15.625rem] rounded-lg object-cover object-top ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
             onLoad={() => setImageLoaded(true)}
             onError={(e) => {
               if (retriedRef.current) return;
