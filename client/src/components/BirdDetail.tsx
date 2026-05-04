@@ -189,7 +189,7 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
               className={`mt-4 w-full ${
                 bird.seen
                   ? 'bg-[#DDEBDD] text-[#4CAF50] hover:bg-[#C8E6C9]'
-                  : 'bg-[#5042E0] hover:bg-[#3d32c0] text-white'
+                  : 'bg-[#4CAF50] hover:bg-[#388E3C] text-white'
               }`}
               onClick={handleSeenToggle}
               aria-pressed={bird.seen}

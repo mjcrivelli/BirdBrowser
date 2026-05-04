@@ -196,31 +196,21 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
       fontFamily: 'Arial, sans-serif',
     });
 
-    // Badges row
-    const badgeRow = document.createElement('div');
-    Object.assign(badgeRow.style, {
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: '4px',
-      marginBottom: '8px',
-    });
-
-    if (bird.sizeLength) badgeRow.appendChild(badge('📏', `${bird.sizeLength} cm`, GREEN_LIGHT, GREEN_BORDER, '#155e35'));
-    if (bird.weightG)   badgeRow.appendChild(badge('⚖️', `${bird.weightG} g`,   GREEN_LIGHT, GREEN_BORDER, '#155e35'));
-    if (bird.sexualDimorphism) {
-      badgeRow.appendChild(badge('♂♀', `${bird.sexualDimorphism}`, BLUE_LIGHT, BLUE_BORDER, '#1a4f6e'));
-    }
-
     info.appendChild(name);
     info.appendChild(sciName);
-    info.appendChild(badgeRow);
 
-    const s1 = section('Comportamento', bird.behavior);
-    const s2 = section('Habitat', bird.habitat);
-    const s3 = section('Dieta', bird.diet);
-    if (s1) info.appendChild(s1);
-    if (s2) info.appendChild(s2);
-    if (s3) info.appendChild(s3);
+    if (bird.description) {
+      const desc = document.createElement('p');
+      desc.textContent = bird.description;
+      Object.assign(desc.style, {
+        fontSize: '10px',
+        color: GRAY_TEXT,
+        fontFamily: 'Arial, sans-serif',
+        lineHeight: '1.5',
+        margin: '6px 0 0',
+      });
+      info.appendChild(desc);
+    }
 
     card.appendChild(imgWrap);
     card.appendChild(info);
