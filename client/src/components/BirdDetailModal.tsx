@@ -101,7 +101,7 @@ const BirdDetailModal: React.FC<BirdDetailModalProps> = ({ bird, open, onClose }
 
             <div className="mt-6">
               <Button
-                className="bg-transparent hover:bg-green-50 text-[#159d51] font-bold font-montserrat border border-[#159d51]"
+                className="bg-transparent hover:bg-green-50 text-[#0f783a] font-bold font-montserrat border border-[#0f783a]"
                 onClick={handleOpenWikiaves}
                 aria-label={`Abrir página do WikiAves sobre ${bird?.name} em nova aba`}
               >

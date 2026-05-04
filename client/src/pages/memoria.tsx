@@ -1,111 +1,171 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-
-const images = [
-  '/img/img1.jpg',
-  '/img/img2.jpg',
-  '/img/img3.jpg',
-  '/img/img4.jpg',
-  '/img/img5.jpg',
-  '/img/img6.jpg',
-];
-
-interface Card {
-  id: number;
-  img: string;
-  matched: boolean;
-}
+import { useBirds } from '@/hooks/useBirds';
 
 const Memoria: React.FC = () => {
-  const [cards, setCards] = useState<Card[]>(() =>
-    [...images, ...images]
+  const { birds } = useBirds();
+
+  const buildDeck = (birdList: typeof birds) => {
+    const pool = birdList.slice(0, 6);
+    return [...pool, ...pool]
       .sort(() => Math.random() - 0.5)
-      .map((img, index) => ({ id: index, img, matched: false }))
-  );
+      .map((b, i) => ({ uid: i, birdId: b.id, name: b.name, img: b.imageUrl, matched: false }));
+  };
+
+  const [cards, setCards] = useState<ReturnType<typeof buildDeck>>([]);
   const [flipped, setFlipped] = useState<number[]>([]);
+  const [announcement, setAnnouncement] = useState('');
+  const initialized = useRef(false);
+
+  useEffect(() => {
+    if (birds.length > 0 && !initialized.current) {
+      setCards(buildDeck(birds));
+      initialized.current = true;
+    }
+  }, [birds]);
+
+  const matchedCount = cards.filter(c => c.matched).length / 2;
+  const totalPairs = 6;
+  const allMatched = matchedCount === totalPairs && totalPairs > 0;
 
   const handleFlip = (index: number) => {
-    if (flipped.includes(index) || flipped.length === 2 || cards[index].matched) return;
+    const card = cards[index];
+    if (!card || flipped.includes(index) || flipped.length === 2 || card.matched) return;
 
     const newFlipped = [...flipped, index];
     setFlipped(newFlipped);
 
     if (newFlipped.length === 2) {
       const [first, second] = newFlipped;
-      if (cards[first].img === cards[second].img) {
+      if (cards[first].birdId === cards[second].birdId) {
         setCards(prev =>
-          prev.map(card =>
-            card.id === cards[first].id || card.id === cards[second].id
-              ? { ...card, matched: true }
-              : card
+          prev.map((c, i) =>
+            i === first || i === second ? { ...c, matched: true } : c
           )
         );
+        const pairs = matchedCount + 1;
+        setAnnouncement(pairs === totalPairs
+          ? 'Parabéns! Você encontrou todos os pares!'
+          : `Par encontrado! ${pairs} de ${totalPairs} pares.`
+        );
+      } else {
+        setAnnouncement('Não combina. Tente novamente.');
       }
-      // Desvira cartas não correspondentes depois de 1 segundo
       setTimeout(() => setFlipped([]), 1000);
     }
   };
 
-  const handleRestart = () => {
-    setCards(
-      [...images, ...images]
-        .sort(() => Math.random() - 0.5)
-        .map((img, index) => ({ id: index, img, matched: false }))
-    );
-    setFlipped([]);
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleFlip(index);
+    }
   };
+
+  const handleRestart = () => {
+    if (birds.length > 0) {
+      setCards(buildDeck(birds));
+      setFlipped([]);
+      setAnnouncement('Jogo reiniciado.');
+    }
+  };
+
+  if (cards.length === 0) {
+    return (
+      <>
+        <Header />
+        <main className="container mx-auto px-4 py-8 text-center">
+          <p className="text-gray-500">Carregando jogo…</p>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
       <Header />
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-center mb-8">Jogo da Memória</h1>
+      <main className="container mx-auto px-4 py-8 max-w-xl">
+        <h1 className="text-3xl font-bold text-center font-montserrat mb-1">Jogo da Memória</h1>
+        <p className="text-center text-gray-500 text-sm mb-2" aria-live="polite" aria-atomic="true">
+          {matchedCount} de {totalPairs} pares encontrados
+        </p>
+
+        <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+          {announcement}
+        </div>
 
         <div className="flex justify-center mb-6">
           <button
             onClick={handleRestart}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+            className="px-5 py-2 rounded font-semibold text-white"
+            style={{ backgroundColor: '#0f783a' }}
+            aria-label="Reiniciar o jogo da memória"
           >
             Reiniciar
           </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {allMatched && (
+          <div role="alert" className="text-center font-bold text-lg mb-4" style={{ color: '#0f783a' }}>
+            Parabéns! Você encontrou todos os pares!
+          </div>
+        )}
+
+        <div
+          className="grid grid-cols-3 sm:grid-cols-4 gap-3"
+          role="grid"
+          aria-label="Tabuleiro do jogo da memória"
+        >
           {cards.map((card, index) => {
-            const isFlipped = flipped.includes(index) || card.matched;
+            const isVisible = flipped.includes(index) || card.matched;
+            let cardLabel: string;
+            if (card.matched) {
+              cardLabel = `Par encontrado: ${card.name}`;
+            } else if (isVisible) {
+              cardLabel = `Carta revelada: ${card.name}`;
+            } else {
+              cardLabel = `Carta ${index + 1} virada para baixo — pressione Enter para virar`;
+            }
+            const canFlip = !card.matched && flipped.length < 2 && !flipped.includes(index);
 
             return (
               <div
-                key={card.id}
-                className="relative w-full h-32 cursor-pointer perspective"
-                onClick={() => handleFlip(index)}
+                key={card.uid}
+                role="gridcell"
               >
                 <div
-                  className={`absolute w-full h-full transition-transform duration-500 transform ${
-                    isFlipped ? 'rotate-y-180' : ''
-                  }`}
-                  style={{ transformStyle: 'preserve-3d' }}
+                  role="button"
+                  tabIndex={canFlip ? 0 : -1}
+                  aria-label={cardLabel}
+                  aria-pressed={card.matched}
+                  className="w-full rounded-lg overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                  style={{
+                    height: '8rem',
+                    cursor: canFlip ? 'pointer' : 'default',
+                    border: card.matched ? '2px solid #0f783a' : '2px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    outlineColor: '#0f783a',
+                  }}
+                  onClick={() => handleFlip(index)}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
                 >
-                  {/* Frente da carta */}
-                  <div
-                    className="absolute w-full h-full bg-gray-400 flex items-center justify-center rounded-lg"
-                    style={{ backfaceVisibility: 'hidden' }}
-                  >
-                    <div className="w-24 h-24 bg-gray-600 rounded" />
-                  </div>
-
-                  {/* Verso da carta */}
-                  <div
-                    className="absolute w-full h-full flex items-center justify-center rounded-lg"
-                    style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-                  >
+                  {isVisible ? (
                     <img
                       src={card.img}
-                      alt="Ave"
-                      className="h-24 w-24 object-cover rounded"
+                      alt={card.name}
+                      className="w-full h-full object-cover object-top"
+                      style={{ opacity: card.matched ? 0.7 : 1 }}
                     />
-                  </div>
+                  ) : (
+                    <div
+                      className="w-full h-full flex items-center justify-center"
+                      style={{ backgroundColor: '#9ca3af' }}
+                    >
+                      <div style={{ width: '3rem', height: '3rem', backgroundColor: '#6b7280', borderRadius: '0.375rem' }} />
+                    </div>
+                  )}
                 </div>
               </div>
             );

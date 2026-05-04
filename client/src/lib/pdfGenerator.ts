@@ -2,7 +2,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import type { BirdWithSeenStatus } from '@shared/schema';
 
-const GREEN = '#159d51';
+const GREEN = '#0f783a';
 const GREEN_LIGHT = '#e8f5ee';
 const GREEN_BORDER = '#a8d5b8';
 const GRAY_TEXT = '#555';

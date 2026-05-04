@@ -89,7 +89,7 @@ const SEASONS: {
   { key: 'verao',     label: 'Verão',     months: [12, 1, 2],  color: '#fef200', onColor: '#78350f', lightBg: '#fefce8', lightText: '#713f12', lightBorder: '#fef08a' },
   { key: 'outono',    label: 'Outono',    months: [3, 4, 5],   color: '#5042E0', onColor: '#ffffff', lightBg: '#ede9fe', lightText: '#4c1d95', lightBorder: '#c4b5fd' },
   { key: 'inverno',   label: 'Inverno',   months: [6, 7, 8],   color: '#62c1ed', onColor: '#0c2d4a', lightBg: '#e0f7ff', lightText: '#0c4a6e', lightBorder: '#bae6fd' },
-  { key: 'primavera', label: 'Primavera', months: [9, 10, 11], color: '#159d51', onColor: '#ffffff', lightBg: '#dcfce7', lightText: '#14532d', lightBorder: '#86efac' },
+  { key: 'primavera', label: 'Primavera', months: [9, 10, 11], color: '#0f783a', onColor: '#ffffff', lightBg: '#dcfce7', lightText: '#14532d', lightBorder: '#86efac' },
 ];
 
 const MONTHS = [
@@ -425,13 +425,13 @@ export default function InatLab() {
                   <button key={m.n} onClick={() => setSeason(season === m.n ? 'all' : m.n)}
                     style={
                       isActive
-                        ? { backgroundColor: '#159d51', color: '#ffffff', borderColor: '#159d51' }
+                        ? { backgroundColor: '#0f783a', color: '#ffffff', borderColor: '#0f783a' }
                         : inSeason && activeSeason
                           ? { backgroundColor: activeSeason.lightBg, color: activeSeason.lightText, borderColor: activeSeason.lightBorder }
                           : {}
                     }
                     className={`w-10 py-1 rounded text-xs font-medium border transition-colors ${
-                      isActive || inSeason ? '' : 'bg-white text-gray-500 border-gray-200 hover:border-[#159d51]'
+                      isActive || inSeason ? '' : 'bg-white text-gray-500 border-gray-200 hover:border-[#0f783a]'
                     }`}>
                     {m.label}
                   </button>
@@ -511,7 +511,7 @@ export default function InatLab() {
                 onClick={() => setView(view === 'catalog-only' ? 'all' : 'catalog-only')}
                 className="rounded-xl border-2 p-4 text-left transition-all hover:brightness-95 active:scale-95"
                 style={{
-                  backgroundColor: view === 'catalog-only' ? '#0d7a3e' : '#159d51',
+                  backgroundColor: view === 'catalog-only' ? '#0d7a3e' : '#0f783a',
                   borderColor: '#0d7a3e',
                   color: '#ffffff',
                   boxShadow: view === 'catalog-only' ? '0 0 0 3px #0d7a3e33' : undefined,
@@ -548,8 +548,8 @@ export default function InatLab() {
                 <button key={tab.key} onClick={() => setView(tab.key)}
                   className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${
                     view === tab.key
-                      ? 'bg-[#159d51] text-white border-[#159d51]'
-                      : 'bg-white text-gray-600 border-gray-200 hover:border-[#159d51]'
+                      ? 'bg-[#0f783a] text-white border-[#0f783a]'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-[#0f783a]'
                   }`}>
                   {tab.label}
                 </button>
@@ -570,7 +570,7 @@ export default function InatLab() {
                   const sources = [
                     inatLabel  && { label: inatLabel,               color: localCount > 0 ? 'text-[#74ac00]' : 'text-gray-400' },
                     s.ebird    && { label: `eBird: ${s.ebird.count}`, color: 'text-blue-600' },
-                    s.catalog  && { label: 'Catálogo ✓',              color: 'text-[#159d51]' },
+                    s.catalog  && { label: 'Catálogo ✓',              color: 'text-[#0f783a]' },
                   ].filter(Boolean) as { label: string; color: string }[];
 
                   const inatLink = s.inatId
@@ -637,7 +637,7 @@ export default function InatLab() {
                     <span style={{ color: '#0c4a6e' }}>eBird / GBIF ({yearGbifPoints.length} registros)</span>
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: '#159d51', borderColor: '#0a5e30', borderWidth: 1 }}></span>
+                    <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: '#0f783a', borderColor: '#0a5e30', borderWidth: 1 }}></span>
                     <span style={{ color: '#0a5e30' }}>Toca — avistamentos ({yearTocaPoints.length})</span>
                   </span>
                   {isFiltered && <span className="text-gray-500 font-medium">· {seasonLabel}</span>}
@@ -747,7 +747,7 @@ export default function InatLab() {
                       ))}
                       {yearTocaPoints.map((p, i) => (
                         <CircleMarker key={`toca-${mapYear}-${i}`} center={[p.lat, p.lng]}
-                          radius={7} pathOptions={{ color: '#0a5e30', fillColor: '#159d51', fillOpacity: 0.9, weight: 1.5 }}>
+                          radius={7} pathOptions={{ color: '#0a5e30', fillColor: '#0f783a', fillOpacity: 0.9, weight: 1.5 }}>
                           <Popup>
                             <div className="text-sm min-w-[150px]">
                               <div className="font-semibold">{p.birdName}</div>
