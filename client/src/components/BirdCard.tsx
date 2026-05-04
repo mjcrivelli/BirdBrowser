@@ -223,7 +223,7 @@ const BirdCard: React.FC<BirdCardProps> = ({
 
         {/* Seen indicator */}
         {bird.seen && (
-          <div className="absolute top-0 right-1/4 bg-[#4CAF50] text-white rounded-full p-1" aria-hidden="true">
+          <div className="absolute top-0 right-1/4 bg-[#5042E0] text-white rounded-full p-1" aria-hidden="true">
             <Check className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
           </div>
         )}
