@@ -5,10 +5,7 @@ import type { BirdWithSeenStatus } from '@shared/schema';
 const GREEN = '#159d51';
 const GREEN_LIGHT = '#e8f5ee';
 const GREEN_BORDER = '#a8d5b8';
-const BLUE_LIGHT = '#e8f4fc';
-const BLUE_BORDER = '#9ed0e8';
 const GRAY_TEXT = '#555';
-const GRAY_LIGHT = '#f7f7f7';
 
 const recordPdfGeneration = async (seenBirds: BirdWithSeenStatus[]) => {
   try {
@@ -36,35 +33,6 @@ const recordPdfGeneration = async (seenBirds: BirdWithSeenStatus[]) => {
   } catch {}
 };
 
-const badge = (emoji: string, text: string, bg: string, border: string, color: string) => {
-  const el = document.createElement('span');
-  Object.assign(el.style, {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '3px',
-    background: bg,
-    border: `1px solid ${border}`,
-    color,
-    fontSize: '10px',
-    fontWeight: '500',
-    padding: '2px 8px',
-    borderRadius: '999px',
-    fontFamily: 'Arial, sans-serif',
-    whiteSpace: 'nowrap',
-    lineHeight: '1.4',
-    verticalAlign: 'middle',
-  });
-  const emojiSpan = document.createElement('span');
-  emojiSpan.textContent = emoji;
-  Object.assign(emojiSpan.style, { fontSize: '11px', lineHeight: '1', verticalAlign: 'middle' });
-  const textSpan = document.createElement('span');
-  textSpan.textContent = text;
-  Object.assign(textSpan.style, { verticalAlign: 'middle', lineHeight: '1.4' });
-  el.appendChild(emojiSpan);
-  el.appendChild(textSpan);
-  return el;
-};
-
 const section = (label: string, value: string | null | undefined) => {
   if (!value) return null;
   const wrap = document.createElement('div');
@@ -78,6 +46,22 @@ const section = (label: string, value: string | null | undefined) => {
   wrap.appendChild(lbl);
   wrap.appendChild(val);
   return wrap;
+};
+
+const waitForImages = (container: HTMLElement): Promise<void> => {
+  const imgs = Array.from(container.querySelectorAll('img')) as HTMLImageElement[];
+  return Promise.all(
+    imgs.map(img =>
+      new Promise<void>(resolve => {
+        if (img.complete && img.naturalWidth > 0) { resolve(); return; }
+        img.onload = () => resolve();
+        img.onerror = () => {
+          img.style.display = 'none';
+          resolve();
+        };
+      })
+    )
+  ).then(() => undefined);
 };
 
 export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise<void> => {
@@ -142,8 +126,10 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
     padding: '0 24px 24px',
   });
 
-  for (const bird of seenBirds) {
+  for (let i = 0; i < seenBirds.length; i++) {
+    const bird = seenBirds[i];
     const card = document.createElement('div');
+    card.dataset.cardIdx = String(i);
     Object.assign(card.style, {
       border: `1px solid ${GREEN_BORDER}`,
       borderRadius: '10px',
@@ -152,8 +138,6 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
       gap: '0',
       background: 'white',
       boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-      pageBreakInside: 'avoid',
-      breakInside: 'avoid',
       overflow: 'hidden',
     });
 
@@ -165,9 +149,11 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
       flexShrink: '0',
       background: GREEN_LIGHT,
     });
+
     const img = document.createElement('img');
     const src = bird.customImageUrl || bird.imageUrl || '';
     img.src = src.startsWith('//') ? `https:${src}` : src;
+    img.crossOrigin = 'anonymous';
     img.alt = bird.name;
     Object.assign(img.style, { width: '130px', height: '130px', objectFit: 'cover', display: 'block' });
     imgWrap.appendChild(img);
@@ -189,7 +175,7 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
     const sciName = document.createElement('p');
     sciName.textContent = bird.scientificName;
     Object.assign(sciName.style, {
-      margin: '0 0 8px',
+      margin: '0 0 6px',
       fontSize: '12px',
       fontStyle: 'italic',
       color: '#888',
@@ -207,7 +193,7 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
         color: GRAY_TEXT,
         fontFamily: 'Arial, sans-serif',
         lineHeight: '1.5',
-        margin: '6px 0 4px',
+        margin: '0 0 4px',
       });
       info.appendChild(desc);
     }
@@ -241,31 +227,89 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
   container.appendChild(footer);
 
   try {
-    await new Promise(resolve => setTimeout(resolve, 800));
+    // Wait for all images to load (not just a fixed delay)
+    await waitForImages(container);
 
-    const canvas = await html2canvas(container, {
-      scale: 2,
+    // ── Measure card positions for smart page breaks ───────────────────────
+    // A4 at 820px wide → page height in DOM px = 297/210 * 820 ≈ 1160px
+    const PAGE_H_DOM = Math.round((297 / 210) * 820);
+    const containerTop = container.getBoundingClientRect().top;
+
+    // Collect the bottom edge of every card row (in DOM coordinates relative to container)
+    const cardEls = Array.from(grid.querySelectorAll('[data-card-idx]')) as HTMLElement[];
+    const rowBottoms: number[] = [];
+    for (let i = 0; i < cardEls.length; i += 2) {
+      const a = cardEls[i].getBoundingClientRect();
+      const b = cardEls[i + 1]?.getBoundingClientRect();
+      const rowBottom = Math.max(a.bottom, b ? b.bottom : a.bottom) - containerTop;
+      rowBottoms.push(rowBottom);
+    }
+
+    // Determine page cut points: find the row gap just before exceeding each page boundary
+    // cuts[] holds DOM-pixel y positions (relative to container top) where each new page starts
+    const cuts: number[] = [0];
+    let pageStart = 0;
+
+    while (true) {
+      const pageEnd = pageStart + PAGE_H_DOM;
+      // Find the last row that fits entirely within this page
+      let cutAt = -1;
+      for (let r = 0; r < rowBottoms.length; r++) {
+        if (rowBottoms[r] <= pageEnd) {
+          cutAt = rowBottoms[r];
+        } else {
+          break;
+        }
+      }
+      if (cutAt === -1 || cutAt === pageStart) break; // nothing more fits, stop
+      // Check if there are rows beyond this cut
+      const hasMore = rowBottoms.some(rb => rb > cutAt);
+      if (!hasMore) break;
+      cuts.push(cutAt + 8); // +8px = half the grid gap, start next page in the gap
+      pageStart = cutAt + 8;
+    }
+
+    // ── Render full canvas ─────────────────────────────────────────────────
+    const SCALE = 2;
+    const fullCanvas = await html2canvas(container, {
+      scale: SCALE,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
       logging: false,
     });
 
+    // ── Extract per-page slices ────────────────────────────────────────────
     const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgData = canvas.toDataURL('image/png');
-    const imgWidth = 210;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const pageWidthPx = fullCanvas.width; // 820 * scale
+    const pageHeightPx = Math.round(PAGE_H_DOM * SCALE);
 
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-
-    let heightLeft = imgHeight - 297;
-    let pageOffset = -297;
-    while (heightLeft > 0) {
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, pageOffset, imgWidth, imgHeight);
-      pageOffset -= 297;
-      heightLeft -= 297;
+    // Build page ranges from cuts[]
+    const pageRanges: { startPx: number; endPx: number }[] = [];
+    for (let p = 0; p < cuts.length; p++) {
+      const startPx = cuts[p] * SCALE;
+      const endPx = p + 1 < cuts.length ? cuts[p + 1] * SCALE : fullCanvas.height;
+      pageRanges.push({ startPx, endPx });
     }
+
+    pageRanges.forEach(({ startPx, endPx }, p) => {
+      if (p > 0) pdf.addPage();
+
+      const sliceH = endPx - startPx;
+      const pageCanvas = document.createElement('canvas');
+      pageCanvas.width = pageWidthPx;
+      pageCanvas.height = sliceH;
+
+      const ctx = pageCanvas.getContext('2d')!;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, pageWidthPx, sliceH);
+      ctx.drawImage(fullCanvas, 0, -startPx);
+
+      const imgData = pageCanvas.toDataURL('image/png');
+      // Scale slice to A4 width, keep proportional height
+      const sliceMmH = (sliceH / pageWidthPx) * 210;
+      pdf.addImage(imgData, 'PNG', 0, 0, 210, sliceMmH);
+    });
 
     pdf.save(`aves-vistas-${new Date().toISOString().split('T')[0]}.pdf`);
   } catch (error) {
