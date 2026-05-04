@@ -120,27 +120,16 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
     letterSpacing: '0.5px',
   });
 
-  const hproject = document.createElement('p');
-  hproject.textContent = 'Projeto Despertar para a Observação de Aves';
-  Object.assign(hproject.style, {
-    margin: '0 0 4px',
-    fontSize: '13px',
-    fontWeight: 'bold',
-    color: GREEN,
-    fontFamily: 'Arial, sans-serif',
-  });
-
   const hsubtitle = document.createElement('p');
-  hsubtitle.textContent = `${seenBirds.length} ${seenBirds.length === 1 ? 'espécie registrada' : 'espécies registradas'} · ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}`;
+  hsubtitle.textContent = `Projeto Despertar para a Observação de Aves · ${seenBirds.length} ${seenBirds.length === 1 ? 'espécie registrada' : 'espécies registradas'} · ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}`;
   Object.assign(hsubtitle.style, {
     margin: '0',
-    fontSize: '14px',
+    fontSize: '13px',
     color: GRAY_TEXT,
     fontFamily: 'Arial, sans-serif',
   });
 
   header.appendChild(htitle);
-  header.appendChild(hproject);
   header.appendChild(hsubtitle);
   container.appendChild(header);
 
