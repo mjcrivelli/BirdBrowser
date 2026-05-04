@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useBirds } from '@/hooks/useBirds';
+import logoImage from '@assets/logo_atualizado_1767007291716.png';
 
 const Memoria: React.FC = () => {
   const { birds } = useBirds();
@@ -161,9 +162,13 @@ const Memoria: React.FC = () => {
                   ) : (
                     <div
                       className="w-full h-full flex items-center justify-center"
-                      style={{ backgroundColor: '#9ca3af' }}
+                      style={{ backgroundColor: '#e8f5ee' }}
                     >
-                      <div style={{ width: '3rem', height: '3rem', backgroundColor: '#6b7280', borderRadius: '0.375rem' }} />
+                      <img
+                        src={logoImage}
+                        alt=""
+                        style={{ width: '4rem', height: '4rem', objectFit: 'contain' }}
+                      />
                     </div>
                   )}
                 </div>
