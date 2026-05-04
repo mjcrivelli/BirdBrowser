@@ -35,6 +35,7 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
     sizeLength: bird.sizeLength ?? '',
     weightG: bird.weightG ?? '',
     wikipediaUrl: bird.wikipediaUrl,
+    wikiavesUrl: bird.wikiavesUrl ?? '',
   });
   const { isAdminMode, adminPassword } = useAdmin();
   const { toast } = useToast();
@@ -50,10 +51,9 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
     }
   }, [bird.imageUrl, bird.customImageUrl]);
 
-  const handleOpenWikipedia = () => {
-    if (bird?.wikipediaUrl) {
-      window.open(bird.wikipediaUrl, '_blank', 'noopener,noreferrer');
-    }
+  const handleOpenWikiaves = () => {
+    const url = bird?.wikiavesUrl || bird?.wikipediaUrl;
+    if (url) window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const handleEditSave = async () => {
@@ -262,10 +262,10 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
           <div className="mt-6">
             <Button
               className="bg-[#4CAF50] hover:bg-[#388E3C] text-white font-montserrat"
-              onClick={handleOpenWikipedia}
-              aria-label={`Abrir página da Wikipedia sobre ${bird.name} em nova aba`}
+              onClick={handleOpenWikiaves}
+              aria-label={`Abrir página do WikiAves sobre ${bird.name} em nova aba`}
             >
-              Ver na Wikipedia
+              Ver no WikiAves
               <ExternalLink className="h-4 w-4 ml-2" />
             </Button>
           </div>
@@ -323,6 +323,10 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
             <div>
               <label className="text-sm font-medium">URL Wikipedia</label>
               <Input value={editData.wikipediaUrl} onChange={(e) => setEditData({...editData, wikipediaUrl: e.target.value})} />
+            </div>
+            <div>
+              <label className="text-sm font-medium">URL WikiAves</label>
+              <Input value={editData.wikiavesUrl} onChange={(e) => setEditData({...editData, wikiavesUrl: e.target.value})} placeholder="https://www.wikiaves.com.br/wiki/..." />
             </div>
             <div className="flex gap-2 justify-end pt-4">
               <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancelar</Button>

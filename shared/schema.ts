@@ -18,6 +18,7 @@ export const birds = pgTable("birds", {
   imageUrl: text("image_url").notNull(),
   customImageUrl: text("custom_image_url"),
   wikipediaUrl: text("wikipedia_url").notNull(),
+  wikiavesUrl: text("wikiaves_url"),
 });
 
 export const insertBirdSchema = createInsertSchema(birds).pick({
@@ -34,6 +35,7 @@ export const insertBirdSchema = createInsertSchema(birds).pick({
   imageUrl: true,
   family: true,
   wikipediaUrl: true,
+  wikiavesUrl: true,
 });
 
 export type InsertBird = z.infer<typeof insertBirdSchema>;

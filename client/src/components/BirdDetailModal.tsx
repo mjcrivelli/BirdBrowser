@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { X } from 'lucide-react';
+import { X, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Bird } from '@shared/schema';
 
@@ -11,10 +11,9 @@ interface BirdDetailModalProps {
 }
 
 const BirdDetailModal: React.FC<BirdDetailModalProps> = ({ bird, open, onClose }) => {
-  const handleOpenWikipedia = () => {
-    if (bird?.wikipediaUrl) {
-      window.open(bird.wikipediaUrl, '_blank', 'noopener,noreferrer');
-    }
+  const handleOpenWikiaves = () => {
+    const url = bird?.wikiavesUrl || bird?.wikipediaUrl;
+    if (url) window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   // Close on escape key
@@ -117,12 +116,11 @@ const BirdDetailModal: React.FC<BirdDetailModalProps> = ({ bird, open, onClose }
             <div className="mt-6">
               <Button
                 className="bg-[#4CAF50] hover:bg-[#388E3C] text-white font-montserrat"
-                onClick={handleOpenWikipedia}
+                onClick={handleOpenWikiaves}
+                aria-label={`Abrir página do WikiAves sobre ${bird?.name} em nova aba`}
               >
-                Ver na Wikipedia
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
+                Ver no WikiAves
+                <ExternalLink className="h-4 w-4 ml-2" />
               </Button>
             </div>
           </div>

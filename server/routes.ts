@@ -336,7 +336,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin endpoint to update bird info
   app.put("/api/admin/birds/:id", async (req, res) => {
     try {
-      const { password, name, scientificName, description, identification, sexualDimorphism, behavior, habitat, diet, sizeLength, weightG, wikipediaUrl } = req.body;
+      const { password, name, scientificName, description, identification, sexualDimorphism, behavior, habitat, diet, sizeLength, weightG, wikipediaUrl, wikiavesUrl } = req.body;
       
       if (password !== ADMIN_PASSWORD) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -359,6 +359,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (sizeLength !== undefined) updateData.sizeLength = sizeLength;
       if (weightG !== undefined) updateData.weightG = weightG;
       if (wikipediaUrl !== undefined && wikipediaUrl !== null) updateData.wikipediaUrl = wikipediaUrl;
+      if (wikiavesUrl !== undefined) updateData.wikiavesUrl = wikiavesUrl;
 
       console.log("Update data to apply:", updateData);
 
