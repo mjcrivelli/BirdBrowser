@@ -189,7 +189,7 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
               className={`mt-4 w-full ${
                 bird.seen
                   ? 'bg-[#DDEBDD] text-[#4CAF50] hover:bg-[#C8E6C9]'
-                  : 'bg-[#4CAF50] hover:bg-[#388E3C] text-white'
+                  : 'bg-[#5042E0] hover:bg-[#3d32c0] text-white'
               }`}
               onClick={handleSeenToggle}
               aria-pressed={bird.seen}
@@ -247,7 +247,7 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
 
           <div className="mt-6">
             <Button
-              className="bg-[#4CAF50] hover:bg-[#388E3C] text-white font-montserrat"
+              className="bg-transparent hover:bg-green-50 text-[#159d51] font-bold font-montserrat border border-[#159d51]"
               onClick={handleOpenWikiaves}
               aria-label={`Abrir página do WikiAves sobre ${bird.name} em nova aba`}
             >
