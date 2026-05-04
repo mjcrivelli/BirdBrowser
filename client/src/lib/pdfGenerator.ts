@@ -94,9 +94,9 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
   // ── Header ────────────────────────────────────────────────────────────────
   const header = document.createElement('div');
   Object.assign(header.style, {
-    background: GREEN,
+    background: 'white',
+    borderBottom: `3px solid ${GREEN}`,
     padding: '28px 36px 22px',
-    color: 'white',
     marginBottom: '24px',
   });
 
@@ -107,7 +107,7 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
     fontSize: '26px',
     fontWeight: 'bold',
     margin: '0 0 6px',
-    color: 'white',
+    color: GREEN,
     letterSpacing: '0.5px',
   });
 
@@ -116,7 +116,7 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
   Object.assign(hsubtitle.style, {
     margin: '0',
     fontSize: '14px',
-    color: 'rgba(255,255,255,0.85)',
+    color: GRAY_TEXT,
     fontFamily: 'Arial, sans-serif',
   });
 
@@ -137,39 +137,35 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
     const card = document.createElement('div');
     Object.assign(card.style, {
       border: `1px solid ${GREEN_BORDER}`,
-      borderLeft: `5px solid ${GREEN}`,
       borderRadius: '10px',
-      padding: '14px 14px 14px 14px',
+      padding: '0',
       display: 'flex',
-      gap: '14px',
+      gap: '0',
       background: 'white',
       boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
       pageBreakInside: 'avoid',
       breakInside: 'avoid',
+      overflow: 'hidden',
     });
 
-    // Circular image
+    // Square image
     const imgWrap = document.createElement('div');
     Object.assign(imgWrap.style, {
-      width: '90px',
-      height: '90px',
-      borderRadius: '50%',
-      overflow: 'hidden',
+      width: '130px',
+      height: '130px',
       flexShrink: '0',
-      border: `3px solid ${GREEN_BORDER}`,
       background: GREEN_LIGHT,
     });
     const img = document.createElement('img');
     const src = bird.customImageUrl || bird.imageUrl || '';
     img.src = src.startsWith('//') ? `https:${src}` : src;
     img.alt = bird.name;
-    Object.assign(img.style, { width: '100%', height: '100%', objectFit: 'cover' });
+    Object.assign(img.style, { width: '130px', height: '130px', objectFit: 'cover', display: 'block' });
     imgWrap.appendChild(img);
 
     // Info
     const info = document.createElement('div');
-    info.style.flex = '1';
-    info.style.overflow = 'hidden';
+    Object.assign(info.style, { flex: '1', overflow: 'hidden', padding: '12px 14px' });
 
     const name = document.createElement('h2');
     name.textContent = bird.name;
