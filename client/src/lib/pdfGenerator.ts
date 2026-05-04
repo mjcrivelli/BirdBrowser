@@ -2,53 +2,75 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import type { BirdWithSeenStatus } from '@shared/schema';
 
+const GREEN = '#159d51';
+const GREEN_LIGHT = '#e8f5ee';
+const GREEN_BORDER = '#a8d5b8';
+const BLUE_LIGHT = '#e8f4fc';
+const BLUE_BORDER = '#9ed0e8';
+const GRAY_TEXT = '#555';
+const GRAY_LIGHT = '#f7f7f7';
+
 const recordPdfGeneration = async (seenBirds: BirdWithSeenStatus[]) => {
   try {
     let latitude: number | null = null;
     let longitude: number | null = null;
-
     if (navigator.geolocation) {
       try {
         const position = await new Promise<GeolocationPosition>((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject, {
             enableHighAccuracy: false,
             timeout: 5000,
-            maximumAge: 600000
+            maximumAge: 600000,
           });
         });
         latitude = position.coords.latitude;
         longitude = position.coords.longitude;
-      } catch (err) {
-        console.log('Could not get location for PDF generation record');
-      }
+      } catch {}
     }
-
-    const response = await fetch('/api/pdf-generated', {
+    await fetch('/api/pdf-generated', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        birdCount: seenBirds.length,
-        birdNames: seenBirds.map(b => b.name),
-        latitude,
-        longitude,
-      }),
-      credentials: 'include'
+      body: JSON.stringify({ birdCount: seenBirds.length, birdNames: seenBirds.map(b => b.name), latitude, longitude }),
+      credentials: 'include',
     });
-
-    if (!response.ok) {
-      console.error('Failed to record PDF generation:', response.status);
-    } else {
-      console.log('PDF generation recorded successfully');
-    }
-  } catch (error) {
-    console.error('Error recording PDF generation:', error);
-  }
+  } catch {}
 };
 
-/**
- * Generate a PDF of the birds that the user has seen
- * @param seenBirds The list of birds that the user has seen
- */
+const badge = (text: string, bg: string, border: string, color: string) => {
+  const el = document.createElement('span');
+  el.textContent = text;
+  Object.assign(el.style, {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '3px',
+    background: bg,
+    border: `1px solid ${border}`,
+    color,
+    fontSize: '11px',
+    fontWeight: '500',
+    padding: '2px 9px',
+    borderRadius: '999px',
+    fontFamily: 'Arial, sans-serif',
+    whiteSpace: 'nowrap',
+  });
+  return el;
+};
+
+const section = (label: string, value: string | null | undefined) => {
+  if (!value) return null;
+  const wrap = document.createElement('div');
+  wrap.style.marginBottom = '5px';
+  const lbl = document.createElement('span');
+  lbl.textContent = label + ': ';
+  Object.assign(lbl.style, { fontWeight: 'bold', fontSize: '12px', color: GREEN, fontFamily: 'Arial, sans-serif' });
+  const val = document.createElement('span');
+  val.textContent = value;
+  Object.assign(val.style, { fontSize: '12px', color: GRAY_TEXT, fontFamily: 'Arial, sans-serif' });
+  wrap.appendChild(lbl);
+  wrap.appendChild(val);
+  return wrap;
+};
+
 export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise<void> => {
   if (seenBirds.length === 0) {
     alert('Você ainda não marcou nenhuma ave como vista!');
@@ -57,120 +79,169 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
 
   recordPdfGeneration(seenBirds);
 
-  // Create a temporary container to render the PDF content
-  const tempContainer = document.createElement('div');
-  tempContainer.classList.add('pdf-container');
-  tempContainer.style.padding = '20px';
-  tempContainer.style.backgroundColor = 'white';
-  tempContainer.style.width = '800px';
-  tempContainer.style.position = 'absolute';
-  tempContainer.style.left = '-9999px';
-  document.body.appendChild(tempContainer);
+  const container = document.createElement('div');
+  Object.assign(container.style, {
+    width: '820px',
+    padding: '0',
+    backgroundColor: 'white',
+    position: 'absolute',
+    left: '-9999px',
+    top: '0',
+    fontFamily: 'Arial, sans-serif',
+  });
+  document.body.appendChild(container);
 
-  // Add the header
+  // ── Header ────────────────────────────────────────────────────────────────
   const header = document.createElement('div');
-  header.classList.add('pdf-header');
-  header.style.textAlign = 'center';
-  header.style.marginBottom = '20px';
-  
-  const title = document.createElement('h1');
-  title.textContent = 'As aves que vi na Cachoeira da Toca!';
-  title.style.color = '#4CAF50';
-  title.style.fontFamily = 'Arial, sans-serif';
-  title.style.marginBottom = '10px';
-  
-  const date = document.createElement('p');
-  date.textContent = new Date().toLocaleDateString('pt-BR');
-  date.style.fontSize = '14px';
-  date.style.color = '#666';
-  
-  header.appendChild(title);
-  header.appendChild(date);
-  tempContainer.appendChild(header);
+  Object.assign(header.style, {
+    background: GREEN,
+    padding: '28px 36px 22px',
+    color: 'white',
+    marginBottom: '24px',
+  });
 
-  // Add the bird cards
-  const birdsContainer = document.createElement('div');
-  birdsContainer.style.display = 'flex';
-  birdsContainer.style.flexDirection = 'column';
-  birdsContainer.style.gap = '20px';
+  const htitle = document.createElement('h1');
+  htitle.textContent = 'As aves que vi na Cachoeira da Toca!';
+  Object.assign(htitle.style, {
+    fontFamily: 'Arial, sans-serif',
+    fontSize: '26px',
+    fontWeight: 'bold',
+    margin: '0 0 6px',
+    color: 'white',
+    letterSpacing: '0.5px',
+  });
 
-  // Create and add each bird card
+  const hsubtitle = document.createElement('p');
+  hsubtitle.textContent = `${seenBirds.length} ${seenBirds.length === 1 ? 'espécie registrada' : 'espécies registradas'} · ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}`;
+  Object.assign(hsubtitle.style, {
+    margin: '0',
+    fontSize: '14px',
+    color: 'rgba(255,255,255,0.85)',
+    fontFamily: 'Arial, sans-serif',
+  });
+
+  header.appendChild(htitle);
+  header.appendChild(hsubtitle);
+  container.appendChild(header);
+
+  // ── Grid ──────────────────────────────────────────────────────────────────
+  const grid = document.createElement('div');
+  Object.assign(grid.style, {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '16px',
+    padding: '0 24px 24px',
+  });
+
   for (const bird of seenBirds) {
-    const birdCard = document.createElement('div');
-    birdCard.style.border = '1px solid #4CAF50';
-    birdCard.style.borderRadius = '8px';
-    birdCard.style.padding = '15px';
-    birdCard.style.display = 'flex';
-    birdCard.style.gap = '20px';
+    const card = document.createElement('div');
+    Object.assign(card.style, {
+      border: `1px solid ${GREEN_BORDER}`,
+      borderLeft: `5px solid ${GREEN}`,
+      borderRadius: '10px',
+      padding: '14px 14px 14px 14px',
+      display: 'flex',
+      gap: '14px',
+      background: 'white',
+      boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+      pageBreakInside: 'avoid',
+      breakInside: 'avoid',
+    });
 
-    // Image container
-    const imageContainer = document.createElement('div');
-    imageContainer.style.width = '150px';
-    imageContainer.style.height = '150px';
-    imageContainer.style.overflow = 'hidden';
-    imageContainer.style.borderRadius = '50%';
-    imageContainer.style.flexShrink = '0';
+    // Circular image
+    const imgWrap = document.createElement('div');
+    Object.assign(imgWrap.style, {
+      width: '90px',
+      height: '90px',
+      borderRadius: '50%',
+      overflow: 'hidden',
+      flexShrink: '0',
+      border: `3px solid ${GREEN_BORDER}`,
+      background: GREEN_LIGHT,
+    });
+    const img = document.createElement('img');
+    const src = bird.customImageUrl || bird.imageUrl || '';
+    img.src = src.startsWith('//') ? `https:${src}` : src;
+    img.alt = bird.name;
+    Object.assign(img.style, { width: '100%', height: '100%', objectFit: 'cover' });
+    imgWrap.appendChild(img);
 
-    const image = document.createElement('img');
-    // Handle protocol-relative URLs
-    image.src = bird.imageUrl && bird.imageUrl.startsWith('//') 
-      ? `https:${bird.imageUrl}` 
-      : bird.imageUrl;
-    image.alt = bird.name;
-    image.style.width = '100%';
-    image.style.height = '100%';
-    image.style.objectFit = 'cover';
-    imageContainer.appendChild(image);
+    // Info
+    const info = document.createElement('div');
+    info.style.flex = '1';
+    info.style.overflow = 'hidden';
 
-    // Bird info
-    const birdInfo = document.createElement('div');
-    birdInfo.style.flex = '1';
+    const name = document.createElement('h2');
+    name.textContent = bird.name;
+    Object.assign(name.style, {
+      margin: '0 0 2px',
+      fontSize: '15px',
+      fontWeight: 'bold',
+      color: '#222',
+      fontFamily: 'Arial, sans-serif',
+    });
 
-    const birdName = document.createElement('h2');
-    birdName.textContent = bird.name;
-    birdName.style.color = '#333';
-    birdName.style.marginBottom = '5px';
-    birdName.style.fontFamily = 'Arial, sans-serif';
+    const sciName = document.createElement('p');
+    sciName.textContent = bird.scientificName;
+    Object.assign(sciName.style, {
+      margin: '0 0 8px',
+      fontSize: '12px',
+      fontStyle: 'italic',
+      color: '#888',
+      fontFamily: 'Arial, sans-serif',
+    });
 
-    const scientificName = document.createElement('p');
-    scientificName.textContent = bird.scientificName;
-    scientificName.style.fontStyle = 'italic';
-    scientificName.style.color = '#666';
-    scientificName.style.marginBottom = '10px';
+    // Badges row
+    const badgeRow = document.createElement('div');
+    Object.assign(badgeRow.style, {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: '4px',
+      marginBottom: '8px',
+    });
 
-    const description = document.createElement('p');
-    description.textContent = bird.description || 'Sem descrição disponível.';
-    description.style.fontSize = '14px';
-    description.style.marginBottom = '5px';
+    if (bird.sizeLength) badgeRow.appendChild(badge(`📏 ${bird.sizeLength} cm`, GREEN_LIGHT, GREEN_BORDER, '#155e35'));
+    if (bird.weightG)   badgeRow.appendChild(badge(`⚖️ ${bird.weightG} g`,   GREEN_LIGHT, GREEN_BORDER, '#155e35'));
+    if (bird.sexualDimorphism) {
+      badgeRow.appendChild(badge(`♂♀ ${bird.sexualDimorphism}`, BLUE_LIGHT, BLUE_BORDER, '#1a4f6e'));
+    }
 
-    const habitat = document.createElement('p');
-    habitat.textContent = `Habitat: ${bird.habitat || 'Não especificado'}`;
-    habitat.style.fontSize = '14px';
-    habitat.style.marginBottom = '5px';
+    info.appendChild(name);
+    info.appendChild(sciName);
+    info.appendChild(badgeRow);
 
-    const diet = document.createElement('p');
-    diet.textContent = `Dieta: ${bird.diet || 'Não especificada'}`;
-    diet.style.fontSize = '14px';
+    const s1 = section('Comportamento', bird.behavior);
+    const s2 = section('Habitat', bird.habitat);
+    const s3 = section('Dieta', bird.diet);
+    if (s1) info.appendChild(s1);
+    if (s2) info.appendChild(s2);
+    if (s3) info.appendChild(s3);
 
-    birdInfo.appendChild(birdName);
-    birdInfo.appendChild(scientificName);
-    birdInfo.appendChild(description);
-    birdInfo.appendChild(habitat);
-    birdInfo.appendChild(diet);
-
-    birdCard.appendChild(imageContainer);
-    birdCard.appendChild(birdInfo);
-    birdsContainer.appendChild(birdCard);
+    card.appendChild(imgWrap);
+    card.appendChild(info);
+    grid.appendChild(card);
   }
 
-  tempContainer.appendChild(birdsContainer);
+  container.appendChild(grid);
+
+  // ── Footer ────────────────────────────────────────────────────────────────
+  const footer = document.createElement('div');
+  Object.assign(footer.style, {
+    borderTop: `2px solid ${GREEN_BORDER}`,
+    margin: '0 24px',
+    padding: '12px 0',
+    textAlign: 'center',
+    fontSize: '11px',
+    color: '#aaa',
+    fontFamily: 'Arial, sans-serif',
+  });
+  footer.textContent = 'Cachoeira da Toca · tocabirds.com';
+  container.appendChild(footer);
 
   try {
-    // Wait a bit for images to load
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Use html2canvas to capture the content
-    const canvas = await html2canvas(tempContainer, {
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    const canvas = await html2canvas(container, {
       scale: 2,
       useCORS: true,
       allowTaint: true,
@@ -178,41 +249,27 @@ export const generateBirdsPDF = async (seenBirds: BirdWithSeenStatus[]): Promise
       logging: false,
     });
 
-    // Create PDF
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgData = canvas.toDataURL('image/png');
-
-    // Calculate proper sizing to fit on A4
-    const imgWidth = 210; // A4 width in mm
+    const imgWidth = 210;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    
-    let position = 0;
-    
-    // Add the image to the PDF
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    
-    // If the content is taller than a single page, add more pages
-    let heightLeft = imgHeight;
-    
-    while (heightLeft > 297) { // A4 height in mm
-      position = -297;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+    let heightLeft = imgHeight - 297;
+    let pageOffset = -297;
+    while (heightLeft > 0) {
       pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      pdf.addImage(imgData, 'PNG', 0, pageOffset, imgWidth, imgHeight);
+      pageOffset -= 297;
       heightLeft -= 297;
-      position -= 297;
     }
 
-    // Save the PDF
-    const fileName = `aves-vistas-${new Date().toISOString().split('T')[0]}.pdf`;
-    pdf.save(fileName);
-    console.log('PDF gerado e baixado com sucesso:', fileName);
+    pdf.save(`aves-vistas-${new Date().toISOString().split('T')[0]}.pdf`);
   } catch (error) {
     console.error('Erro ao gerar o PDF:', error);
     alert('Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.');
   } finally {
-    // Clean up the temporary element
-    if (tempContainer && tempContainer.parentNode) {
-      document.body.removeChild(tempContainer);
-    }
+    if (container.parentNode) document.body.removeChild(container);
   }
 };
