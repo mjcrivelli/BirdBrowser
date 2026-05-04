@@ -336,7 +336,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin endpoint to update bird info
   app.put("/api/admin/birds/:id", async (req, res) => {
     try {
-      const { password, name, scientificName, description, habitat, diet, wikipediaUrl } = req.body;
+      const { password, name, scientificName, description, identification, sexualDimorphism, behavior, habitat, diet, sizeLength, weightG, wikipediaUrl } = req.body;
       
       if (password !== ADMIN_PASSWORD) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -347,14 +347,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid bird ID" });
       }
 
-      console.log("Updating bird", id, "with data:", { name, scientificName, description, habitat, diet, wikipediaUrl });
-
       const updateData: Record<string, any> = {};
       if (name !== undefined && name !== null) updateData.name = name;
       if (scientificName !== undefined && scientificName !== null) updateData.scientificName = scientificName;
       if (description !== undefined && description !== null) updateData.description = description;
+      if (identification !== undefined) updateData.identification = identification;
+      if (sexualDimorphism !== undefined) updateData.sexualDimorphism = sexualDimorphism;
+      if (behavior !== undefined) updateData.behavior = behavior;
       if (habitat !== undefined && habitat !== null) updateData.habitat = habitat;
       if (diet !== undefined && diet !== null) updateData.diet = diet;
+      if (sizeLength !== undefined) updateData.sizeLength = sizeLength;
+      if (weightG !== undefined) updateData.weightG = weightG;
       if (wikipediaUrl !== undefined && wikipediaUrl !== null) updateData.wikipediaUrl = wikipediaUrl;
 
       console.log("Update data to apply:", updateData);

@@ -27,8 +27,13 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
     name: bird.name,
     scientificName: bird.scientificName,
     description: bird.description,
+    identification: bird.identification ?? '',
+    sexualDimorphism: bird.sexualDimorphism ?? '',
+    behavior: bird.behavior ?? '',
     habitat: bird.habitat,
     diet: bird.diet,
+    sizeLength: bird.sizeLength ?? '',
+    weightG: bird.weightG ?? '',
     wikipediaUrl: bird.wikipediaUrl,
   });
   const { isAdminMode, adminPassword } = useAdmin();
@@ -203,10 +208,46 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
         </div>
 
         <div className="md:w-2/3">
+          {(bird.sizeLength || bird.weightG) && (
+            <div className="flex gap-2 mb-4 flex-wrap">
+              {bird.sizeLength && (
+                <span className="inline-flex items-center gap-1 bg-green-50 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full border border-green-200">
+                  📏 {bird.sizeLength} cm
+                </span>
+              )}
+              {bird.weightG && (
+                <span className="inline-flex items-center gap-1 bg-green-50 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full border border-green-200">
+                  ⚖️ {bird.weightG} g
+                </span>
+              )}
+            </div>
+          )}
+
           <div className="mb-4">
             <h3 className="font-montserrat font-semibold text-lg mb-2">Descrição</h3>
             <p>{bird.description}</p>
           </div>
+
+          {bird.identification && bird.identification !== bird.description && (
+            <div className="mb-4">
+              <h3 className="font-montserrat font-semibold text-lg mb-2">Identificação</h3>
+              <p>{bird.identification}</p>
+            </div>
+          )}
+
+          {bird.sexualDimorphism && (
+            <div className="mb-4">
+              <h3 className="font-montserrat font-semibold text-lg mb-2">Dimorfismo sexual</h3>
+              <p>{bird.sexualDimorphism}</p>
+            </div>
+          )}
+
+          {bird.behavior && (
+            <div className="mb-4">
+              <h3 className="font-montserrat font-semibold text-lg mb-2">Comportamento</h3>
+              <p>{bird.behavior}</p>
+            </div>
+          )}
 
           <div className="mb-4">
             <h3 className="font-montserrat font-semibold text-lg mb-2">Habitat</h3>
@@ -245,9 +286,31 @@ const BirdDetail: React.FC<BirdDetailProps> = ({ bird, onClose, onToggleSeen }) 
               <label className="text-sm font-medium">Nome Científico</label>
               <Input value={editData.scientificName} onChange={(e) => setEditData({...editData, scientificName: e.target.value})} />
             </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-sm font-medium">Tamanho (cm)</label>
+                <Input value={editData.sizeLength} onChange={(e) => setEditData({...editData, sizeLength: e.target.value})} placeholder="ex: 13" />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Peso (g)</label>
+                <Input value={editData.weightG} onChange={(e) => setEditData({...editData, weightG: e.target.value})} placeholder="ex: 16" />
+              </div>
+            </div>
             <div>
               <label className="text-sm font-medium">Descrição</label>
               <textarea className="w-full p-2 border border-gray-300 rounded-md text-sm bg-white text-black" rows={3} value={editData.description} onChange={(e) => setEditData({...editData, description: e.target.value})} />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Identificação</label>
+              <textarea className="w-full p-2 border border-gray-300 rounded-md text-sm bg-white text-black" rows={2} value={editData.identification} onChange={(e) => setEditData({...editData, identification: e.target.value})} />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Dimorfismo sexual</label>
+              <textarea className="w-full p-2 border border-gray-300 rounded-md text-sm bg-white text-black" rows={2} value={editData.sexualDimorphism} onChange={(e) => setEditData({...editData, sexualDimorphism: e.target.value})} />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Comportamento</label>
+              <textarea className="w-full p-2 border border-gray-300 rounded-md text-sm bg-white text-black" rows={2} value={editData.behavior} onChange={(e) => setEditData({...editData, behavior: e.target.value})} />
             </div>
             <div>
               <label className="text-sm font-medium">Habitat</label>
