@@ -8,7 +8,10 @@
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "test:py": "python3 -m unittest discover -s tests/python -p 'test_*.py' -v",
+    "test:js": "node --test tests/js/test_memoria.mjs tests/js/test_html_structure.mjs tests/js/test_css_properties.mjs",
+    "test": "npm run test:py && npm run test:js"
   },
   "dependencies": {
     "@google-cloud/storage": "^7.18.0",
